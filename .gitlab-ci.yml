@@ -13,4 +13,5 @@ compile-report:
     name: "${CI_PROJECT_PATH_SLUG}-report-${CI_COMMIT_REF_NAME}"
     paths:
       - '*.pdf'
-
+  tags:
+    - docker
