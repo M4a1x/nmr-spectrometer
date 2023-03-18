@@ -1,13 +1,10 @@
-name: Compile PDF
+name: Compile Report PDF
 on: [push]
 jobs:
-  building:
+  compile:
     runs-on: ubuntu-latest
     container:
       image: texlive/texlive
-      # Need root, otherwise this exact issue occurs:
-      # https://github.community/t/permission-problems-when-checking-out-code-as-part-of-github-action/202263
-      options: --user root
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
