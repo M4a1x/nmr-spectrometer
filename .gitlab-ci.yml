@@ -1,0 +1,16 @@
+stages:
+  - build
+
+compile-report:
+  stage: build
+  image: texlive/texlive:latest
+  script:
+    - echo "Compiling report PDF with latexmk (LuaLaTeX)..."
+    - cd "$CI_PROJECT_DIR/report"
+    - latexmk
+    - echo "Compiling complete."
+  artifacts:
+    name: "${CI_PROJECT_PATH_SLUG}-report-${CI_COMMIT_REF_NAME}"
+    paths:
+      - '*.pdf'
+
