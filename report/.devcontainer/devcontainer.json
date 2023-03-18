@@ -5,12 +5,6 @@
         "vscode": {
             "settings": {
                 "terminal.integrated.defaultProfile.linux": "bash",
-                "latex-workshop.latexindent.args": [
-                    "-c",
-                    "%DIR%/",
-                    "%TMPFILE%",
-                    "-l"
-                ]
             },
             "extensions": [
                 "James-Yu.latex-workshop",

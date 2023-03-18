@@ -28,11 +28,15 @@
             "name": "latexmk",
             "command": "latexmk",
             "args": [
-                // latexmk doesn't need a file argument, but provide it to avoid running
-                // on *all* found tex files
                 "%DOC%"
             ]
         }
+    ],
+    "latex-workshop.latexindent.args": [
+        "-c",
+        "%DIR%/",
+        "%TMPFILE%",
+        "-l"
     ],
     "latex-workshop.latex.recipe.default": "first",
     "latex-workshop.linting.chktex.enabled": true,
