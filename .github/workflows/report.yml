@@ -15,6 +15,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pdfs
-          path: ./*.out/*.pdf
+          path: ./report/*.out/*.pdf
           if-no-files-found: error
-        working-directory: ./report
