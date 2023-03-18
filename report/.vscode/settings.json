@@ -1,0 +1,41 @@
+{
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk",
+            "tools": [
+                "latexmk"
+            ]
+        },
+        {
+            "name": "lualatex",
+            "tools": [
+                "lualatex"
+            ]
+        }
+    ],
+    "latex-workshop.latex.tools": [
+        {
+            "name": "lualatex",
+            "command": "lualatex",
+            "args": [
+                "--shell-escape",
+                "--synctex=1",
+                "--recorder",
+                "%DOC%"
+            ]
+        },
+        {
+            "name": "latexmk",
+            "command": "latexmk",
+            "args": [
+                // latexmk doesn't need a file argument, but provide it to avoid running
+                // on *all* found tex files
+                "%DOC%"
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipe.default": "first",
+    "latex-workshop.linting.chktex.enabled": true,
+    "latex-workshop.linting.run": "onSave",
+    "latex-workshop.latex.autoBuild.run": "never",
+}
