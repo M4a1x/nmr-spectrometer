@@ -1,4 +1,4 @@
-name: Building and testing
+name: Compile PDF
 on: [push]
 jobs:
   building:
@@ -13,9 +13,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Build all LaTeX PDFs
         run: latexmk
+        working-directory: ./report
       - name: Archive compilation artifacts
         uses: actions/upload-artifact@v3
         with:
           name: pdfs
           path: ./*.out/*.pdf
           if-no-files-found: error
+        working-directory: ./report
