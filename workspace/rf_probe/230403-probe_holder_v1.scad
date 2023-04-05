@@ -16,73 +16,91 @@ global_thickness = 3;
 
 // Calculated
 
-module single_inset(width, depth, thickness) {
-    translate(v = [-width/2, 0, 0]) {
-        cube(size = [width, depth, thickness], center = false);
+module single_inset(width, depth, thickness)
+{
+    translate(v = [ -width / 2, 0, 0 ])
+    {
+        cube(size = [ width, depth, thickness ], center = false);
     }
 }
 
-module inset() {
+module inset()
+{
     inset_width = (slot_width - tube_holder_width) / 2;
-    inset_offset = (tube_holder_width + inset_width) / 2; 
-    
-    translate(v = [inset_offset, 0, 0]) {
+    inset_offset = (tube_holder_width + inset_width) / 2;
+
+    translate(v = [ inset_offset, 0, 0 ])
+    {
         single_inset(width = inset_width, depth = slot_depth, thickness = global_thickness);
     }
 
-    translate(v = [-inset_offset, 0, 0]) {
+    translate(v = [ -inset_offset, 0, 0 ])
+    {
         single_inset(width = inset_width, depth = slot_depth, thickness = global_thickness);
     }
-
 }
 
-module tube(diameter = nmr_tube_diameter, length = global_thickness + tolerance) {
-    translate(v = [0, global_thickness / 2, slot_height / 2]) {
-        rotate(a = [90, 0, 0]) {
+module tube(diameter = nmr_tube_diameter, length = global_thickness + tolerance)
+{
+    translate(v = [ 0, global_thickness / 2, slot_height / 2 ])
+    {
+        rotate(a = [ 90, 0, 0 ])
+        {
             cylinder(h = length, r = diameter / 2, center = true);
         }
     }
 }
 
-module tube_holder() {
-    translate(v = [-tube_holder_width / 2, 0, 0]) {
-        cube(size = [tube_holder_width, global_thickness, slot_height], center = false);
+module tube_holder()
+{
+    translate(v = [ -tube_holder_width / 2, 0, 0 ])
+    {
+        cube(size = [ tube_holder_width, global_thickness, slot_height ], center = false);
     }
 }
 
-module nmr_tube_holder() {
-    difference() {
+module nmr_tube_holder()
+{
+    difference()
+    {
         tube_holder();
         tube();
     }
 }
 
-module coil_tube_holder() {
-    difference() {
+module coil_tube_holder()
+{
+    difference()
+    {
         tube_holder();
         tube(diameter = coil_tube_diameter);
-        translate(v = [-tube_holder_width / 2 - tolerance / 2, -tolerance / 2, slot_height / 2]) {
-            cube(size=[tube_holder_width + tolerance, global_thickness + tolerance, slot_height + tolerance], center = false);
+        translate(v = [ -tube_holder_width / 2 - tolerance / 2, -tolerance / 2, slot_height / 2 ])
+        {
+            cube(size = [ tube_holder_width + tolerance, global_thickness + tolerance, slot_height + tolerance ],
+                 center = false);
         }
     }
 }
 
-module holder() {
+module holder()
+{
     nmr_tube_holder();
 
-    translate(v = [0, slot_depth - global_thickness, 0]) {
+    translate(v = [ 0, slot_depth - global_thickness, 0 ])
+    {
         nmr_tube_holder();
     }
 
-    translate(v = [0, (slot_depth - global_thickness) / 3, 0]) { 
+    translate(v = [ 0, (slot_depth - global_thickness) / 3, 0 ])
+    {
         coil_tube_holder();
     }
 
-    translate(v = [0, (slot_depth - global_thickness) / 3 * 2, 0]) {
+    translate(v = [ 0, (slot_depth - global_thickness) / 3 * 2, 0 ])
+    {
         coil_tube_holder();
     }
 }
 
 inset();
 holder();
-
