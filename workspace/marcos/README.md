@@ -61,3 +61,16 @@ python test_marga_model.py
 ```
 
 Getting a `RuntimeWarning: gpafhdo gradient error; [...]`  is fine here.
+
+## Running the `marga` simulator
+
+To run the `marga` simulator a file needs to be allocated in RAM:
+```bash
+fallocate -l 516KiB /tmp/marcos_server_mem
+```
+
+To then run the simulator execute the following, which will start the simulator and dumps event output to a `*.csv` file in the same directory:
+```bash
+cd marcos_pack/marga/build
+./marga_sim csv
+```
