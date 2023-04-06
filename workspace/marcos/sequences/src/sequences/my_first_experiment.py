@@ -1,14 +1,19 @@
+import logging
 import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from sequences.marcos_client import experiment as ex
+logger = logging.getLogger(__name__)
 
-# dirty hack, cause marcos_client uses direct imports for neighboring files
-marcos_client = (Path(__file__).parent / "marcos_client").resolve()
-sys.path.append(str(marcos_client))
+# dirty hack, cause marcos_client uses direct imports for neighbouring files
+marcos_client_path = (Path(__file__).parent / "marcos_client").resolve()
+sys.path.append(str(marcos_client_path))
+logger.info("Added %s to python path", str(marcos_client_path))
+
+# Needs to be after sys.path hack
+from sequences.marcos_client import experiment as ex  # noqa: E402, pylint: disable=C0413
 
 
 def my_first_experiment():
