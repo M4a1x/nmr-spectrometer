@@ -65,7 +65,7 @@ python test_marga_model.py
 
 Getting a `RuntimeWarning: gpafhdo gradient error; [...]`  is fine here.
 
-## Running the `marga` simulator
+#### Running the `marga` simulator
 
 To run the `marga` simulator a file needs to be allocated in RAM:
 ```bash
@@ -83,3 +83,57 @@ When you then run an experiment from Python `exp.run()` and then close the serve
 ```bash
 python plot_csv.py ../marga/build/marga_sim.csv
 ```
+
+### Red Pitaya
+
+- Login: root
+- Password: root
+
+#### Flash the custom marcos Yocto image
+
+TODO!
+
+#### Connect through serial
+1. Connect the middle USB port of the Red Pitaya to the laptop
+2. Install `tio` with `sudo dnf install tio` then run `tio /dev/ttyUSB0`
+3. You've got a shell!
+
+#### Connect through Ethernet
+1. Connect the Ethernet cable directly to the laptop
+2. Configure the Laptop ethernet interface statically to
+    - IP: 192.168.1.1
+    - Subnetmask: 255.255.255.0
+    - Gateway: 192.168.1.1
+3. Use ssh to connect to the Red Pitaya: `ssh root@192.168.1.100`
+
+#### Start the server
+
+From the laptop/console get the `marcos_extra` repo and execute:
+```bash
+./marcos_setup.sh 192.168.1.100 rp-122
+./copy_bitstream.sh 192.168.1.100
+```
+
+Then simply run
+```bash
+./marcos_server
+```
+
+which you then find in the home directory of the Red Pitaya after logging in through SSH. Or execute it directly:
+```bash
+ssh root@192.168.1.100 "~/marcos_server"
+```
+
+#### Test the server
+
+After starting the server (see above) you can test the server by executing
+```bash
+python test_server.py
+```
+on the Console/Laptop from the `marcos_client` repository. All tests should pass.
+
+The script
+```bash
+python test_noise.py
+```
+can be used to generate some pulses and look at them through an oscilloscope.

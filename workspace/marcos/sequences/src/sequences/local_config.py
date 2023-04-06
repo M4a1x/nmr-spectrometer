@@ -2,8 +2,8 @@
 
 ## IP address: RP address or 'localhost' if emulating a local server.
 ## Uncomment one of the lines below.
-ip_address = "localhost"
-# ip_address = "192.168.1.189"
+# ip_address = "localhost"
+ip_address = "192.168.1.100"
 
 ## Port: always 11111 for now
 port = 11111
