@@ -10,7 +10,7 @@ port = 11111
 
 ## FPGA clock frequency: uncomment one of the below to configure various
 ## system behaviour. Right now only 122.88 is supported.
-fpga_clk_freq_MHz = 122.88  # RP-122
+fpga_clk_freq_MHz = 122.88  # RP-122  # noqa: N816
 # fpga_clk_freq_MHz = 125.0 # RP-125
 
 ## Gradient board: uncomment one of the below to configure the gradient data format
