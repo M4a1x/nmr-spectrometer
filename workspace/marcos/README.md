@@ -51,7 +51,10 @@ cd marcos_pack/marga
 mkdir build
 cd build
 cmake ../src
+make
 ```
+
+If you execute `ls` inside the folder now you should see a new executable `marga_sim` which is the simulator!
 
 Now we can run the unit tests against the simulator:
 
@@ -69,7 +72,7 @@ To run the `marga` simulator a file needs to be allocated in RAM:
 fallocate -l 516KiB /tmp/marcos_server_mem
 ```
 
-To then run the simulator execute the following, which will start the simulator and dumps event output to a `*.csv` file in the same directory:
+To then run the simulator execute the following, which will start the simulator and dump event output to a `*.csv` file in the same directory:
 ```bash
 cd marcos_pack/marga/build
 ./marga_sim csv
