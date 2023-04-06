@@ -77,3 +77,9 @@ To then run the simulator execute the following, which will start the simulator 
 cd marcos_pack/marga/build
 ./marga_sim csv
 ```
+
+When you then run an experiment from Python `exp.run()` and then close the server e.g. directly after the experiment run with a `exp.close_server(only_if_sim=True)`, the outputted `marga_sim.csv` can be plotted by the `plot_csv.py` script in the `marcos_client`.
+
+```bash
+python plot_csv.py ../marga/build/marga_sim.csv
+```
