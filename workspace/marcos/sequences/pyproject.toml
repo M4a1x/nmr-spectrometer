@@ -9,17 +9,8 @@ description = ''
 readme = "README.md"
 requires-python = ">=3.9"
 license = "GPL-3.0-or-later"
-keywords = [
-  "NMR",
-  "spectrometer",
-  "spectroscopy",
-  "ETH",
-  "low-field",
-  "25 MHz",
-]
-authors = [
-  { name = "Maximilian Stabel", email = "mstabel@ethz.ch" },
-]
+keywords = ["NMR", "spectrometer", "spectroscopy", "ETH", "low-field", "25 MHz"]
+authors = [{ name = "Maximilian Stabel", email = "mstabel@ethz.ch" }]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
@@ -29,12 +20,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = [
-    "numpy",
-    "scipy",
-    "matplotlib",
-    "msgpack",
-]
+dependencies = ["marcos @ git+https://github.com/M4a1x/marcos_client.git"]
 
 [project.urls]
 Documentation = "https://github.com/M4a1x/nmr-spectrometer#readme"
@@ -64,50 +50,22 @@ dependencies = [
 [tool.hatch.envs.default.scripts]
 test = "pytest {args:tests}"
 test-cov = "coverage run -m pytest {args:tests}"
-cov-report = [
-  "- coverage combine",
-  "coverage report",
-]
-cov = [
-  "test-cov",
-  "cov-report",
-]
+cov-report = ["- coverage combine", "coverage report"]
+cov = ["test-cov", "cov-report"]
 typing = "mypy --install-types --non-interactive {args:src/sequences tests}"
 style = [
   "black --check --diff {args:.}",
   "ruff {args:.}",
   "pylint {args:srgs/sequences tests}",
 ]
-fmt = [
-  "black {args:.}",
-  "ruff --fix {args:.}",
-  "style",
-]
-all = [
-  "style",
-  "typing",
-]
+fmt = ["black {args:.}", "ruff --fix {args:.}", "style"]
+all = ["style", "typing"]
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.9", "3.10", "3.11"]
 
-[tool.hatch.build]
-artifacts = ["src/sequences/marcos_client/*"]  # from build_hook.py
-
-[tool.hatch.build.hooks.custom]
-path = "hatch_build.py"  # default
-dependencies = ["gitpython"]
-
-[tool.hatch.build.targets.sdist]
-exclude = [""]
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/sequences"]
-
 [tool.black]
 target-version = ["py39"]
-line-length = 120
-skip-string-normalization = true
 
 [tool.ruff]
 target-version = "py39"
@@ -145,9 +103,15 @@ ignore = [
   # Allow boolean positional values in function calls, like `dict.get(... True)`
   "FBT003",
   # Ignore checks for possible passwords
-  "S105", "S106", "S107",
+  "S105",
+  "S106",
+  "S107",
   # Ignore complexity
-  "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915",
+  "C901",
+  "PLR0911",
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
 ]
 unfixable = [
   # Don't touch unused imports
@@ -168,17 +132,11 @@ ban-relative-imports = "all"
 source_pkgs = ["sequences", "tests"]
 branch = true
 parallel = true
-omit = [
-  "src/sequences/__about__.py",
-]
+omit = ["src/sequences/__about__.py"]
 
 [tool.coverage.paths]
 sequences = ["src/sequences", "*/sequences/src/sequences"]
 tests = ["tests", "*/sequences/tests"]
 
 [tool.coverage.report]
-exclude_lines = [
-  "no cov",
-  "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:",
-]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
