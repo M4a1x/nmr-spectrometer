@@ -137,3 +137,10 @@ The script
 python test_noise.py
 ```
 can be used to generate some pulses and look at them through an oscilloscope.
+
+## Misc
+
+To backup an SD card, use the following command (with admin rights, so probably prefix `sudo`):
+```bash
+dd if=/dev/mmcblk0 status=progress bs=4M | gzip  > sd_card.img.gz
+```
