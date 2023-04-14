@@ -43,7 +43,7 @@ The resulting part has exactly the dimensions of the free space of the magnet: 7
 
 ### Coil
 
-The coil was wrapped around a 7.5mm (TODO: verify!) glass tube with 0.2mm diameter insulated copper wire on a length of 4mm. With 18 turns this results in a theoretical inductance of 4.5uH.
+The coil was wrapped around a 7.5mm glass tube with 0.2mm diameter insulated copper wire on a length of 4mm. With 18 turns this results in a theoretical inductance of 4.5uH.
 
 When measured with an HP4284 LCR-Meter resting on a styrofoam box we obtained the following measurements:
 
