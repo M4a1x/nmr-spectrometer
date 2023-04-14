@@ -91,14 +91,33 @@ python plot_csv.py ../marga/build/marga_sim.csv
 
 #### Flash the custom marcos Yocto image
 
-TODO!
+- (This is mostly [following the wiki tutorial](https://github.com/vnegnev/marcos_extras/wiki/guide_setting_marcos_up))
+- [Download the SD Card image](https://drive.google.com/file/d/1Kz3a7ylPrvh3pxZz5EkwARKeRLj5R6fp/view?usp=sharing)
+- Extract: `tar -xvf sdimage-bootpart-202004030120-mmcblk0.direct.tar.bz2`
+- Write to SD-card `sudo dd if=sdimage-bootpart-202004030120-mmcblk0.direct of=/dev/mmcblk0 bs=1M status=progress && sync`
+- Put the micro SD-Card into the RedPitaya
 
 #### Connect through serial
-1. Connect the middle USB port of the Red Pitaya to the laptop
-2. Install `tio` with `sudo dnf install tio` then run `tio /dev/ttyUSB0`
+1. Connect the middle port (left micro-USB port) of the Red Pitaya to the laptop
+2. Install `tio` with `sudo dnf install tio` then run `tio /dev/ttyUSB0` (or use `minicom`/`PuTTY`)
 3. You've got a shell!
+4. Login is `root`. Password if promted is `root` as well.
+
+To configure a static IP (here: `192.168.1.100`) for the RedPitaya change the line
+```bash
+iface eth0 inet dhcp
+```
+to
+```bash
+iface eth0 inet static
+    address 192.168.1.100
+    netmask 255.255.255.0
+    network 192.168.1.0
+    gateway 192.168.1.1
+```
 
 #### Connect through Ethernet
+> Note: By default, the RedPitaya needs a DHCP server for configuration. For the below to work you need to configure the RedPitaya's IP statically through the USB serial connection first (see above).
 1. Connect the Ethernet cable directly to the laptop
 2. Configure the Laptop ethernet interface statically to
     - IP: 192.168.1.1
