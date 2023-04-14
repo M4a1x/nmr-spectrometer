@@ -91,11 +91,18 @@ python plot_csv.py ../marga/build/marga_sim.csv
 
 #### Flash the custom marcos Yocto image
 
-- (This is mostly [following the wiki tutorial](https://github.com/vnegnev/marcos_extras/wiki/guide_setting_marcos_up))
-- [Download the SD Card image](https://drive.google.com/file/d/1Kz3a7ylPrvh3pxZz5EkwARKeRLj5R6fp/view?usp=sharing)
-- Extract: `tar -xvf sdimage-bootpart-202004030120-mmcblk0.direct.tar.bz2`
-- Write to SD-card `sudo dd if=sdimage-bootpart-202004030120-mmcblk0.direct of=/dev/mmcblk0 bs=1M status=progress && sync`
-- Put the micro SD-Card into the RedPitaya
+1. (This is mostly [following the wiki tutorial](https://github.com/vnegnev/marcos_extras/wiki/guide_setting_marcos_up))
+2. [Download the SD Card image](https://drive.google.com/file/d/1Kz3a7ylPrvh3pxZz5EkwARKeRLj5R6fp/view?usp=sharing)
+3. Extract: `tar -xvf sdimage-bootpart-202004030120-mmcblk0.direct.tar.bz2`
+4. Write to SD-card `sudo dd if=sdimage-bootpart-202004030120-mmcblk0.direct of=/dev/mmcblk0 bs=1M status=progress && sync`
+5. Put the micro SD-Card into the RedPitaya
+
+#### Alternatively: Flash the standard RedPitaya Image
+
+1. Download the latest image for the RP 122-16 from [the official Red Pitaya homepage](https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html)
+2. Extract it: `cd ~/Downloads` and then `unzip SDRlab_122-16_OS_1.04-11_stable.img.zip`
+3. Write to SD-card `sudo dd if=SDRlab_122-16_OS_1.04-11_stable.img of=/dev/mmcblk0 bs=1M status=progress && sync`
+4. Put the micro SD-Card into the RedPitaya
 
 #### Connect through serial
 1. Connect the middle port (left micro-USB port) of the Red Pitaya to the laptop
@@ -156,6 +163,15 @@ The script
 python test_noise.py
 ```
 can be used to generate some pulses and look at them through an oscilloscope.
+
+#### SD-Card usage
+
+Currently there are three micro sd cards in use:
+| micro SD Card                   | Image                                                                                                         | User | Password |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---- | -------- |
+| SanDisk Ultra (red/white, 16GB) | RedPitaya standard                                                                                            | root | root     |
+| SanDisk (black, 16GB)           | MaRCoS image (Ocra Yocto Image)                                                                               | root | root     |
+| NoName (black, 2GB)             | ["Pavel Denim" - Red Pitaya for Pulsed NMR](http://pavel-demin.github.io/red-pitaya-notes/pulsed-nmr-122-88/) | root | changeme |
 
 ## Misc
 
