@@ -2,11 +2,11 @@
 
 This repo contains all data relevant to my master thesis.
 
-|            |                         |
-| ---------- | ----------------------- |
-| Professor  | Roland Riek             |
-| Supervisor | Takuya Segawa           |
-| Time       | 01.04.2023 – 31.09.2023 |
+|            |                                |
+| ---------- | ------------------------------ |
+| Professor  | Sebastian Kozerke, Roland Riek |
+| Supervisor | Takuya Segawa                  |
+| Time       | 01.04.2023 – 31.09.2023        |
 
 ## Folder structure
 
