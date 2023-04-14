@@ -5,6 +5,25 @@
 % Disable separate dark color for frame titles
 \setbeamercolor{frametitle}{fg=normal text.fg, bg=normal text.bg}
 
+% Redefine the 3 main colors of the theme to ETH colors
+\definecolor{mDarkBrown}{HTML}{604c38} % use ETH color here!
+\definecolor{ETHgrey}{HTML}{6F6F6F}     % for "background"
+\definecolor{ETHpetrold}{HTML}{00596D}  % for dark teal
+\definecolor{ETHbronzed}{HTML}{956013}  % for dark brown
+\definecolor{ETHbronze}{HTML}{8E6713}   % for light brown
+\definecolor{ETHgreen}{HTML}{627313}    % for light green
+
+\setbeamercolor{normal text}{%
+  fg=ETHpetrold,  % mDarkTeal,
+  bg=black!2
+}
+\setbeamercolor{alerted text}{%
+  fg=ETHbronze  % mLightBrown
+}
+\setbeamercolor{example text}{%
+  fg=ETHgreen  % mLightGreen
+}
+
 % More padding for frame titles. Align with text body.
 \makeatletter
 \setlength{\metropolis@frametitle@padding}{3ex}
@@ -46,47 +65,46 @@
 % TODO:
 % - Make same style as thesis, e.g.
 %   - Font
-%   - ETH Color Scheme
 % - align column left with heading/rest of text
 
 \begin{document}
-\maketitle
-% \section{First Section}
-\begin{frame}{Our goal is a functioning low-field\\NMR benchtop spectrometer}
-  \begin{figure}
-    \centering
-    \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{./img/magnet.png}
-  \end{figure}
-\end{frame}
-\begin{frame}{We've made a probe holder\\and an RF-coil already}
-  \begin{columns}
-    \begin{column}{0.45\textwidth}
-      \includegraphics[width=\textwidth]{./img/probe_holder.jpg}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \includegraphics[width=\textwidth]{./img/coil.jpg}
-    \end{column}
-  \end{columns}
-\end{frame}
-\begin{frame}{Next we will setup the console, measure the magnetic field\\and build, match and tune the probe}
-  \begin{columns}
-    \begin{column}{0.33\textwidth}
-      \includegraphics[width=\textwidth, height=0.8\textheight, keepaspectratio]{./img/red_pitaya.png}
-    \end{column}
-    \begin{column}{0.33\textwidth}
+  \maketitle
+  % \section{First Section}
+  \begin{frame}{Our goal is a functioning low-field\\NMR benchtop spectrometer}
+    \begin{figure}
       \centering
-      \includegraphics[width=\textwidth, height=0.8\textheight, keepaspectratio]{./img/magnet_only.png}
-    \end{column}
-    \begin{column}{0.33\textwidth}
-      \includegraphics[width=\textwidth, height=0.8\textheight, keepaspectratio]{./img/coil.jpg}
-    \end{column}
-  \end{columns}
-\end{frame}
-\begin{frame}[standout]
-  Thank you!
-\end{frame}
-\appendix
-% \begin{frame}[standout]
-%   A backup graph for explaining things.
-% \end{frame}
+      \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{./img/magnet.png}
+    \end{figure}
+  \end{frame}
+  \begin{frame}{We've made a probe holder\\and an RF-coil already}
+    \begin{columns}
+      \begin{column}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{./img/probe_holder.jpg}
+      \end{column}
+      \begin{column}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{./img/coil.jpg}
+      \end{column}
+    \end{columns}
+  \end{frame}
+  \begin{frame}{Next we will setup the console, measure the magnetic field\\and build, match and tune the probe}
+    \begin{columns}
+      \begin{column}{0.33\textwidth}
+        \includegraphics[width=\textwidth, height=0.8\textheight, keepaspectratio]{./img/red_pitaya.png}
+      \end{column}
+      \begin{column}{0.33\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, height=0.8\textheight, keepaspectratio]{./img/magnet_only.png}
+      \end{column}
+      \begin{column}{0.33\textwidth}
+        \includegraphics[width=\textwidth, height=0.8\textheight, keepaspectratio]{./img/coil.jpg}
+      \end{column}
+    \end{columns}
+  \end{frame}
+  \begin{frame}[standout]
+    Thank you!
+  \end{frame}
+  \appendix
+  % \begin{frame}[standout]
+  %   A backup graph for explaining things.
+  % \end{frame}
 \end{document}
