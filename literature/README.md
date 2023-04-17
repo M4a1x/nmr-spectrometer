@@ -15,3 +15,9 @@ This directory contains files, notes and related works like articles, papers, ma
 - [ ] [NMR Probeheads for Biophysical and Biomedical Experiments - Mispelter, Lupu, Briguet (2015)](./NMR_Theory/Jo%C3%ABl%20Mispelter%2C%20Mihaela%20Lupu%2C%20Andr%C3%A9%20Briguet%20-%20NMR%20Probeheads%20For%20Biophysical%20And%20Biomedical%20Experiments_%20Theoretical%20Principles%20And%20Practical%20Guidelines-Imperial%20College%20Press%20(2015).pdf)
 - [ ] [Extended Continuous Passive Shimming of Magnets - McDowell, US Patent 10739428 (2020)](./NMR_Theory/US10739428.pdf)
 - [ ] [Magnetic Field Correction System - McDowell (2016), US Patent 9285441](./NMR_Theory/US9285441.pdf)
+
+## Further Reading
+- [Direct Digital Sampling](https://www.analog.com/media/en/technical-documentation/tech-articles/directsampling-dacs-in-theory-and-application.pdf) instead of Down Mixing was suggested by Prof. Kozerke, maybe also [this application note](https://www.ni.com/en/solutions/aerospace-defense/radar-electronic-warfare-sigint/advantages-of-direct-rf-sampling-architectures.html)
+- [NMRduino](https://twitter.com/nmrduino)
+- [Kaltenleiter Master Thesis](./Masters_Thesis_kaltenleitner.pdf) on NMR with LimeSDR, but the limit is 30MHz, which is quite close to what we're using (25MHz)
+- Michael Tyler Magnets and the [Python scripts to calculate them](./permanent_magnets/)
