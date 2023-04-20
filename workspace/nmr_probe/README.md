@@ -26,7 +26,7 @@ We then decided that it would be beneficial for the NMR probe to occupy the whol
 
 The coil consists of approx. ~0.2mm insulated copper wire wrapped around a clear plastic tube in 18 turns on a length of 6mm with a diameter of 7.5mm resulting in a theoretical inductance of 3.00uH when assuming a mu_r of 1 for the inside. Thus expecting an NMR signal from about 8mm long.
 
-Since Andrew sent us his probe we also were able to measure his values, but only inside the circuit (i.e. with tuning and matching capacitances attached) making the results inaccurate.When measured with an PM6303 RCL meter the coil had an inductance of 2.3uH @ 1kHz.
+Since Andrew sent us his probe we also were able to measure his values, but only inside the circuit (i.e. with tuning and matching capacitances attached) making the results inaccurate. When measured with an PM6303 RCL meter the coil had an inductance of 2.3uH @ 1kHz.
 
 ## Probe Holder v1
 
@@ -43,7 +43,7 @@ The resulting part has exactly the dimensions of the free space of the magnet: 7
 
 ### Coil
 
-The coil was wrapped around a 7.5mm glass tube with 0.2mm diameter insulated copper wire on a length of 4mm. With 18 turns this results in a theoretical inductance of 4.5uH.
+The coil was wrapped around a 7.5mm glass tube with 0.2mm diameter insulated copper wire on a length of 4mm. With 18 turns this results in a theoretical inductance of 4.5uH. To reach a resonant frequency of 25.01MHz thus a capacitance of 9pF is needed in theory.
 
 When measured with an HP4284 LCR-Meter resting on a styrofoam box we obtained the following measurements:
 
@@ -62,5 +62,7 @@ To get a better idea of how the coil behaves near the target resonance frequency
 ![Hand wound coils](230412-rf_coil_0_2mm_copper_18_turns_4mm_long_7_5mm_diameter_on_glass_hand_wound.jpg)
 
 The resonant frequency of this setup was then measured with a Rhode&Schwarz ZNB4 vector network analyser (VNA) and a connected pickup coil held near the circuit. We estimated the resonant frequency to be 29.6MHz. With the formula of the resonance frequency of a coil and capacitance of $f_{res} = \frac{1}{2\pi\sqrt{LC}}$ we estimated the inductance to be $L = \frac{1}{4\pi^2f_{res}^2C} = 2.89\textrm{uH}$, which is close to the expected value when looking at the measurements above, but quite far (~35% smaller) from the calculated expectation of 4.5uH.
+
+With this new inductance, the expected capacitance that compensates this inductance is now 14pF. For the tuning capacitance, a variable capacitor with a range of 4.5pF-20pF was therefore chosen (JZ200HV).
 
 A "variable pitch coil" with changing density of windings (tighter at both edges, looser at the centre) could later be investigated for a more homogenous field inside the coil.
