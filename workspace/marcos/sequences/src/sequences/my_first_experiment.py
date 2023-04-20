@@ -24,7 +24,7 @@ def my_first_experiment():
 
 
 def my_second_experiment():
-    exp = Experiment(lo_freq=5, rx_t=3.125)
+    exp = Experiment(lo_freq=5, rx_t=1)
 
     event_dict = {
         "tx0": (np.array([50, 130, 200, 360]), np.array([0.5, 0, 0.5j, 0])),
@@ -39,7 +39,7 @@ def my_second_experiment():
     exp.close_server(only_if_sim=True)
 
     plt.figure()
-    plt.plot(np.abs(rxd["rx1"]))
+    plt.plot(np.abs(rxd["rx0"]))
     plt.show()
 
 
