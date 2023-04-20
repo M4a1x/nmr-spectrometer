@@ -25,6 +25,8 @@ This README contains all instructions related to MaRCoS - specifically setup and
       - [Running the script on the RedPitaya](#running-the-script-on-the-redpitaya)
   - [Misc](#misc)
 
+## Background
+The [MaRCoS](https://github.com/vnegnev/marcos_server) code is written by [Vlad Negnevitsky](https://www.linkedin.com/in/vlad-negnevitsky-97268a16a/) based on [OCRA](https://openmri.github.io/ocra/) ([as outlined in this paper](../../literature/marcos_paper.pdf)) and OCRA in turn is based on [Pavel Demin's Red Pitaya notes](http://pavel-demin.github.io/red-pitaya-notes/) ([see this post by Vlad on the OCRA website](https://zeugmatographix.org/ocra/2020/07/27/porting-rp-125-fpga-bitstream-features-to-rp-122/)).
 
 ## Setup
 
@@ -243,7 +245,7 @@ if __name__ == "__main__":
 
 Here we set the modulation frequency to 5MHz and the recieve sample interval to 3.125us when creating the `Experiment` object.
 
-When running the experiment this sends a pulse from 50 to 130us (i.e. with a length of 80us) on `tx0` (which is OUT1 on the RedPitaya) with half of the maximum output power and enables the reception sampling from 200 to 400us in the experiment (i.e. for 200us).
+When running the experiment this sends a pulse from 50 to 130us (i.e. with a length of 80us) on `tx0` (which is OUT1 on the RedPitaya) with half of the maximum output power (i.e. 0.5) and enables the reception sampling from 200 to 400us in the experiment (i.e. for 200us).
 
 #### Running the script on the simulator
 Now you can [run the marga simulator](#running-the-marga-simulator) in a separate terminal (as this is blocking):
@@ -325,11 +327,17 @@ Instead of running the experiment on the simulator as [described above](#running
 |                  Ocilloscope screenshot outputs                  |                    osci rx test                     |
 |                      Laptop/Console capture                      |              laptop/console capture rx              |
 
-> **Important**
-> The oscilloscope input needs to be configured in 50 Ohm input mode to prevent the reflection of any waves. If your oscilloscope doesn't have a 50 Ohm mode, a 50 Ohm feedthrough termination or a simple Tee-Connector with a 50 Ohm termination resistor can be connected directly at the oscilloscope inputs. The Red Pitaya inputs are already AC coupled and 50 Ohm terminated, so nothing needs to be done here.
-
 > **Note**
 > In the right setup the oscilloscope is also connected in between to listen in on the waveform, in case something goes wrong.
+
+> **Important**
+> The oscilloscope input needs to be configured in 50 Ohm input mode to prevent the reflection of any waves. If your oscilloscope doesn't have a 50 Ohm mode, a 50 Ohm feedthrough termination or a simple Tee-Connector with a 50 Ohm termination resistor can be connected directly at the oscilloscope inputs. The Red Pitaya inputs are already AC coupled and 50 Ohm terminated, so nothing needs to be done here.
+> 
+> Since we send at half the maximum voltage of the Red Pitaya (which is +-0.5Vpp), we expect a Vpp of 250mV as seen on the left with correct termination. A wrong termination reflects the signal back to the output of the Red Pitaya and because of that the voltage levels read twice as high (incoming + reflected wave)
+> |Correct 50 Ohm termination|Wrong High-Impedance termination|
+> |:---:|:---:|
+> |![Signal detail of the beginning of the sequence](./230420-my_first_experiment_signal_detail.png)|![Signal detail of the beginning of the sequence with high impedance termination on the oscilloscope](./230420-my_first_experiment_signal_detail_high_impedance.png)|
+
 
 After setting up the hardware and changing the script, running the script is relatively straightforward. Make sure you can reach the Red Pitaya over the network as set up above (`ping 192.168.1.100`). Then change the `local_config.py` inside `marcos_pack/marcos_client` to
 ```python
