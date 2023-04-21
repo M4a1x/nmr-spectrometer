@@ -333,7 +333,7 @@ Instead of running the experiment on the simulator as [described above](#running
 > **Important**
 > The oscilloscope input needs to be configured in 50 Ohm input mode to prevent the reflection of any waves. If your oscilloscope doesn't have a 50 Ohm mode, a 50 Ohm feedthrough termination or a simple Tee-Connector with a 50 Ohm termination resistor can be connected directly at the oscilloscope inputs. The Red Pitaya inputs are already AC coupled and 50 Ohm terminated, so nothing needs to be done here.
 > 
-> Since we send at half the maximum voltage of the Red Pitaya (which is +-0.5Vpp), we expect a Vpp of 250mV as seen on the left with correct termination. A wrong termination reflects the signal back to the output of the Red Pitaya and because of that the voltage levels read twice as high (incoming + reflected wave)
+> Since we send at half the maximum voltage of the Red Pitaya (which is 0.5Vpp, when driving 50Ohm), we expect a Vpp of 250mV as seen on the left with correct termination. A wrong termination reflects the signal back to the output of the Red Pitaya and because of that the voltage levels read twice as high (incoming + reflected wave)
 > |Correct 50 Ohm termination|Wrong High-Impedance termination|
 > |:---:|:---:|
 > |![Signal detail of the beginning of the sequence](./230420-my_first_experiment_signal_detail.png)|![Signal detail of the beginning of the sequence with high impedance termination on the oscilloscope](./230420-my_first_experiment_signal_detail_high_impedance.png)|
