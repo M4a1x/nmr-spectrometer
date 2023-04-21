@@ -364,6 +364,8 @@ Again, the two windows that pop up should look exactly the same as in the simula
 
 ## Misc
 
+Red Pitaya maximum output is 0.5 Vpp driving a 50 Ohm load. This is the maximum value sent, when specifying "1" in the `tx` sequence. Recieving this amplitude of 0.5 Vpp at the input results in an amplitude of maximum ~16.370 in the `rx` measurement.
+
 To backup an SD card, use the following command (with admin rights, so probably prefix `sudo`):
 ```bash
 dd if=/dev/mmcblk0 status=progress bs=4M | gzip  > sd_card.img.gz
