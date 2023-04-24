@@ -4,6 +4,7 @@ This README contains all instructions related to MaRCoS - specifically setup and
 
 ## Table of Contents <!-- omit in toc -->
 - [MaRCoS](#marcos)
+  - [Background](#background)
   - [Setup](#setup)
     - [Console / Laptop](#console--laptop)
       - [OS Setup](#os-setup)
@@ -320,12 +321,12 @@ Instead of running the experiment on the simulator as [described above](#running
 > **TODO**
 > Schematic, oscilloscope screenshots, laptop screenshots here
 
-|                Outputs connected to oscilloscope                 |         Output connected back to Red Pitaya         |
-| :--------------------------------------------------------------: | :-------------------------------------------------: |
-|                      Schematic output test                       |                  Schematic rx test                  |
-| ![Test both outputs](./230419-marcos_both_output_test_setup.JPG) | ![Test input](./230419-marcos_rx_tx_test_setup.JPG) |
-|                  Ocilloscope screenshot outputs                  |                    osci rx test                     |
-|                      Laptop/Console capture                      |              laptop/console capture rx              |
+|                    Outputs connected to oscilloscope                     |                   Output connected back to Red Pitaya                    |
+| :----------------------------------------------------------------------: | :----------------------------------------------------------------------: |
+|                          Schematic output test                           |                            Schematic rx test                             |
+|     ![Test both outputs](./230419-marcos_both_output_test_setup.JPG)     |           ![Test input](./230419-marcos_rx_tx_test_setup.JPG)            |
+| ![Oscilloscope reading](230419-my_first_experiment_out1_out2_50_ohm.png) | ![Oscilloscope reading](230419-my_first_experiment_out1_out2_50_ohm.png) |
+|                                   None                                   |   ![Recieved Pulse](230419-my_first_experiment_rx0_high_impedance.png)   |
 
 > **Note**
 > In the right setup the oscilloscope is also connected in between to listen in on the waveform, in case something goes wrong.
