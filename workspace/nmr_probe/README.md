@@ -66,3 +66,12 @@ The resonant frequency of this setup was then measured with a Rhode&Schwarz ZNB4
 With this new inductance, the expected capacitance that compensates this inductance is now 14pF. For the tuning capacitance, a variable capacitor with a range of 4.5pF-20pF was therefore chosen (JZ200HV).
 
 A "variable pitch coil" with changing density of windings (tighter at both edges, looser at the centre) could later be investigated for a more homogenous field inside the coil.
+
+## Probe Holder v2
+
+- Reduce loop area of coil leads
+- use standard caps in parallel with smaller trimmer cap
+- reduce height (v1 has a very tight fit, probably by printing tolerance 0.2mm)
+- style after [this OCRA probe from Pier](https://zeugmatographix.org/ocra/2022/04/18/rf-coil-for-the-ocra-tabletop-mri-system/) (also has instructions on build, tuning and matching)
+- less turns for larger capacitance for easier tuning an matching
+- add rf shielding. Also adds as reference capacitance for a more stable tuning/matching in different surroundings.
