@@ -23,7 +23,7 @@ To drive the magnet shims, a 32-channel current source is needed. More details c
 - For DAC: DAC80501 (same as in Martinos/GPA-FHDO) ~6CHF on mouser.ch
 - For OpAmp: OPA547?
 - in Andrew/Conradi Paper: OPA025 (not found. maybe opa2544? 25chf), 0.5ohm current sense low side
-- Circuit: As simple as possible.
+- Circuit: As simple as possible. See notebook 02.05.2023
 
 ### Use LED current driver
 - TL4242 (500mA, +-5%)
