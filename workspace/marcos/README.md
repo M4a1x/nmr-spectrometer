@@ -193,7 +193,42 @@ python test_server.py
 on the Console/Laptop from the `marcos_client` repository. All tests should pass.
 
 > **Note**
-> In our case on the official RedPitaya image two tests failed. The execution of experiments/sequences still worked as expected. This still needs to be verified with Vlad/MaRCoS (20.04.2023)
+> In our case on the official RedPitaya image two tests failed. The execution of experiments/sequences still worked as expected. This still needs to be verified with Vlad/MaRCoS (20.04.2023). The MaRCoS provided image didn't work. Upon execution of the test, the whole system crashes and needs to be restarted.
+
+The errors were as follows:
+```bash
+python test_server.py
+s.sFs..F...sss.
+======================================================================
+FAIL: test_bus (__main__.ServerTest.test_bus)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstabel/Projects/nmr-spectrometer/workspace/marcos/marcos_pack/marcos_client/test_server.py", line 157, in test_bus
+    self.assertAlmostEqual(null_t/1e3, times[0] * loops_norm, delta = deltas[0] * loops_norm) # 1 flop takes ~1.5 ns on average
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1.126 != 1.5 within 0.2 delta (0.3740000000000001 difference)
+
+======================================================================
+FAIL: test_grad_adc (__main__.ServerTest.test_grad_adc)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/mstabel/Projects/nmr-spectrometer/workspace/marcos/marcos_pack/marcos_client/test_server.py", line 298, in test_grad_adc
+    self.assertEqual(expected, readback[1:]) # ignore 1st word, since it depends on the history of ADC transfers
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: [65535, 1536, 1536, 1536, 1536, 1536, 1536, 1536, 1536, 1536] != [0, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535]
+
+First differing element 0:
+65535
+0
+
+- [65535, 1536, 1536, 1536, 1536, 1536, 1536, 1536, 1536, 1536]
++ [0, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535]
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.632s
+
+FAILED (failures=2, skipped=6)
+```
 
 The script
 ```bash
