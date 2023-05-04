@@ -21,3 +21,4 @@ This directory contains files, notes and related works like articles, papers, ma
 - [NMRduino](https://twitter.com/nmrduino)
 - [Kaltenleiter Master Thesis](./Masters_Thesis_kaltenleitner.pdf) on NMR with LimeSDR, but the limit is 30MHz, which is quite close to what we're using (25MHz)
 - Michael Tyler Magnets and the [Python scripts to calculate them](./permanent_magnets/)
+- [FOSS NMR Spectrometer @15MHz](https://hal.science/hal-02308789/document)
