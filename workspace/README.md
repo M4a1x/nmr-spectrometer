@@ -6,6 +6,17 @@ For details on the probe, construction see the [README.md](./nmr_probe/README.md
 
 For details on the control of the MaRCoS software see the [README.md](./marcos/README.md) in the [`marcos`](./marcos/) folder.
 
+## NMR Spectrometer Target Specifications
+
+In addition to the [thesis description/project proposal](../literature/project_proposal/Master_Thesis_Proposal.pdf) we tried to meet the following specifications. This includes design requirements for the physical setup partially repeated in the various sub-sections in the `workspace` directory.
+
+- Larmor Frequency: 25MHz (0.6T)
+- RF-field strength: x.xx mT
+- pi/2 pulse length: x.xx us
+
+> **TODO**
+> Write down NMR target specifications here
+
 ## Red Pitaya SDRlab 122-16 (STEMlab 122-16)
 ### Basic Specs
 |                    |                           |
