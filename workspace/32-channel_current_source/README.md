@@ -11,6 +11,9 @@ To drive the magnet shims, a 32-channel current source is needed. More details c
 - Programmable
 - Isolated
 
+## Noise
+The B field is propoertional 
+
 ## Ideas
 ### Build myself
 - Red Pitaya SPI -> 32 DACs
@@ -21,9 +24,10 @@ To drive the magnet shims, a 32-channel current source is needed. More details c
 - Get inspiration from the Gradient Board [GPA-FHDO](https://github.com/menkueclab/GPA-FHDO) (uses the same architecture and parts as Martinos Lab above, i.e. OPAMP OPA549 in push-pull config, input noise density 70nV/sqrt(Hz), current noise density 1pA/sqrt(Hz))
 - Probably need output filter (e.g. to prevent 60Hz noise)
 - For DAC: DAC80501 (same as in Martinos/GPA-FHDO) ~6CHF on mouser.ch
-- For OpAmp: OPA547?
+- For OpAmp: OPA547?, OPA551?
 - in Andrew/Conradi Paper: OPA025 (not found. maybe opa2544? 25chf), 0.5ohm current sense low side
 - Circuit: As simple as possible. See notebook 02.05.2023
+- Modular Design Example: [32 channel rf signal amplifier](https://www.opensourceimaging.org/project/32-channel-rf-receive-chain-amplifiers/)
 
 ### Use LED current driver
 - TL4242 (500mA, +-5%)

@@ -6,9 +6,18 @@ For details on the probe, construction see the [README.md](./nmr_probe/README.md
 
 For details on the control of the MaRCoS software see the [README.md](./marcos/README.md) in the [`marcos`](./marcos/) folder.
 
+
+## Previous NMR Work
+
+- Designing and building a low-cost portable FT-NMR spectrometer in 2019: A modern challenge (Alain Lous-Joseph, Philippe Lesot)
+- OpenCore NMR (Kazuyuki Takeda)
+- LabTools NMR spectrometer based on RedPitaya
+- Pavel Demin's NMR spectrometer
+- [Simple Low-Cost Tabletop NMR for chemical-shift-resolution spectra measurements](https://www.sciencedirect.com/science/article/pii/S1090780718301745#b0110). Home-built magnet, 60Hz resolution at 2.45MHz (58.8mT), in a later paper down to 1ppm.
+
 ## NMR Spectrometer Target Specifications
 
-In addition to the [thesis description/project proposal](../literature/project_proposal/Master_Thesis_Proposal.pdf) we tried to meet the following specifications. This includes design requirements for the physical setup partially repeated in the various sub-sections in the `workspace` directory.
+In addition to the [thesis description/project proposal](../literature/project_proposal/Master_Thesis_Proposal.pdf) we tried to meet the following specifications. This includes design requirements for the physical setup partially repeated in the various sub-sections in the `workspace` directory. Hardware should be reusable. The end goal would be of type "Bring your own Magnet", i.e. a Red Pitaya SDRLab 122.88, our board and magnet should be enough to do spectroscopy, when building their own probes.
 
 - Larmor Frequency: 25MHz (0.6T)
 - RF-field strength: x.xx mT
