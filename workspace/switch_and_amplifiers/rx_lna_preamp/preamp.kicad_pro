@@ -45,7 +45,7 @@
         "silk_text_thickness": 0.09999999999999999,
         "silk_text_upright": false,
         "zones": {
-          "min_clearance": 0.86
+          "min_clearance": 0.2405
         }
       },
       "diff_pair_dimensions": [
@@ -55,11 +55,7 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [
-        "courtyards_overlap|137186001|88096001|00000000-0000-0000-0000-00005edb04b5|00000000-0000-0000-0000-00005ede55bd",
-        "courtyards_overlap|138356001|96785999|00000000-0000-0000-0000-00005eda63ca|00000000-0000-0000-0000-00005edb04b5",
-        "courtyards_overlap|164086001|93206001|00000000-0000-0000-0000-00005eda6a15|00000000-0000-0000-0000-00005eda68b6"
-      ],
+      "drc_exclusions": [],
       "meta": {
         "filename": "board_design_settings.json",
         "version": 2
@@ -460,7 +456,7 @@
       },
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.2405,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.25,

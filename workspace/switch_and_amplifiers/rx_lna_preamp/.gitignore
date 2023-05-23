@@ -38,4 +38,5 @@ bom/
 
 # Gerber export output
 out/
+jlcpcb/
 
