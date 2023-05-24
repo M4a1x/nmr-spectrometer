@@ -26,6 +26,8 @@ In addition to the [thesis description/project proposal](../literature/project_p
 > **TODO**
 > Write down NMR target specifications here
 
+In the end, separate modules should be developed for ease of reconfiguration. A nice addition would be a single board, including RX/TX amplifiers, switch and filters on one standard [Eurocard 3U (100mm x 160mm x 1.6mm)](https://en.wikipedia.org/wiki/Eurocard_(printed_circuit_board)) FR4 board, so it can be rack mounted, possibly with the common [DIN 41612](https://en.wikipedia.org/wiki/DIN_41612) (~~STEbus~~, VMEbus) connector at the back end. See also the [ARTIQ/Sinara project](https://github.com/sinara-hw/SiLPA_HL/issues/1).
+
 ## Red Pitaya SDRlab 122-16 (STEMlab 122-16)
 ### Basic Specs
 |                    |                           |

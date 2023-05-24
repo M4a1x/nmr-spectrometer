@@ -22,34 +22,6 @@ We need two amplifiers for the NMR spectrometer: A gain stage for the transmit p
 +------------+                                            +--------------+
 ```
 
-## TX Power Amplifier
-Transmit power is expected to be in the area of Watts (Louis-Joseph and Leot (2022)). The max. TX power of the Bruker Fourier 80 is 5W (37dBm) as well. Thus a single amplifier is often not enough and a multi-stage approach is preferable. The RedPitaya maximum output is -2dBm or 0.5Vpp thus 32dB to 39dB amplification would be required.
-
-Previous Work/References:
-- The PHA-202+ (30MHZ-2.7GHz) used in a [design in the ETH Quantum Optics Group](https://www.changpuak.ch/electronics/PHA-202+Amplifier.php). Seems to work well down to 2MHz! Probably the best option. Includes Specifics for heatsink, case and PCB. Originally found in the [ARTIQ/Sinara SiLPA discussion](https://github.com/sinara-hw/SiLPA_HL/issues/1) (see below) was well evaluated for its capabilities, there were concerns about temperature stability and praise for ease of use. went with [QPB8808](https://www.qorvo.com/products/p/QPB8808) in the end but need 1.5:1 balun
-- [Interesting general article about RF Power amps in NMR](http://www.cpcamps.com/introduction-to-nmr-mri-amplifiers.html)
-- [IEEE Paper on how to build an RF power amp for NMR (10-25MHz)](https://ieeexplore.ieee.org/document/5163353)
-- [The Stone Zone Blog post about using an IRF510 Mosfet with 2n2222 push-pull preamp](http://thestone.zone/radio/2020/12/13/multi-watt-amplifier.html) for a few Watt amplifier (up to 12W?) [here's a kicad board on github with the IRF510](https://github.com/paulh002/IRF510-rf-amplifier). This transistor seems to be quite popular with HAM people. [Another KiCAD project here](https://github.com/thaaraak/IRF510-Amplifier-v2) with a [circuit walkthrough on youtube](https://www.youtube.com/watch?v=D4UhOmum_oU)
-- [HAM Radio Amplifier based on IRF510](https://github.com/kholia/HF-PA-v6), [another project based on the same transistor](https://github.com/paulh002/IRF510-rf-amplifier)
-- [The Stone Zone Blog post about using "real" RF Transistors, the 2SK3475 and 2SK3476 for a few Watt amplifier](http://thestone.zone/radio/2021/06/05/power-amplifier.html)
-- [The Stone Zone Blog post about the 2sc573 transistor](http://thestone.zone/radio/2022/12/20/2sc573-testing.html) seems to work well for ~2W, but only preliminary testing
-- [OpenCore NMR](https://reader.elsevier.com/reader/sd/pii/S1090780708000670?token=C091614A806EFA2BEE0FBD33618073B2E48461C188AAA27B69640A102C862D004694C98189A10EBBDE6AD556E4D1E2EC&originRegion=eu-west-1&originCreation=20230510092722) uses a low pass filter before transmission
-- [OpenCore NMR compact educational system](https://www.sciencedirect.com/science/article/pii/B9780080970721000078?via%3Dihub) used for an MRI image of a dandelion used ~1W (2mm diameter coil)
-- [Martinos Tabletop MRT](https://tabletop.martinos.org/index.php?title=Hardware:RF) TX line uses a 1.2W [ZHL-3A+](https://www.minicircuits.com/pdfs/ZHL-3A.pdf) power amplifier (gain 25dB, P1dB 32 dBm, 5dB noise), which they had to gate due to the carrier frequency coming through (~300€)
-- [In this Halbach MRI Magnet Project that also uses MaRCoS](https://pure.tudelft.nl/ws/portalfiles/portal/150811992/NMR_in_Biomedicine_2023_Obungoloch_On_site_construction_of_a_point_of_care_low_field_MRI_system_in_Africa.pdf) a [ZX60-100VH+](https://www.minicircuits.com/WebStore/dashboard.html?model=ZX60-100VH%2B) was used (they also used a passive TR switch based on crossed diodes and lambda/4 pi circuit)
-- [The FOSS 2019 paper (Louis-Joseph and Lesot)](../../literature/related_projects/foss_nmr_spectrometer_15MHz.pdf) sends 37dBm max using a ZHL-5W-1 (gain: 46dB, max 40dBm, noise 4dB, mini-circuits) amp (~1500€)
-- The [ARTIQ/Sinara Booster](https://github.com/sinara-hw/Booster/wiki) looks like a good inspiration
-- The [ARTIQ/Sinara SiLPA](https://github.com/sinara-hw/SiLPA_HL/issues/1) seems relatively simple and seems to work down to 10MHz. Maybe ask them directly? Uses a CATV 75 ohm amplifier with 2 baluns for 50 ohm matching
-  - Design a "simple" circuit myself based on a CATV amplifier as well?
-- [JQI AOM Amp](https://github.com/JQIamo/aom-driver) seems ok, not as professional but meeting the specs and still quantum computation. Separate repo for [the GaN amplifier](https://github.com/JQIamo/GaN-Amplifier)
-- The [OCRA Project uses a ZFL-500HLN+](https://www.minicircuits.com/pdfs/ZFL-500HLN.pdf) (gain: 20dB, noise: 3.8dB, P1DB: 17dBm) (~150€)
-- MAGX-011086A power amplifier has an AN I could reproduce (4W) (~20€)
-
-Next Steps:
-1. Buy ZHL-3A+ power amplifier
-2. Buy 1x PHA-13HLN+ evaluation board
-3. Buy PHL-13HLN+ chips, try to use them with the same layout as the receive chips, test if power suffices
-4. Do a bit more research here for a home-built one? or cheaper alternatives for a 1-5W amplifier
 
 ## TX/RX Switch
 The T/R Switch needs to handle  ~5W, max 10W in transmit power (Bruker max. 5W!). Two main options exist:
