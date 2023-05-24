@@ -22,23 +22,6 @@ We need two amplifiers for the NMR spectrometer: A gain stage for the transmit p
 +------------+                                            +--------------+
 ```
 
-## LNA RX Amplifier
-The receive amplifier needs to amplify the signal from uW level (~-30dbm, [Louis-Joesph and Lesot (2022)](../../literature/related_projects/foss_nmr_spectrometer_15MHz.pdf)) to around -2dbm (~0.5V @ 50Ohm) for the 16-bit ADC of the RedPitaya. Thus a gain of at least 28dB is needed. Previous work (see below) uses either a two or even three-stage design. One option would be to use an amplifier chain similar to [Martinos (MIT) lab](https://rflab.martinos.org/index.php?title=Main_Page) for reception. Sometimes they are already integrated into the T/R Switch. e.g. the below T/R Switch from Menküc uses the Design from Martinos lab with PHA13-LN+.
-> **TODO**: Verify that 40dB (vs the 30dB estimate) are suitable for us. Experimentally?
-
-Previous Work/References:
-- [Martinos Lab](https://rflab.martinos.org/index.php?title=Low-noise_RF_Preamplifier) uses a 3-stage design for their low-noise RF preamplifier. It consists of two PHA-13LN+ (Gain: 24dB, P1dB: 23dBm, Noise: 0.9dB @20MHz/5V) and one ZFL-500LN+ (Gain: 28dB, P1dB: 8dBm, Noise: 2.9dB, @5MHZ/15V) at the end before going into the measurement equipment. The two PHA-13LN+ are protected by a BAV99 signal switching diode (Vf=~1V), clamping the power at ~9-10dBm (PHA-13LN+ max. input pulse: 21dBm)
-- The [tabletop MRI by Martinos Lab](https://tabletop.martinos.org/index.php?title=Hardware:RF) uses a 2 stage amplifier based on the [Gali-74+](https://www.minicircuits.com/pdfs/GALI-74+.pdf). (25dB gain, P1dB 19dbm, 2.7dB noise). The RF-Switch uses [BYS-10](https://www.vishay.com/docs/86013/bys10.pdf) Schottky diodes with a Vf of 0.5V (4dBm).
-- [Hibino](https://www.sciencedirect.com/science/article/pii/S1090780718301745#b0110) used a CA-251F4 preamplifier (DC-10MHz, voltage 40dB gain, output power +-10mA max, )
-- The ZFL-500LN+ from mini-circuits has a gain of almost exactly 28dB when powered with at least 15V, with a P1dB of 8dBm over its whole specified range. Its noise figure is at typ. 2.9dB.
-- Low Pass Filter at the output? e.g. [SCLF-30+](https://www.mouser.ch/datasheet/2/1030/SCLF_30_2b-1701154.pdf), [SCLF-27+](https://www.mouser.ch/datasheet/2/1030/SCLF_27_2b-1701261.pdf). Or design my own? bessel/butterworth/... What about other atoms and their resonant frequencies? -> all interesting ones have lower resonant frequencies than a single 1H, so lowpass (not bandpass) should be good
-
-Next Steps:
-1. Buy 1x PHA-13LN+ evaluation board
-3. Buy 1x SCLF-27+ evaluation board
-4. Build 3x PHA-13LN+ individual gain blocks based on Martinos Lab Design
-5. Build 2x Protection diode blocks with a BAV99 dual-diode each
-
 ## TX Power Amplifier
 Transmit power is expected to be in the area of Watts (Louis-Joseph and Leot (2022)). The max. TX power of the Bruker Fourier 80 is 5W (37dBm) as well. Thus a single amplifier is often not enough and a multi-stage approach is preferable. The RedPitaya maximum output is -2dBm or 0.5Vpp thus 32dB to 39dB amplification would be required.
 
