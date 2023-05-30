@@ -2,10 +2,34 @@
 
 Here lies any code/digital work created during the project. This includes design files, measurement data, photographs and more. This is the main folder to be worked in.
 
-For details on the probe, construction see the [README.md](./nmr_probe/README.md) in the [`nmr_probe`](./nmr_probe/) folder.
+| Folder                                                      | Description                                                                                                         |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| [`nmr_probe`](./nmr_probe/)                                 | Probe and Probe construction                                                                                        |
+| [`marcos`](./marcos/)                                       | MaRCoS software and control of the spectrometer                                                                     |
+| [`32-channel_current_source`](./32-channel_current_source/) | Digitally controllable current source for driving the shims                                                         |
+| [`tr_switch`](./tr_switch/)                                 | Transmit/Receive Switch for Switching between High-Power RF impulse transmission and low level FID signal reception |
+| [`rx_lna_preamp`](./rx_lna_preamp/)                         | Low-Noise Amplifier for the amplification of the FID signal for the RedPitaya                                       |
+| [`tx_power_amp`](./tx_power_amp/)                           | Power Amplifier to amplify the excitation pulse of the RedPitaya                                                    |
 
-For details on the control of the MaRCoS software see the [README.md](./marcos/README.md) in the [`marcos`](./marcos/) folder.
-
+## General Setup
+```text
++------------+                                            +--------------+
+|            |     |\            |\                       | RX/TX Switch |
+|            |     | \           | \                      |              |
+|         TX |-----|  +----------|  +---------------------|---x  \       |         \ | /
+|            |     | /           | /                      |       \      |          \|/
+|            |     |/            |/                       |        \     |           |
+|            |  ZFL-1000+      ZHL-3A+                    |         \    |           |
+| Red Pitaya |                                            |          +---|-----------+
+|            |                                            |              |
+|            |       /|            /|           /|        |              |
+|            |      / |           / |          / |        |              |
+|         RX |-----+  |----------+  |---------+  |--------|---x          |
+|            |      \ |           \ |          \ |        |              |
+|            |       \|            \|           \|        |              |
+|            |   ZFL-500LN+     PHA-13LN+   PHA-13LN+     |              |
++------------+                                            +--------------+
+```
 
 ## Previous NMR Work
 
@@ -29,6 +53,9 @@ In addition to the [thesis description/project proposal](../literature/project_p
 In the end, separate modules should be developed for ease of reconfiguration. A nice addition would be a single board, including RX/TX amplifiers, switch and filters on one standard [Eurocard 3U (100mm x 160mm x 1.6mm)](https://en.wikipedia.org/wiki/Eurocard_(printed_circuit_board)) FR4 board, so it can be rack mounted, possibly with the common [DIN 41612](https://en.wikipedia.org/wiki/DIN_41612) (~~STEbus~~, VMEbus) connector at the back end. See also the [ARTIQ/Sinara project](https://github.com/sinara-hw/SiLPA_HL/issues/1).
 
 ## Red Pitaya SDRlab 122-16 (STEMlab 122-16)
+The ADC of the RedPitaya is specified for an RF input voltage of 0.5Vpp. Its absolute maximum rating is 30VDC and 1Vpp RF (~4dBm). This has been verified by looking at the [used ADC](https://www.analog.com/media/en/technical-documentation/data-sheets/218543f.pdf) and the [RedPitaya Schematic](../../literature/instruments/Customer_Schematics_STEM122-16SDR_V1r1(Series1).PDF). Thus the input has to be protected from the power of the transmit cycle.
+
+The easiest way to do this is to use a TVS diode for clamping the input to safe levels. Unfortunately, this severely degrades the ADCs performance according to [this Analog Devices Application Note](../../literature/instruments/rf-samp-adc-input-protection.pdf). The same AN suggests using [RB851Y](https://www.mouser.com/datasheet/2/348/rb851y-209815.pdf) Schottky diodes for ADC input protection
 ### Basic Specs
 |                    |                           |
 | ------------------ | ------------------------- |
@@ -66,3 +93,6 @@ In the end, separate modules should be developed for ease of reconfiguration. A 
 | Connector type          | SMA                              |
 | Output slew rate        | N/A                              |
 | Bandwidth               | 300 kHz - 60 MHz                 |
+
+Next Steps:
+1. Build 2x Protection diode blocks with 2x BYS-10 schottky diodes each for input protection (limit power to 4dBm/+-0.5V/1Vpp)
