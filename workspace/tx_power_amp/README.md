@@ -18,6 +18,7 @@ Transmit power is expected to be in the area of Watts (Louis-Joseph and Leot (20
 - The [OCRA Project uses a ZFL-500HLN+](https://www.minicircuits.com/pdfs/ZFL-500HLN.pdf) (gain: 20dB, noise: 3.8dB, P1DB: 17dBm, ~150€)
 - The [MAGX-011086A](https://cdn.macom.com/datasheets/MAGX-011086A.pdf) GaN power amplifier (gain 24.6dB @ 900MHz, 37dBm max, has a typical application circuit I could reproduce (4W) (~20€)
 - The [PHA-13HLN+](https://www.minicircuits.com/pdfs/PHA-13HLN+.pdf) (gain 24dB, P1dB 27.3dBm, noise 1.1dB) has a maximum power of 28.7dBm typically (~0.5W)
+- [NPA1003](https://media.digikey.com/pdf/Data%20Sheets/MA-Com%20Technology%20PDFs/NPA1003.pdf) 38dBm power amplifier, 50ohm matched
 
 ## Background
 - [Interesting general article about RF Power amps in NMR](http://www.cpcamps.com/introduction-to-nmr-mri-amplifiers.html)
@@ -25,6 +26,9 @@ Transmit power is expected to be in the area of Watts (Louis-Joseph and Leot (20
 - [OpenCore NMR](https://reader.elsevier.com/reader/sd/pii/S1090780708000670?token=C091614A806EFA2BEE0FBD33618073B2E48461C188AAA27B69640A102C862D004694C98189A10EBBDE6AD556E4D1E2EC&originRegion=eu-west-1&originCreation=20230510092722) uses a low pass filter  after the DAC to get rid of unwanted image frequencies due to the digital stepping through the waveform
 - The [ARTIQ/Sinara Booster](https://github.com/sinara-hw/Booster/wiki) looks like a good inspiration
 - The [ARTIQ/Sinara SiLPA](https://github.com/sinara-hw/SiLPA_HL/issues/1) as well
+- More FM transmitter circuits on [electroschematics.com](https://www.electroschematics.com/diy-fm-transmitter-circuits/)
+- [NSP AN721 on Impedance Matching for RF Power Transistors](https://www.nxp.com/docs/en/application-note/AN721.pdf)
+- [STM RF Board Layout Guide](../../literature/rf/an5407-optimized-rf-board-layout-for-stm32wl-series-stmicroelectronics.pdf)
 
 ## Discussion
 The cheapest option with the highest power output which is still relatively easy to build based on the above findings would be a design based on the RF transistors 2SK3475 (16dB, 2€) and 2SK3476 (11dB, 5€). To get to 39dB amplification needed, another 12dB would be needed. Again the ADL5535 (16dB) could be used for that? probably in conjunction with a 3dB pi attenuator (see e.g. Booster schematic)
