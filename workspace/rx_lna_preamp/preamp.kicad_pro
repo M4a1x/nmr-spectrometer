@@ -45,7 +45,7 @@
         "silk_text_thickness": 0.09999999999999999,
         "silk_text_upright": false,
         "zones": {
-          "min_clearance": 0.2405
+          "min_clearance": 0.3559
         }
       },
       "diff_pair_dimensions": [
@@ -178,7 +178,9 @@
         0.2,
         0.5,
         1.0,
-        1.066
+        1.066,
+        1.45,
+        2.29
       ],
       "via_dimensions": [
         {
@@ -456,7 +458,7 @@
       },
       {
         "bus_width": 12,
-        "clearance": 0.2405,
+        "clearance": 0.3559,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.25,
@@ -466,7 +468,7 @@
         "name": "RF",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 1.066,
+        "track_width": 1.45,
         "via_diameter": 0.8,
         "via_drill": 0.45,
         "wire_width": 6
