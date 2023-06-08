@@ -31,15 +31,15 @@ Transmit power is expected to be in the area of Watts (Louis-Joseph and Leot (20
 - [STM RF Board Layout Guide](../../literature/rf/an5407-optimized-rf-board-layout-for-stm32wl-series-stmicroelectronics.pdf)
 
 ## Discussion
-The cheapest option with the highest power output which is still relatively easy to build based on the above findings would be a design based on the RF transistors 2SK3475 (16dB, 2€) and 2SK3476 (11dB, 5€). To get to 39dB amplification needed, another 12dB would be needed. Again the ADL5535 (16dB) could be used for that? probably in conjunction with a 3dB pi attenuator (see e.g. Booster schematic)
+The cheapest option with the highest power output which is still relatively easy to build based on the above findings would be a design based on the RF transistors 2SK3475 (16dB, 2€) and 2SK3476 (11dB, 5€), which unfortunately seem to be obsolete. To get to 39dB amplification needed, another 12dB would be needed. Again the ADL5535 (16dB) could be used for that? probably in conjunction with a 3dB pi attenuator (see e.g. Booster schematic)
 
-The next option would be using the PHA-202+ amplifier (18dB, 14€) with a preamplifier, e.g. the ADL5535 (16dB, 5€) from Booster. This would be slightly simpler as we'd be using a finished amp and preamp, but would have less max. power (~1W).
+The next option would be using the PHA-202+ amplifier (18dB, P1dB 30dBm, 14€) with a preamplifier, e.g. the ADL5535 (16dB, P1dB 17.7dBm, 5€)/ADL5536 (20dB, P1dB 18dBm, 5€, probably too close to the P1dB coming from -2dBm) or PHA-1+ (17.2dB, P1dB 21.5dB, 3€) from Booster or the GALI-74+ (25dB, P1dB 19dBm, 3.50€). This would be slightly simpler as we'd be using a finished amp and preamp, but would have less max. power (~1W). Going with 18dB + 20dB (PHA-202+ and AD5536) we'd get 38dB gain on a -2dBm signal, thus 36dB which would make a 6dB pi attenuator in between feasable, as well as an input bandpass pi/t filter.
 
 The last option would be using the NPTB00004A transistor (23dB) together with the ADL5535 (16dB) to reach 39dB, basically a stripped-down Booster.
 
 There are a lot of options for preamplifiers though, e.g. a QPA4586A, QPA7489 would probably work as well even (but their specified range is rather large compared to the ADL5535/6). They are roughly the same price (~4€).
 
-The two RF transistors of the first option are not recommended for new designs and the PHA-202+ option only reaches 1W output power. The last option also consists of a power transistor requiring my own bias, supply and matching calculations. Thus the simplest first step would be to build the PHA-202+ with a preamp. In a further step, the PHA-202+ could be replaced either with the QPB8808 as in SiLAS which wouldn't require any special calculations, but matching of 75 to 50 Ohm or a self-designed amplifier based on a transistor.
+The two RF transistors of the first option are not recommended for new designs and the PHA-202+ option only reaches 1W output power. The last option also consists of a power transistor requiring its own bias, supply and matching calculations. Thus the simplest first step would be to build the PHA-202+ with a preamp. In a further step, the PHA-202+ could be replaced either with the QPB8808 as in SiLAS which wouldn't require any special calculations, but matching of 75 to 50 Ohm or a self-designed amplifier based on a transistor.
 
 [Building my own amplifier](https://w3axl.com/?p=308) based on the transistors with correct power supply, biasing and input/output matching networks [or matched feedback networks](http://www.w1ghz.org/small_proj/Simple_Broadband_Power_Amplifiers.pdf) would probably need more time and research.
 
