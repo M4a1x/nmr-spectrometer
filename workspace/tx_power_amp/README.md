@@ -49,3 +49,6 @@ The two RF transistors of the first option are not recommended for new designs a
 3. Design board based on PHA-202+ and ADL5535 for 1W PA
 4. Design own power amplification stage using an RF transistor, e.g. NPTB00004A
 
+
+## Additional Stuff
+Should be able to power off the poweramp when not transmitting. This could simple be done like in the power amp from martinos lab with a pnp/npn bjt transistor combination [probably taken from here](https://electronics.stackexchange.com/questions/248946/high-side-switching-12v-with-bjt-mosfet) or a npn/p-mosfet combination like [in this stackoverflow answer](https://electronics.stackexchange.com/questions/606733/why-use-both-a-bjt-and-a-mosfet-for-switching-a-subcircuit) or [this one](https://electronics.stackexchange.com/questions/407303/how-to-drive-p-channel-mosfet)
