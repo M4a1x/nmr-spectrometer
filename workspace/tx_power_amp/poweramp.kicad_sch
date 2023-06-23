@@ -4,6 +4,14 @@
 
   (paper "A4")
 
+  (title_block
+    (title "RF Power Amplifier")
+    (date "2023-06-23")
+    (rev "1")
+    (company "ETH Zürich")
+    (comment 1 "Maximilian Stabel")
+  )
+
   (lib_symbols
     (symbol "Connector:Conn_Coaxial" (pin_names (offset 1.016) hide) (in_bom yes) (on_board yes)
       (property "Reference" "J" (at 0.254 3.048 0)
@@ -1110,13 +1118,37 @@
         )
       )
       (symbol "PHA-202_1_1"
+        (pin passive line (at -2.54 -7.62 90) (length 2.54) hide
+          (name "EP" (effects (font (size 1.27 1.27))))
+          (number "1" (effects (font (size 1.27 1.27))))
+        )
         (pin input line (at -7.62 0 0) (length 2.54)
           (name "~" (effects (font (size 1.27 1.27))))
           (number "2" (effects (font (size 1.27 1.27))))
         )
+        (pin passive line (at -2.54 -7.62 90) (length 2.54) hide
+          (name "EP" (effects (font (size 1.27 1.27))))
+          (number "3" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at -2.54 -7.62 90) (length 2.54) hide
+          (name "EP" (effects (font (size 1.27 1.27))))
+          (number "4" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at -2.54 -7.62 90) (length 2.54) hide
+          (name "EP" (effects (font (size 1.27 1.27))))
+          (number "5" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at -2.54 -7.62 90) (length 2.54) hide
+          (name "EP" (effects (font (size 1.27 1.27))))
+          (number "6" (effects (font (size 1.27 1.27))))
+        )
         (pin output line (at 7.62 0 180) (length 2.54)
           (name "~" (effects (font (size 1.27 1.27))))
           (number "7" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at -2.54 -7.62 90) (length 2.54) hide
+          (name "EP" (effects (font (size 1.27 1.27))))
+          (number "8" (effects (font (size 1.27 1.27))))
         )
         (pin power_in line (at -2.54 -7.62 90) (length 3.81)
           (name "GND" (effects (font (size 1.27 1.27))))
@@ -1991,9 +2023,37 @@
     (uuid fa00752e-b557-492a-a866-dc6558798fd0)
   )
 
+  (label "preamp_out" (at 132.08 76.2 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 219cdaea-dd7a-45cb-ba10-4adf573d54ef)
+  )
+  (label "amp_in" (at 193.04 76.2 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 292eb2bb-5778-40ef-9f4d-74764d41f052)
+  )
+  (label "att_out" (at 172.72 76.2 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 6f5dfabc-bf42-46d1-aeb9-5147e3a7ce28)
+  )
+  (label "amp_out" (at 234.95 76.2 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 71cc9a26-176b-4c50-b20e-add41e9cd04f)
+  )
+  (label "att_in" (at 156.21 76.2 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid b0e674e2-bda1-4168-8fe0-013eb8c6ccee)
+  )
   (label "rf_out" (at 255.27 76.2 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid b144c488-dfbe-42e1-a5e1-3585928a5fdd)
+  )
+  (label "preamp_in" (at 93.98 76.2 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid cfe5727b-9f4d-467b-8e0e-46bcbab7ec31)
+  )
+  (label "filter_out" (at 73.66 76.2 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid db77e813-37c0-4c75-bea8-ccd479329ac2)
   )
   (label "rf_in" (at 27.94 76.2 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
@@ -2003,10 +2063,10 @@
   (symbol (lib_id "Device:R") (at 227.33 132.08 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 016889ea-5cb3-402a-9c7c-87965f2795b5)
-    (property "Reference" "R10" (at 229.8262 130.81 0)
+    (property "Reference" "R10" (at 229.87 130.81 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "1k" (at 229.8262 133.35 0)
+    (property "Value" "1k" (at 229.87 133.35 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0805_2012Metric" (at 229.108 132.08 90)
@@ -2322,10 +2382,10 @@
   (symbol (lib_id "Device:R") (at 227.33 121.92 180) (unit 1)
     (in_bom yes) (on_board yes) (dnp no) (fields_autoplaced)
     (uuid 1e0b6c99-c1fd-4876-8c35-cf355e050043)
-    (property "Reference" "R11" (at 229.8262 120.65 0)
+    (property "Reference" "R11" (at 229.87 120.65 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "1k" (at 229.8262 123.19 0)
+    (property "Value" "4k7" (at 229.87 123.19 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0805_2012Metric" (at 229.108 121.92 90)
@@ -2419,14 +2479,20 @@
     (property "Reference" "Q1" (at 229.87 140.97 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "2N3904" (at 229.87 143.51 0)
+    (property "Value" "MMBT3904" (at 229.87 143.51 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Package_TO_SOT_THT:TO-92_Inline" (at 229.87 144.145 0)
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23" (at 229.87 144.145 0)
       (effects (font (size 1.27 1.27) italic) (justify left) hide)
     )
-    (property "Datasheet" "https://www.onsemi.com/pub/Collateral/2N3903-D.PDF" (at 224.79 142.24 0)
+    (property "Datasheet" "https://www.mouser.ch/datasheet/2/115/DIOD_S_A0003133141_1-2542424.pdf" (at 224.79 142.24 0)
       (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "MPN" "MMBT3904-7-F" (at 224.79 142.24 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Mouser" "621-MMBT3904-F" (at 224.79 142.24 0)
+      (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 3378db02-7bcb-48b6-a91c-e664fdc55c1b))
     (pin "2" (uuid 7af8a99d-e729-4b7b-ac86-fe0c702f5b72))
@@ -2449,14 +2515,20 @@
     (property "Value" "PHA-202+" (at 214.63 68.58 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "poweramp:DL1636" (at 215.9 66.04 0)
+    (property "Footprint" "poweramp:DL1636_HandSolder" (at 215.9 66.04 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.minicircuits.com/pdfs/PHA-202+.pdf" (at 214.63 76.2 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+    (pin "1" (uuid 83a3054a-32ca-4e71-8975-e29b661cfca3))
     (pin "2" (uuid 21fea97a-ce49-4372-8645-021be8a41180))
+    (pin "3" (uuid ac915943-bede-4048-95a1-ed9ed227fed2))
+    (pin "4" (uuid b28f95b3-d156-4782-92a7-50fad5775342))
+    (pin "5" (uuid 5280ca25-597f-4582-bd8a-496177d27645))
+    (pin "6" (uuid c1d85302-ee41-4400-acb2-b9a4d05918f2))
     (pin "7" (uuid bddabffb-4f45-4465-b265-4f0cd6f9284a))
+    (pin "8" (uuid c7933f52-209e-40ee-bf0c-3a40bba03343))
     (pin "EP" (uuid 070fa24a-a73b-4abe-835c-cfe63e8fbc2e))
     (instances
       (project "poweramp"
@@ -2695,8 +2767,8 @@
     (property "Notes" "Polymeric 6V 0.75A 0.2s 40mΩ 0805 PTC Resettable Fuses RoHS" (at 29.21 123.19 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 08a187c8-f82c-4083-b56d-c2aab96d9e7b))
-    (pin "2" (uuid 43c7fc26-9315-4362-8516-8941f653659c))
+    (pin "1" (uuid 6800cb9b-1bc4-4c35-baad-92d223d202c3))
+    (pin "2" (uuid d9fb60e1-4eba-4583-8d15-8c96b57c2227))
     (instances
       (project "poweramp"
         (path "/3ba85549-d938-40dc-a098-3fc5b81e65f6"
@@ -3267,7 +3339,7 @@
     (property "Datasheet" "~" (at 25.4 130.81 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 02ea1546-de38-40ee-93bd-f0542ca935f4))
+    (pin "1" (uuid 2316f044-8bf9-46a4-a8d3-2d896e3cb3c1))
     (instances
       (project "preamp"
         (path "/11169205-19ab-4034-b6c7-01c47de08507"
@@ -3357,7 +3429,7 @@
     (property "Datasheet" "" (at 35.56 132.08 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 93e11c57-3be2-4269-aa0f-7d401852de6f))
+    (pin "1" (uuid d8545022-b7f2-48e6-9916-aa4e7c2b9ab2))
     (instances
       (project "preamp"
         (path "/11169205-19ab-4034-b6c7-01c47de08507"
@@ -3393,8 +3465,8 @@
     (property "Mouser" "80-C0805C104J5R" (at 35.56 127 90)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 2d87a749-6990-4fb6-a8ac-6e44a172e446))
-    (pin "2" (uuid 5681769c-1b0e-4342-9c74-51590e4cea30))
+    (pin "1" (uuid 20cca13c-3a36-4677-a718-6fff7896bfb0))
+    (pin "2" (uuid f8ee872c-77c3-41d5-b86a-b8ec413ac10d))
     (instances
       (project "poweramp"
         (path "/3ba85549-d938-40dc-a098-3fc5b81e65f6"
@@ -3614,8 +3686,8 @@
     (property "Mouser" "649-68491-102HLF" (at 19.05 123.19 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 8a4d74d5-2380-481d-8d1f-0a19b7d366ee))
-    (pin "2" (uuid 4f7dbdb8-627a-4b73-b9d0-07e9c225177f))
+    (pin "1" (uuid 6db7fcf5-7ffe-4711-a373-7aaec66f6370))
+    (pin "2" (uuid 25d8d79b-8ad6-4516-ad84-e51c86e6cb74))
     (instances
       (project "preamp"
         (path "/11169205-19ab-4034-b6c7-01c47de08507"
@@ -3831,7 +3903,7 @@
     (property "Datasheet" "~" (at 58.42 123.19 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 3b5dc9a9-f56b-4fec-9ca2-bc5bcb252141))
+    (pin "1" (uuid 08d49651-a8bf-47c2-b546-d666e3af5e9e))
     (instances
       (project "preamp"
         (path "/11169205-19ab-4034-b6c7-01c47de08507"
@@ -4343,8 +4415,8 @@
     (property "Notes" "Schottky Diode, 30V, 1A" (at 52.07 123.19 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 4a2ccd74-a93b-48b5-9806-8256a81381d7))
-    (pin "2" (uuid 806347d1-b144-47c8-849b-1533397334b0))
+    (pin "1" (uuid bdd6c10e-305b-45f6-ab70-510933021367))
+    (pin "2" (uuid 9b46c9c5-2380-4512-baa3-54cf9ada6f67))
     (instances
       (project "preamp"
         (path "/11169205-19ab-4034-b6c7-01c47de08507"
@@ -4427,7 +4499,7 @@
     (property "Reference" "R9" (at 220.9362 146.05 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
-    (property "Value" "1k" (at 220.9362 148.59 0)
+    (property "Value" "10k" (at 220.9362 148.59 0)
       (effects (font (size 1.27 1.27)) (justify right))
     )
     (property "Footprint" "Resistor_SMD:R_0805_2012Metric" (at 220.218 147.32 90)
@@ -4600,7 +4672,7 @@
     (property "Datasheet" "" (at 58.42 119.38 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid 64f12a80-8d26-41f8-bd35-59603cbda72b))
+    (pin "1" (uuid c1a777be-9a68-44ed-b61d-ffc61bf0bf7d))
     (instances
       (project "poweramp"
         (path "/3ba85549-d938-40dc-a098-3fc5b81e65f6"

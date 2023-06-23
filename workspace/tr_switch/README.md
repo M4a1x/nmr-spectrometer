@@ -3,11 +3,31 @@
 The T/R Switch needs to handle  ~5W, max 10W in transmit power (Bruker max. 5W!). Two main options exist:
 - passive T/R Switch (lambda/4 + passive diodes) as built by Alex. Possibly change the Diodes to Schottky diodes for smaller leak-through power. Why aren't we using PIN diodes?
 - active T/R switch (lambda/4 + pin diode)
-  - built from discrete components (e.g. [this Github by Menküc](https://github.com/menkueclab/TR-Switch), explained in  [this Infineon AN](https://www.infineon.com/dgdl/Infineon-AN_1809_PL32_1810_172154_PIN%20diodes%20in%20RF%20sw%20applications-AN-v01_00-EN.pdf?fileId=5546d46265f064ff016643e2bc241042)) or the [OCRA T/R Switch](https://zeugmatographix.org/ocra/2021/09/30/transmit-receive-switch-for-the-ocra-tabletop-mri-system/) (PIN Diodes ~2CHF)
-  - commercial chip (e.g. [M3SWA-2-50DR up to 20dBm](https://www.minicircuits.com/pdfs/M3SWA-2-50DR.pdf) used by OpenCoreNMR for pulse modulation/[PE42520](https://www.psemi.com/pdf/datasheets/pe42520ds.pdf) (5W)/[QPC6324](https://www.mouser.ch/datasheet/2/412/QPC6324_Data_Sheet-1265756.pdf) (5W)/[HMC544A (reflective)](https://www.analog.com/media/en/technical-documentation/data-sheets/hmc544ae.pdf) (5W) used in Sinara Booster/[MASW-000932](https://www.mouser.ch/datasheet/2/249/MASW_000932-838129.pdf) (max 80W) see [DigiKeys Antenna Switching Note](https://www.digikey.ch/en/articles/how-to-quickly-safely-switch-antenna-transducer-transmit-receive-modes) or [Digikeys RF Switch Note](https://www.digikey.de/de/articles/choosing-an-rf-switch)) ~5CHF-10CHF
-  - [20CHF Commercial RF Switch](https://www.mikroe.com/rf-switch-click) used in [SiLPA](https://github.com/sinara-hw/SiLPA_HL/issues/1)
-  - [Mini circuits packaged SPDT active switch ZX80-DR230-S](https://www.mouser.de/ProductDetail/Mini-Circuits/ZX80-DR230-S+?qs=A6eO%252BMLsxmSxGVKhwBQ6Xg%3D%3D&_gl=1*166vu6r*_ga*dW5kZWZpbmVk*_ga_15W4STQT4T*dW5kZWZpbmVk*_ga_1KQLCYKRX3*dW5kZWZpbmVk)
+  - built from discrete components, e.g. 
+    - [this Github by Menküc](https://github.com/menkueclab/TR-Switch), explained in  [this Infineon AN](https://www.infineon.com/dgdl/Infineon-AN_1809_PL32_1810_172154_PIN%20diodes%20in%20RF%20sw%20applications-AN-v01_00-EN.pdf?fileId=5546d46265f064ff016643e2bc241042))
+    - [OCRA T/R Switch](https://zeugmatographix.org/ocra/2021/09/30/transmit-receive-switch-for-the-ocra-tabletop-mri-system/) (PIN Diodes ~2CHF)
+  - commercial chip, e.g. 
+    - [QPC6324](https://www.mouser.ch/datasheet/2/412/QPC6324_Data_Sheet-1265756.pdf), 31dBm term. CW
+    - [HMC849A](https://www.analog.com/media/en/technical-documentation/data-sheets/hmc849a.pdf), 33dBm CW through, 26.5dBm term. CW (thermal), absorptive
+    - [HMC8038](https://www.analog.com/media/en/technical-documentation/data-sheets/HMC8038.pdf), 30dBm term. CW, 100MHz - 6GHz
+    - [RFSW6024](https://www.qorvo.com/products/p/RFSW6024), 28dBm term max. CW driven simultaneously
+    - [PE42553](https://www.psemi.com/pdf/datasheets/pe42553ds.pdf), 10us, power on: 36dbm CW/39.5dBm pulsed, terminated: ~30.5dBm pulsed (est.)/28dBm CW
+    - [PE42020](https://www.psemi.com/pdf/datasheets/pe42020ds.pdf) max 26dBm CW term.
+    - [PE42520](https://www.psemi.com/pdf/datasheets/pe42520ds.pdf) 26dbm term. CW
+    - [HMC1118](https://www.analog.com/media/en/technical-documentation/data-sheets/HMC1118.pdf), 28dBm term. CW
+    - [HMC544A (reflective)](https://www.analog.com/media/en/technical-documentation/data-sheets/hmc544ae.pdf) (5W) used in Sinara Booster
+    - [Skyworks SKY12208 PIN Diode Switch](https://www.skyworksinc.com/-/media/SkyWorks/Documents/Products/601-700/SKY12208_478LF_201671D.pdf) 50W, reflective?
+    - [MASW-000932](https://www.mouser.ch/datasheet/2/249/MASW_000932-838129.pdf) [MASW-000932](https://cdn.macom.com/datasheets/MASW-000936.pdf) (max 80W/120W), requires high bias voltage?, reflective
+    - [HMC874A](https://www.analog.com/media/en/technical-documentation/data-sheets/hmc784a.pdf), reflective, P0.1dB 36dBm, 30dB Return loss, 100ns
+    - [MASWSS0178](https://www.mouser.ch/datasheet/2/249/MASWSS0178-318572.pdf), P1dB 29dBm, 24ns, absorptive, 
+    - (also see [DigiKeys Antenna Switching Note](https://www.digikey.ch/en/articles/how-to-quickly-safely-switch-antenna-transducer-transmit-receive-modes) or [Digikeys RF Switch Note](https://www.digikey.de/de/articles/choosing-an-rf-switch))
+    - [20CHF Commercial RF Switch](https://www.mikroe.com/rf-switch-click) used in [SiLPA](https://github.com/sinara-hw/SiLPA_HL/issues/1)
+    - [Mini circuits packaged SPDT active switch ZX80-DR230-S](https://www.mouser.de/ProductDetail/Mini-Circuits/ZX80-DR230-S+?qs=A6eO%252BMLsxmSxGVKhwBQ6Xg%3D%3D&_gl=1*166vu6r*_ga*dW5kZWZpbmVk*_ga_15W4STQT4T*dW5kZWZpbmVk*_ga_1KQLCYKRX3*dW5kZWZpbmVk)
+    - [MSWA2-50+](https://www.minicircuits.com/pdfs/MSWA2-50+.pdf), [MSWA-2-20+](https://www.minicircuits.com/pdfs/MSWA-2-20+.pdf), too low P1dB (<20dBm)
+    - ~~[M3SWA-2-50DR up to 20dBm](https://www.minicircuits.com/pdfs/M3SWA-2-50DR.pdf) used by OpenCoreNMR for pulse modulation~~
   
+[Typical leakages are 30mVpp for GaAs switches and 300mVpp for PIN diode based switches](https://www.minicircuits.com/app/SW13-2.pdf) (so ~10dB better). This AN also states that PIN Diodes can be used with frequencies >10MHz (GaAs down to DC) and are mainly limited by average power dissipation. GaAs is limited by peak voltage and current ratings inside the GaAs transistors. GaAs is faster.
+
 For simplicity of use, a passive switch would be advantageous if possible. The passive solution should leak only a little power that can be clamped by the protection diodes before the amplifier. This has the advantage that we can see the ringing of the coil and accurately start measuring after it ringed down?
 
 Next steps:
