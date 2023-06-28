@@ -16,7 +16,7 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Mouser" "" (at 0.254 0 0)
-      (effects (font (size 1.27 1.27)))
+      (effects (font (size 1.27 1.27)) hide)
     )
     (property "ki_keywords" "RF SPDT switch terminated non-reflective absorptive 4G 5G 1.8V Logic Compatible" (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
