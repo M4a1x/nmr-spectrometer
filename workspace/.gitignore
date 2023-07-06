@@ -37,6 +37,7 @@ bom/
 
 # Gerber export output
 out/
+jlcpcb/
 
 ### LTspice ###
 # gitignore template for LTspice
