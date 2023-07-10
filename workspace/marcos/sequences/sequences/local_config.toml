@@ -1,7 +1,7 @@
 [server]
 ## IP address: Red Pitaya address or 
 ## 'localhost' if emulating a local server with marcos_server through verilator (marga)
-ip_address = "localhost" # e.g. 192.168.1.189
+ip_address = "192.168.1.100" # e.g. 192.168.1.189
 
 ## Port where marcos_server is running
 port = 11111
