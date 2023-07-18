@@ -85,10 +85,10 @@ def send_simple_pulse() -> None:
 
     # data = ng.proc_base.zf_size(data, 32768)    # zero fill to 32768 points, fft is faster with power of 2
     data = ng.proc_base.fft(rxd["rx0"])  # Fourier transform
-    data = ng.proc_base.ps(data, p0=180.0)  # phase correction
-    data = ng.proc_base.di(data)  # discard the imaginaries
-    data = ng.proc_base.rev(data)  # reverse the data
-    freq_fft = np.arange(0, data.size) * sample_freq_MHz * 1e6
+    # data = ng.proc_base.ps(data, p0=0)  # phase correction
+    # data = ng.proc_base.di(data)  # discard the imaginaries
+    # data = ng.proc_base.rev(data)  # reverse the data
+    freq_fft = np.fft.fftshift(np.fft.fftfreq(n=len(data), d=sample_time_us / 1e6))
 
     _, fft_axes = plt.subplots(1, 1, figsize=(12, 8), layout="constrained")
 
