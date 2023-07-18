@@ -20,7 +20,10 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["marcos @ git+https://github.com/M4a1x/marcos_client.git"]
+dependencies = [
+  "marcos @ git+https://github.com/M4a1x/marcos_client.git",
+  "nmrglue",
+]
 
 [project.urls]
 Documentation = "https://github.com/M4a1x/nmr-spectrometer#readme"
