@@ -1,5 +1,6 @@
 import logging
 import io
+import copy
 import nmrglue as ng
 import numpy as np
 import numpy.typing as npt
@@ -122,6 +123,10 @@ class FID1D:
             label=universal_dict[0]["label"],
             observation_freq=universal_dict[0]["obs"] * 1e6,
         )
+        if fid.size != universal_dict[0]["size"]:
+            msg = "Size length mismatch between universal_dict metadata and actual data"
+            raise ValueError(msg)
+
         fid_udic = fid._udic
         fid_udic.update(universal_dict)
         fid._udic = fid_udic
@@ -178,7 +183,7 @@ class FID1D:
         fig = self._plot()
         fig.show()
 
-    def save_plot(self, file: Path) -> None:
+    def save_plot(self, file: Path | str | io.BytesIO) -> None:
         fig = self._plot()
         fig.savefig(file)
 
@@ -197,3 +202,39 @@ class FID1D:
             serif=serif,
         )
         return fig
+
+    def show_simple_fft(self) -> None:
+        fig = self._plot_simple_fft()
+        fig.show()
+
+    def save_simple_fft(self, file: Path | str | io.BytesIO) -> None:
+        fig = self._plot_simple_fft()
+        fig.savefig(file)
+
+    def simple_fft(self) -> tuple[dict, npt.NDArray]:
+        dic, data = copy.deepcopy(self._pipedic), copy.deepcopy(self.data)
+        dic, data = ng.pipe_proc.sp(dic, data)  # Sine bell apodization
+        dic, data = ng.pipe_proc.zf(dic, data, auto=True)  # Zero fill
+        dic, data = ng.pipe_proc.ft(dic, data, auto=True)  # Complex Fourier transform
+        data = ng.proc_autophase.autops(data, fn="acme")  # Auto phase shift
+        dic, data = ng.pipe_proc.di(dic, data)  # Delete imaginaries
+        return dic, data
+
+    def _plot_simple_fft(self, hz_scale: bool = True, serif: bool = False) -> Figure:
+        dic, data = self.simple_fft()
+        fig, axes = make_axes(rows=1, columns=1)
+        uc = ng.pipe.make_uc(dic, data)
+        axes.plot(uc.hz_scale() if hz_scale else uc.ppm_scale(), data)
+        axes.set_title(f"Spectrum of {self.label}")
+        axes.set_xlabel("Frequency")
+        axes.set_ylabel("Amplitude")
+        style_axes(
+            axes,
+            nticks=4,
+            xunit="Hz" if hz_scale else "ppm",
+            yunit="au",
+            serif=serif,
+        )
+        return fig
+
+        # freq_fft = np.fft.fftshift(np.fft.fftfreq(n=len(data), d=sample_time_us / 1e6))
