@@ -20,6 +20,15 @@ logger = logging.getLogger(__name__)
 
 
 class FID1D:
+    """Class representing 1D Free Induction Decay (FID) data and metadata
+
+    Metadata is internally stored in a dictionary (`self._pipedic`) in NMRPipe format using nmrglue.
+    This is an implementation detail and should not be relied upon! Convenience methods for
+    conversion of nmrglue data are supplied `_from_udic` and `_from_pipe` as well as getting back
+    the respective dictionaries (`self._udic` and `self._pipedic`). Using the public
+    interface is strongly preferred, though as this might change at any time!
+    """
+
     def __init__(
         self,
         raw_data: npt.NDArray,
@@ -55,21 +64,37 @@ class FID1D:
             "ndim": 1,
             0: axis_dict,
         }
-
-        self.params = ng.pipe.create_dic(universal_dict)
+        self._udic = universal_dict
         self.data = data
 
     @property
+    def _udic(self) -> dict:
+        return ng.pipe.guess_udic(self._pipedic, self.data)
+
+    @_udic.setter
+    def _udic(self, universal_dict: dict) -> None:
+        if not isinstance(universal_dict, dict) or "ndim" not in universal_dict.keys():
+            msg = "Not a universal_dictionary!"
+            raise ValueError(msg)
+        if universal_dict["ndim"] > 1 or 1 in universal_dict.keys():
+            msg = "Only 1D FIDs supported!"
+            raise ValueError(msg)
+        if not universal_dict[0]["time"] or universal_dict[0]["freq"]:
+            msg = "Only time domain signals supported!"
+            raise ValueError(msg)
+        self._pipedic = ng.pipe.create_dic(universal_dict)
+
+    @property
     def label(self) -> str:
-        return ng.pipe.guess_udic(self.params, self.data)[0]["label"]
+        return self._udic[0]["label"]
 
     @property
     def carrier_freq(self) -> float:
-        return ng.pipe.guess_udic(self.params, self.data)[0]["car"]
+        return self._udic[0]["car"]
 
     @property
     def observation_freq(self) -> float:
-        return ng.pipe.guess_udic(self.params, self.data)[0]["obs"] * 1e6
+        return self._udic[0]["obs"] * 1e6
 
     @property
     def size(self) -> float:
@@ -77,26 +102,77 @@ class FID1D:
 
     @property
     def spectral_width(self) -> float:
-        return ng.pipe.guess_udic(self.params, self.data)[0]["sw"]
+        return self._udic[0]["sw"]
 
     @classmethod
-    def from_file(cls: Self, file: Path) -> Self:
-        if file.suffix != ".fid":
-            logger.warning(
-                "File %s doesn't end with '.fid'. Trying to load as NMRPipe file anyway...",
-                str(file),
-            )
-        parameters, data = ng.pipe.read(filename=file)
+    def _from_udic(cls: Self, universal_dict: dict, data: npt.NDArray) -> Self:
+        """Convenience method to create an FID from a nmrglue universal_dictionary
 
-        # TODO: check if time domain data (see parameters dic)
-        cls(data, **parameters)
+        Args:
+            universal_dict (dict): nmrglue universal_dictionary `udic`
+            data (npt.NDArray): FID time domain data
 
-    def to_file(self, file: Path) -> None:
-        if file.suffix != ".fid":
+        Returns:
+            Self: New FID1D instance
+        """
+        fid = cls(
+            data,
+            spectral_width=universal_dict[0]["sw"],
+            carrier_freq=universal_dict[0]["car"],
+            label=universal_dict[0]["label"],
+            observation_freq=universal_dict[0]["obs"] * 1e6,
+        )
+        fid_udic = fid._udic
+        fid_udic.update(universal_dict)
+        fid._udic = fid_udic
+        return fid
+
+    @classmethod
+    def _from_pipe(cls: Self, pipe_dict: dict, data: npt.NDArray) -> Self:
+        """Convenience method to create an FID from an nmrglue pipe dictionary
+
+        Args:
+            pipe_dict (dict): dictionary with NMRPipe metadata as give by nmrglue
+            data (npt.NDArray): 1D time domain NMR FID data
+
+        Returns:
+            Self: New FID1D instance
+        """
+        fid = cls._from_udic(ng.pipe.guess_udic(pipe_dict, data), data)
+        fid_pipedic = fid._pipedic
+        fid_pipedic.update(pipe_dict)
+        fid._pipedic = fid_pipedic
+        return fid
+
+    @classmethod
+    def from_file(cls: Self, file: Path | str | io.BytesIO) -> Self:
+        """Create a FID1D instance from an NMRPipe file containing 1D time domain data
+
+        Args:
+            file (Path | str | io.BytesIO): Location of the NMRPipe formatted data. Path, string and
+            in memory buffer are supported
+
+        Returns:
+            Self: New FID1D instance
+        """
+        dic, data = ng.pipe.read(filename=file)
+        return cls._from_pipe(dic, data)
+
+    def to_file(self, file: Path | str | io.BytesIO) -> None:
+        """Store the 1D FID time domain data in a file in NMRPipe format
+
+        Args:
+            file (Path | str | io.BytesIO): Location to write to. Path, string and in memory buffers
+            are supported
+
+        Raises:
+            ValueError: On invalid file name. NMRPipe files must end in `.fid`
+        """
+        if (isinstance(file, (str, Path))) and Path(file).suffix != ".fid":
             msg = f"Time domain data files have to end in '.fid'. Invalid filename: {str(file)}"
             raise ValueError(msg)
-        self.params["FDPIPEFLAG"] = 1.0  # Set NMRPipe data stream header
-        ng.pipe.write(str(file.resolve()), self.params, self.data, overwrite=False)
+        self._pipedic["FDPIPEFLAG"] = 1.0  # Set NMRPipe data stream header
+        ng.pipe.write(file, self._pipedic, self.data, overwrite=False)
 
     def show_plot(self) -> None:
         fig = self._plot()
@@ -108,7 +184,7 @@ class FID1D:
 
     def _plot(self, us_scale: bool = False, serif: bool = False) -> Figure:
         fig, axes = make_axes(rows=1, columns=1)
-        uc = ng.pipe.make_uc(self.params, self.data)
+        uc = ng.pipe.make_uc(self._pipedic, self.data)
         axes.plot(uc.us_scale() if us_scale else uc.ms_scale(), self.data)
         axes.set_title(f"FID of {self.label}")
         axes.set_ylabel("Amplitude")
