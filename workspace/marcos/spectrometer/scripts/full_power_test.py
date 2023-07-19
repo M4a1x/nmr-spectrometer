@@ -25,7 +25,7 @@ def test_all_outputs() -> None:
     exp.add_flodict({"rx0_en": (np.array([0, 90000]), np.array([1, 0]))})
     exp.add_flodict({"rx1_en": (np.array([0, 90000]), np.array([1, 0]))})
 
-    # Plot sequence (doesn´t show yet)
+    # Plot sequence (doesn`t show yet)
     _, tx_axes = plt.subplots(4, 1, figsize=(12, 8), sharex="col", layout="constrained")
     exp.plot_sequence(axes=tx_axes)
 
@@ -51,7 +51,7 @@ def test_all_outputs() -> None:
     rx_axes[2][0].set_title("RX 0 Absolute")
     rx_axes[2][0].set_ylabel("Voltage [mV]")
     rx_axes[2][0].plot(time_rx0_us, np.absolute(rxd["rx0"]) * rx_mV_factor)
-    rx_axes[2][0].set_xlabel("Time within RX 0 Window [$\mu$s]")
+    rx_axes[2][0].set_xlabel(r"Time within RX 0 Window [$\mu$s]")
     rx_axes[0][1].set_title("RX 1 I")
     rx_axes[0][1].set_ylabel("Voltage [mV]")
     rx_axes[0][1].plot(time_rx1_us, rxd["rx1"].real * rx_mV_factor)
@@ -59,7 +59,7 @@ def test_all_outputs() -> None:
     rx_axes[1][1].set_ylabel("Voltage [mV]")
     rx_axes[1][1].plot(time_rx1_us, rxd["rx1"].imag * rx_mV_factor)
     rx_axes[2][1].set_title("RX 1 Absolute")
-    rx_axes[2][1].set_xlabel("Time within RX 1 Window [$\mu$s]")
+    rx_axes[2][1].set_xlabel(r"Time within RX 1 Window [$\mu$s]")
     rx_axes[2][1].set_ylabel("Voltage [mV]")
     rx_axes[2][1].plot(time_rx1_us, np.absolute(rxd["rx1"]) * rx_mV_factor)
     plt.show()

@@ -1,18 +1,19 @@
-import logging
-import io
 import copy
+import io
+import logging
+from pathlib import Path
+from typing import Optional, Self, Tuple
+
+import matplotlib as mpl
 import nmrglue as ng
 import numpy as np
 import numpy.typing as npt
-from pathlib import Path
-import matplotlib as mpl
 from matplotlib import pyplot as plt
+from matplotlib import ticker
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from typing import Self, Tuple, Optional
-from matplotlib import ticker
 
-from .plot import make_axes, style_axes
+from spectrometer.plot import make_axes, style_axes
 
 logger = logging.getLogger(__name__)
 
@@ -173,7 +174,7 @@ class FID1D:
             ValueError: On invalid file name. NMRPipe files must end in `.fid`
         """
         if (isinstance(file, (str, Path))) and Path(file).suffix != ".fid":
-            msg = f"Time domain data files have to end in '.fid'. Invalid filename: {str(file)}"
+            msg = f"Time domain data files have to end in '.fid'. Invalid filename: {file!s}"
             raise ValueError(msg)
         self._pipedic["FDPIPEFLAG"] = 1.0  # Set NMRPipe data stream header
         ng.pipe.write(file, self._pipedic, self.data, overwrite=False)

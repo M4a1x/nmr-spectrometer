@@ -1,10 +1,12 @@
+from typing import Optional
+
 import matplotlib as mpl
+from cycler import cycler
 from matplotlib import pyplot as plt
+from matplotlib import ticker
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-from typing import Optional
-from matplotlib import ticker
-from cycler import cycler
+import numpy as np
 
 # TODO: Look at matplotx/mplx dufte style - might be better
 
@@ -21,7 +23,7 @@ def make_axes(
 
     plt.rcParams["axes.autolimit_mode"] = "round_numbers"
 
-    fig, ax = plt.subplots(
+    fig, axes = plt.subplots(
         nrows=rows,
         ncols=columns,
         figsize=(7, 4),
@@ -30,20 +32,22 @@ def make_axes(
     )
 
     # Use ETH colours for plots
-    ax.set_prop_cycle(
-        cycler(
-            color=[
-                "#215CAF",  # ETH blue
-                "#B7352D",  # ETH red
-                "#627313",  # ETH green
-                "#A7117A",  # ETH purple
-                "#8E6713",  # ETH bronze
-                "#007894",  # ETH petrol
-                "#6F6F6F",  # ETH gray
-            ],
-        )
-    )
-    return fig, ax
+    if isinstance(axes, np.ndarray):
+        for ax in axes:
+            ax.set_prop_cycle(
+                cycler(
+                    color=[
+                        "#215CAF",  # ETH blue
+                        "#B7352D",  # ETH red
+                        "#627313",  # ETH green
+                        "#A7117A",  # ETH purple
+                        "#8E6713",  # ETH bronze
+                        "#007894",  # ETH petrol
+                        "#6F6F6F",  # ETH gray
+                    ],
+                )
+            )
+    return fig, axes
 
 
 def style_axes(
