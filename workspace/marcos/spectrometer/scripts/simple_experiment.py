@@ -3,7 +3,7 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import nmrglue as ng
-from .data import FID1D
+from spectrometer.data import FID1D
 from datetime import datetime, UTC
 
 logging.basicConfig(level=logging.INFO)

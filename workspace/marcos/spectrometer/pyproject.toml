@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "sequences"
+name = "spectrometer"
 dynamic = ["version"]
-description = ''
+description = "Interface for controlling the ETH low-cost low-field 0.6T NMR spectrometer"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "GPL-3.0-or-later"
@@ -34,12 +34,10 @@ Source = "https://github.com/M4a1x/nmr-spectrometer"
 allow-direct-references = true
 
 [tool.hatch.version]
-path = "src/sequences/__about__.py"
+path = "spectrometer/__about__.py"
 
 [tool.hatch.envs.default]
-description = """
-Default environment for execution of the sequences
-"""
+description = "Default environment"
 path = ".venv"
 dependencies = [
   "coverage[toml]>=6.5",
@@ -55,11 +53,11 @@ test = "pytest {args:tests}"
 test-cov = "coverage run -m pytest {args:tests}"
 cov-report = ["- coverage combine", "coverage report"]
 cov = ["test-cov", "cov-report"]
-typing = "mypy --install-types --non-interactive {args:src/sequences tests}"
+typing = "mypy --install-types --non-interactive {args:spectrometer tests}"
 style = [
   "black --check --diff {args:.}",
   "ruff {args:.}",
-  "pylint {args:srgs/sequences tests}",
+  "pylint {args:spectrometer tests}",
 ]
 fmt = ["black {args:.}", "ruff --fix {args:.}", "style"]
 all = ["style", "typing"]
@@ -122,7 +120,7 @@ unfixable = [
 ]
 
 [tool.ruff.isort]
-known-first-party = ["sequences"]
+known-first-party = ["spectrometer"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
@@ -132,14 +130,14 @@ ban-relative-imports = "all"
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
 
 [tool.coverage.run]
-source_pkgs = ["sequences", "tests"]
+source_pkgs = ["spectrometer", "tests"]
 branch = true
 parallel = true
-omit = ["src/sequences/__about__.py"]
+omit = ["spectrometer/__about__.py"]
 
 [tool.coverage.paths]
-sequences = ["src/sequences", "*/sequences/src/sequences"]
-tests = ["tests", "*/sequences/tests"]
+spectrometer = ["spectrometer", "*/spectrometer/spectrometer"]
+tests = ["tests", "*/spectrometer/tests"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
