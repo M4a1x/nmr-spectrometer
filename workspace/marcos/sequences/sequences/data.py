@@ -14,7 +14,6 @@ from matplotlib import ticker
 
 from .plot import make_axes, style_axes
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # TODO: Write processed (spectral) data as *.ft1 (number indicates last processed dimension)

@@ -3,22 +3,39 @@ import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import nmrglue as ng
+from .data import FID1D
+from datetime import datetime, UTC
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 from marcos import Experiment
 
 
-def send_simple_pulse() -> None:
-    sample_freq_MHz = 0.32
-    sample_time_us = 1 / sample_freq_MHz
-    # Send with 25.01MHz on tx0, tx1, set third lo to 25 MHz
-    # rx_lo=2 -> set receive lo for both channels to third (i.e. 25MHz lo)
-    exp = Experiment(lo_freq=(25.09, 25.09, 25.00), rx_lo=2, rx_t=sample_time_us)
+def send_simple_pulse(
+    pulse_length_us=9,
+    rx_length_us=10e3,
+    label="Water 1H",
+    tx0_freq=25e6,
+    tx1_freq=None,
+    rx_freq=None,
+    sample_freq=320e3,
+) -> None:
+    # Setup marcos experiment
+    tx1_freq = tx1_freq if tx1_freq else tx0_freq
+    rx_freq = rx_freq if rx_freq else tx0_freq
+    exp = Experiment(
+        lo_freq=(tx0_freq / 1e6, tx1_freq / 1e6, rx_freq / 1e6),
+        rx_lo=2,
+        rx_t=1 / (sample_freq / 1e6),
+    )
+    sample_time_us_actual = exp.get_rx_ts()
+    sample_freq_actual = (1 / sample_time_us_actual) * 1e6
 
-    tx_start_us = 100
-    tx_length_us = 9
+    # Calculate TX/RX dictionary
+    tx_start_us = 0
+    tx_length_us = pulse_length_us
     tx_power = 1  # %
 
     tx_end_us = tx_start_us + tx_length_us
@@ -27,10 +44,9 @@ def send_simple_pulse() -> None:
     tx_gate_pre_us = 1
     tx_gate_post_us = 1
 
-    tx_rx_delay_us = 35  # must be >= tx_gate_post_us
+    tx_rx_delay_us = 1  # must be >= tx_gate_post_us
 
     rx_start_us = tx_end_us + tx_rx_delay_us
-    rx_length_us = 10_000
     rx_end_us = rx_start_us + rx_length_us
 
     exp.add_flodict(
@@ -55,49 +71,37 @@ def send_simple_pulse() -> None:
     )
 
     # Plot sequence (doesn´t show yet)
-    _, tx_axes = plt.subplots(4, 1, figsize=(12, 8), layout="constrained")
+    sequence_fig, tx_axes = plt.subplots(
+        4, 1, figsize=(12, 8), sharex="all", layout="constrained"
+    )
     exp.plot_sequence(axes=tx_axes)
 
     # Execute the sequence
     rxd, msgs = exp.run()
     exp.close_server(only_if_sim=True)
 
-    # Print msgs
-    print(rxd)
-    print(msgs)
+    # Log msgs
+    logger.info(rxd)
+    logger.info(msgs)
 
-    # Plot results
-    rx_mV_factor = 250 / 16.370  # Measured Estimate!
-    time_rx0_us = np.arange(0, rxd["rx0"].size) * sample_time_us
-    _, rx_axes = plt.subplots(
-        3, 1, figsize=(12, 8), sharex="all", sharey="all", layout="constrained"
+    # Create 1D FID object
+    fid = FID1D(
+        rxd["rx0"],
+        spectral_width=sample_freq_actual,
+        carrier_freq=0.0,  # Offset between rx_freq and magnet resonance freq. Needs to be calibrated
+        label=label,
+        observation_freq=rx_freq,
     )
-    rx_axes[0].set_title("RX 0 I")
-    rx_axes[0].set_ylabel("Voltage [mV]")
-    rx_axes[0].plot(time_rx0_us, rxd["rx0"].real * rx_mV_factor)
-    rx_axes[1].set_title("RX 0 Q")
-    rx_axes[1].set_ylabel("Voltage [mV]")
-    rx_axes[1].plot(time_rx0_us, rxd["rx0"].imag * rx_mV_factor)
-    rx_axes[2].set_title("RX 0 Absolute")
-    rx_axes[2].set_ylabel("Voltage [mV]")
-    rx_axes[2].plot(time_rx0_us, np.absolute(rxd["rx0"]) * rx_mV_factor)
-    rx_axes[2].set_xlabel("Time within RX 0 Window [$\mu$s]")
+    timestr = datetime.now(tz=UTC).strftime("%Y%m%d-%H%M%S")
+    labelstr = "".join([c for c in fid.label if c.isalnum() or c in "-_"])
+    fid.to_file(f"{timestr}-{labelstr}.fid")
 
-    # data = ng.proc_base.zf_size(data, 32768)    # zero fill to 32768 points, fft is faster with power of 2
-    data = ng.proc_base.fft(rxd["rx0"])  # Fourier transform
-    # data = ng.proc_base.ps(data, p0=0)  # phase correction
-    # data = ng.proc_base.di(data)  # discard the imaginaries
-    # data = ng.proc_base.rev(data)  # reverse the data
-    freq_fft = np.fft.fftshift(np.fft.fftfreq(n=len(data), d=sample_time_us / 1e6))
+    # Display plots
+    sequence_fig.show()
+    fid.show_plot()
+    fid.show_simple_fft()
 
-    _, fft_axes = plt.subplots(1, 1, figsize=(12, 8), layout="constrained")
-
-    fft_axes.set_title("RX 0 FFT")
-    fft_axes.set_ylabel("Amplitude [au]")
-    fft_axes.set_xlabel("Frequency [Hz]")
-    fft_axes.plot(freq_fft, data)
-
-    plt.show()
+    # freq_fft = np.fft.fftshift(np.fft.fftfreq(n=len(data), d=sample_time_us / 1e6))
 
 
 if __name__ == "__main__":
