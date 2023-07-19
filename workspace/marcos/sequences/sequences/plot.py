@@ -4,6 +4,7 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from typing import Optional
 from matplotlib import ticker
+from cycler import cycler
 
 # TODO: Look at matplotx/mplx dufte style - might be better
 
@@ -20,13 +21,29 @@ def make_axes(
 
     plt.rcParams["axes.autolimit_mode"] = "round_numbers"
 
-    return plt.subplots(
+    fig, ax = plt.subplots(
         nrows=rows,
         ncols=columns,
         figsize=(7, 4),
         layout="constrained",  # Alternative: tight_layout=True
         **kwargs,
     )
+
+    # Use ETH colours for plots
+    ax.set_prop_cycle(
+        cycler(
+            color=[
+                "#215CAF",  # ETH blue
+                "#B7352D",  # ETH red
+                "#627313",  # ETH green
+                "#A7117A",  # ETH purple
+                "#8E6713",  # ETH bronze
+                "#007894",  # ETH petrol
+                "#6F6F6F",  # ETH gray
+            ],
+        )
+    )
+    return fig, ax
 
 
 def style_axes(
@@ -42,7 +59,7 @@ def style_axes(
     """
     _adjust_spines(axes)
     _adjust_ticks(axes, nticks, xunit, yunit)
-    _adjust_color(axes)
+    _adjust_axis_color(axes)
     _adjust_fonts(axes, serif=serif)
     axes.figure.tight_layout()
 
@@ -129,7 +146,7 @@ def _adjust_yticks(axes: Axes, nticks: int, yunit: str, unit_sep: str):
     )
 
 
-def _adjust_color(axes: Axes, color: str = "gray"):
+def _adjust_axis_color(axes: Axes, color: str = "gray"):
     # use `color` (without s) to only color the ticks (not the labels)
     axes.tick_params(colors=color)
     axes.spines[["left", "bottom", "top", "right"]].set_color(color)
