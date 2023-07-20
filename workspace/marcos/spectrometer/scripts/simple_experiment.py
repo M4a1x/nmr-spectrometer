@@ -2,6 +2,7 @@
 
 import logging
 from datetime import UTC, datetime
+
 import matplotlib.pyplot as plt
 
 from spectrometer.data import FID1D
@@ -15,8 +16,8 @@ def main() -> None:
     freq = 25_090_230
     label = "Water 1H"
     data, sample_freq, sequence_fig = send_simple_pulse(
-        pulse_length_us=9,
-        rx_delay_us=35,
+        pulse_length_us=1,
+        rx_delay_us=25,  # wait between pulse and acquisition for coil to ring down
         rx_length_us=10e3,
         tx0_freq=freq,
     )
@@ -37,7 +38,7 @@ def main() -> None:
     sequence_fig.show()
     fid.show_plot()
     fid.show_simple_fft()
-    plt.show()  # Blocks until all figures are closed
+    plt.show(block=True)
 
 
 if __name__ == "__main__":

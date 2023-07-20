@@ -1,12 +1,12 @@
 from typing import Optional
 
 import matplotlib as mpl
+import numpy as np
 from cycler import cycler
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-import numpy as np
 
 # TODO: Look at matplotx/mplx dufte style - might be better
 
