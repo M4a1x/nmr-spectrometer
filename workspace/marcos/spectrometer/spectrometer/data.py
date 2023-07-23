@@ -1,45 +1,62 @@
 import copy
+import datetime as dt
 import io
 import logging
 from pathlib import Path
-from typing import Optional, Self, Tuple
+from typing import Optional, Self
 
-import matplotlib as mpl
 import nmrglue as ng
 import numpy as np
 import numpy.typing as npt
-from matplotlib import pyplot as plt
-from matplotlib import ticker
-from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
 from spectrometer.plot import make_axes, style_axes
 
 logger = logging.getLogger(__name__)
 
-# TODO: Write processed (spectral) data as *.ft1 (number indicates last processed dimension)
+# TODO: Write test that verifies save/load cycle doesn't change data
 
 
 class FID1D:
     """Class representing 1D Free Induction Decay (FID) data and metadata
 
-    Metadata is internally stored in a dictionary (`self._pipedic`) in NMRPipe format using nmrglue.
-    This is an implementation detail and should not be relied upon! Convenience methods for
-    conversion of nmrglue data are supplied `_from_udic` and `_from_pipe` as well as getting back
-    the respective dictionaries (`self._udic` and `self._pipedic`). Using the public
-    interface is strongly preferred, though as this might change at any time!
+    Convenience methods for conversion of nmrglue data are supplied `_from_udic` and `_from_pipe`,
+    as well as getting back the respective dictionaries (`self._get_udic` and `self._get_pipedic`).
+    Using the public interface is strongly preferred, though as this might change at any time!
     """
 
     def __init__(
         self,
-        raw_data: npt.NDArray,
+        data: npt.NDArray,  # 1D complex (i.e. after QI-Demodulation) time domain data
         spectral_width: float,  # Sampling Bandwidth
         carrier_freq: float,  # Offset freq between observation_freq and resonant_freq (depends on magnet)
-        label: str = "1H",  # or "C","N",... for other nuclei
-        observation_freq: float = 25e6,  # assuming downsampling freq and pulse freq to be equal
+        observation_freq: float,  # assuming downsampling freq and pulse freq to be equal
+        label: str,  # usually "1H", "13C","N",..., 8 chars max
+        sample: str,  # sample description (Water, Acteone, Methanol, Benzene, Trifluortoluol, ...), 60 chars max
+        pulse_file: str
+        | Path,  # Name of the file describing the used pulse sequence for this FID, 160 chars max
+        spectrometer: str,  # Name of the spectrometer used for capturing the FID, 32 chars max
+        timestamp: Optional[
+            dt.datetime
+        ] = None,  # Use current time (UTC) as timestamp if nothing is provided
     ) -> None:
-        """Create new container from time domain data"""
-        data = np.asarray(raw_data, dtype=np.complex64)
+        """Create new simple 1D FID container from time domain data
+
+        Args:
+            data (npt.NDArray): 1D complex (i.e. after QI-Demodulation time domain data)
+            spectral_width (float): Sampling Bandwidth (inverse of dwell time)
+            carrier_freq (float): Offset freq between observation_freq and resonant_freq (depends on magnet)
+            observation_freq (float): Assuming downsampling freq and pulse freq to be equal
+            label (str): Usually "1H", "13C", "N", ... (8 chars max)
+            sample (str): Sample description (Water, Acteone, Methanol, Benzene, Trifluortoluol, ...) (60 chars max)
+            pulse_file (str | Path): Name of the file describing the used pulse sequence for this FID (160 chars max)
+            spectrometer (str): Name of the spectrometer used for capturing the FID, 32 chars max
+            timestamp (datetime.datetime, optional): Time of the experiment in UTC. Defaults to datetime.datetime.now(tz=datetime.UTC)
+
+        Raises:
+            ValueError: On invalid argument value. e.g. dimension mismatch, invalid char length, ...
+        """
+        data = np.asarray(data, dtype=np.complex64)
 
         if not data.ndim == 1:
             msg = "Time domain data must be an array of one dimension"
@@ -49,31 +66,150 @@ class FID1D:
             msg = "The input data doesn't seem to consist of complex numbers"
             raise ValueError(msg)
 
-        universal_dict = ng.fileio.fileiobase.create_blank_udic(1)
-        axis_dict = {
-            "car": carrier_freq,
-            "complex": True,
-            "encoding": "direct",  # 1D => direct dimension. Use "states" for all indirect dimensions
-            "freq": False,  # Time domain data
-            "time": True,
-            "label": label,
-            "obs": observation_freq / 1e6,
-            "size": data.shape[0],
-            "sw": spectral_width,
-        }
-        universal_dict = {
-            "ndim": 1,
-            0: axis_dict,
-        }
-        self._udic = universal_dict
+        try:
+            Path(pulse_file).resolve()
+        except (OSError, RuntimeError):
+            msg = f"Pulse file name '{pulse_file}' is invalid"
+            raise ValueError(msg) from None
+
+        if len(str(pulse_file)) > 160:
+            msg = f"Length of pulse file name '{pulse_file}' is longer than 160 characters"
+            raise ValueError(msg)
+
+        if len(spectrometer) > 32:
+            msg = f"Name of spectrometer '{spectrometer}' is longer than 32 characters"
+            raise ValueError(msg)
+
+        if len(sample) > 60:
+            msg = f"Sample description '{sample}' is longer than 60 characters"
+            raise ValueError(msg)
+
+        if len(label) > 8:
+            msg = f"Label '{label}' is longer than 8 characters"
+            raise ValueError(msg)
+
+        self.carrier_freq = carrier_freq
+        self.label = label
+        self.observation_freq = observation_freq
+        self.spectral_width = spectral_width
+        self.sample = sample
+        self.pulse_file = Path(pulse_file)
+        self.spectrometer = spectrometer
+        self.timestamp = (
+            timestamp
+            if timestamp
+            else dt.datetime.now(tz=dt.UTC).replace(microsecond=0)
+        )
+
         self.data = data
 
     @property
-    def _udic(self) -> dict:
-        return ng.pipe.guess_udic(self._pipedic, self.data)
+    def size(self) -> int:
+        """Number of elements in the data array
 
-    @_udic.setter
-    def _udic(self, universal_dict: dict) -> None:
+        Returns:
+            float: Length of the time domain data
+        """
+        return self.data.shape[0]
+
+    def _get_udic(self) -> dict:
+        """Generate a `nmrglue` universal_dictionary
+
+        This drops all in formation about the pulse sequence as well as the sample. Only the basic
+        information is present in a `universal_dictionary`. See the `nmrglue` documentation
+        at https://nmrglue.readthedocs.io/en/latest/tutorial.html#universal-dictionaries for details.
+
+        The resulting dictionary contains one dictionary per dimension (i.e. here only one) with the keys:
+        "car" -> carrier frequency, offset between observation_freq and resonant_freq (depends on magnet)
+        "complex" -> True for complex data, False for magnitude only
+        "encoding" -> "direct" for the direct dimension, "states" for indirect (see `nmrglue` docs for others)
+        "freq" -> True for frequency domain data, false otherwise
+        "time" -> True for time domain data, false otherwise
+        "label" -> Label of the dimension, usually the nuclei, e.g. 13C, 1H, ...
+        "obs" -> observation frequency (central freq of the spectrum/downconversion frequency) in MHz
+        "size" -> length of the time domain data array, i.e. `self.data`
+        "sw" -> Sampling frequency in Hertz, inverse of the dwell time/sampling time
+
+        Returns:
+            dict: `nmrglue` `universal_dictionary`
+        """
+        universal_dict = ng.fileio.fileiobase.create_blank_udic(1)
+        direct_dim_dict = universal_dict[0]
+        direct_dim_dict.update(
+            {
+                "car": self.carrier_freq,
+                "complex": True,
+                "encoding": "direct",  # 1D => direct dimension. Use "states" for all indirect dimensions
+                "freq": False,  # Time domain data
+                "time": True,
+                "label": self.label,
+                "obs": self.observation_freq / 1e6,
+                "size": self.data.shape[0],
+                "sw": self.spectral_width,
+            }
+        )
+
+        universal_dict.update(
+            {
+                "ndim": 1,
+                0: direct_dim_dict,
+            }
+        )
+        return universal_dict
+
+    def _get_pipedic(self) -> dict:
+        pipedic = ng.pipe.create_empty_dic()
+        pipedic["FDDIMCOUNT"] = 1.0
+        pipedic["FDDIMORDER"] = [2.0, 1.0, 3.0, 4.0]
+        pipedic["FDSIZE"] = self.size
+        pipedic["FDREALSIZE"] = self.size
+        pipedic["FD2DPHASE"] = 0.0
+
+        pipedic["FDTITLE"] = self.sample
+        pipedic["FDCOMMENT"] = str(self.pulse_file)
+        pipedic["FDOPERNAME"] = self.spectrometer
+
+        pipedic["FDYEAR"] = self.timestamp.year
+        pipedic["FDMONTH"] = self.timestamp.month
+        pipedic["FDDAY"] = self.timestamp.day
+        pipedic["FDHOURS"] = self.timestamp.hour
+        pipedic["FDMINS"] = self.timestamp.minute
+        pipedic["FDSECS"] = self.timestamp.second
+
+        axis_prefix = "FDF2"
+        pipedic[f"{axis_prefix}SW"] = self.spectral_width
+        pipedic[f"{axis_prefix}OBS"] = self.observation_freq / 1e6
+        pipedic[f"{axis_prefix}CAR"] = self.carrier_freq / pipedic[f"{axis_prefix}OBS"]
+        pipedic[f"{axis_prefix}LABEL"] = self.label
+        pipedic[f"{axis_prefix}QUADFLAG"] = 0.0  # complex data
+        pipedic[f"{axis_prefix}FTFLAG"] = 0.0
+        pipedic[f"{axis_prefix}TDSIZE"] = self.size
+        pipedic[f"{axis_prefix}APOD"] = pipedic[f"{axis_prefix}TDSIZE"]
+        pipedic[f"{axis_prefix}CENTER"] = int(self.size / 2) + 1
+
+        # Origin (last point) is CAR*OBS-SW*(N/2-1)/N
+        # see Fig 3.1 on p.36 of Hoch and Stern and nmrglue.pipe.add_axis_to_dic
+        pipedic[f"{axis_prefix}ORIG"] = (
+            pipedic[f"{axis_prefix}CAR"] * pipedic[f"{axis_prefix}OBS"]
+            - pipedic[f"{axis_prefix}SW"]
+            * (self.size - pipedic[f"{axis_prefix}CENTER"])
+            / self.size
+        )
+
+        return pipedic
+
+    @classmethod
+    def _from_udic(cls: Self, universal_dict: dict, data: npt.NDArray) -> Self:
+        """Convenience method to create a 1D FID from a nmrglue universal_dictionary and corresponding
+        time domain data array
+
+        Args:
+            universal_dict (dict): `nmrglue` universal_dictionary `udic`
+            data (npt.NDArray): FID time domain data `data`
+
+        Returns:
+            Self: New FID1D instance
+        """
         if not isinstance(universal_dict, dict) or "ndim" not in universal_dict.keys():
             msg = "Not a universal_dictionary!"
             raise ValueError(msg)
@@ -81,81 +217,85 @@ class FID1D:
             msg = "Only 1D FIDs supported!"
             raise ValueError(msg)
         if not universal_dict[0]["time"] or universal_dict[0]["freq"]:
-            msg = "Only time domain signals supported!"
+            msg = "Only time domain signals are supported!"
             raise ValueError(msg)
-        self._pipedic = ng.pipe.create_dic(universal_dict)
+        if len(data) != universal_dict[0]["size"]:
+            msg = "Size length mismatch between universal_dict metadata and actual data"
+            raise ValueError(msg)
 
-    @property
-    def label(self) -> str:
-        return self._udic[0]["label"]
-
-    @property
-    def carrier_freq(self) -> float:
-        return self._udic[0]["car"]
-
-    @property
-    def observation_freq(self) -> float:
-        return self._udic[0]["obs"] * 1e6
-
-    @property
-    def size(self) -> float:
-        return self.data.shape[0]
-
-    @property
-    def spectral_width(self) -> float:
-        return self._udic[0]["sw"]
-
-    @classmethod
-    def _from_udic(cls: Self, universal_dict: dict, data: npt.NDArray) -> Self:
-        """Convenience method to create an FID from a nmrglue universal_dictionary
-
-        Args:
-            universal_dict (dict): nmrglue universal_dictionary `udic`
-            data (npt.NDArray): FID time domain data
-
-        Returns:
-            Self: New FID1D instance
-        """
-        fid = cls(
-            data,
+        return cls(
+            data=data,
             spectral_width=universal_dict[0]["sw"],
             carrier_freq=universal_dict[0]["car"],
             label=universal_dict[0]["label"],
             observation_freq=universal_dict[0]["obs"] * 1e6,
+            sample="",
+            pulse_file="",
+            spectrometer="",
         )
-        if fid.size != universal_dict[0]["size"]:
-            msg = "Size length mismatch between universal_dict metadata and actual data"
-            raise ValueError(msg)
-
-        fid_udic = fid._udic
-        fid_udic.update(universal_dict)
-        fid._udic = fid_udic
-        return fid
 
     @classmethod
     def _from_pipe(cls: Self, pipe_dict: dict, data: npt.NDArray) -> Self:
-        """Convenience method to create an FID from an nmrglue pipe dictionary
+        """Convenience method to create a 1D FID from an nmrglue pipe dictionary and corresponding
+        time domain data array
+
+        For "FDTITLE", "FDOPERNAME" and "FDCOMMENT" the file is assumed to have been written by
+        this class and thus contain "Sample Description, "Spectrometer Name" and "Pulse Sequence File
+        Name" respectively.
 
         Args:
-            pipe_dict (dict): dictionary with NMRPipe metadata as give by nmrglue
+            pipe_dict (dict): dictionary with NMRPipe metadata as given by nmrglue
             data (npt.NDArray): 1D time domain NMR FID data
 
         Returns:
             Self: New FID1D instance
         """
-        fid = cls._from_udic(ng.pipe.guess_udic(pipe_dict, data), data)
-        fid_pipedic = fid._pipedic
-        fid_pipedic.update(pipe_dict)
-        fid._pipedic = fid_pipedic
-        return fid
+        if data.ndim != 1 or pipe_dict["FDDIMCOUNT"] != 1:
+            msg = "Only 1D FIDs supported!"
+            raise ValueError(msg)
+
+        axis_num = int(pipe_dict["FDDIMORDER"][0])  # 1D data only
+        axis_prefix = f"FDF{axis_num}"
+
+        if pipe_dict["FDSIZE"] != pipe_dict["FDREALSIZE"] != f"{axis_prefix}TDSIZE":
+            msg = "Data inconsistency in NMRPipe metadata and data array"
+            raise ValueError(msg)
+
+        if pipe_dict[f"{axis_prefix}QUADFLAG"] != 0:
+            msg = "Only complex NMRPipe data is supported"
+            raise ValueError(msg)
+
+        if pipe_dict[f"{axis_prefix}FTFLAG"] != 0:
+            msg = "Only time domain data is supported"
+            raise ValueError(msg)
+
+        return cls(
+            data=data,
+            spectral_width=pipe_dict[f"{axis_prefix}SW"],
+            carrier_freq=pipe_dict[f"{axis_prefix}CAR"]
+            * pipe_dict[f"{axis_prefix}OBS"],  # ppm -> Hz
+            label=pipe_dict[f"{axis_prefix}LABEL"],
+            observation_freq=pipe_dict[f"{axis_prefix}OBS"] * 1e6,
+            sample=pipe_dict["FDTITLE"],
+            pulse_file=pipe_dict["FDCOMMENT"],
+            spectrometer=pipe_dict["FDOPERNAME"],
+            timestamp=dt.datetime(
+                year=int(pipe_dict["FDYEAR"]),
+                month=int(pipe_dict["FDMONTH"]),
+                day=int(pipe_dict["FDDAY"]),
+                hour=int(pipe_dict["FDHOURS"]),
+                minute=int(pipe_dict["FDMINS"]),
+                second=int(pipe_dict["FDSECS"]),
+                tzinfo=dt.UTC,  # Assuming UTC time
+            ),
+        )
 
     @classmethod
-    def from_file(cls: Self, file: Path | str | io.BytesIO) -> Self:
+    def from_file(cls: Self, file: Path | str) -> Self:
         """Create a FID1D instance from an NMRPipe file containing 1D time domain data
 
         Args:
-            file (Path | str | io.BytesIO): Location of the NMRPipe formatted data. Path, string and
-            in memory buffer are supported
+            file (Path | str): Location of the NMRPipe formatted data
 
         Returns:
             Self: New FID1D instance
@@ -163,21 +303,30 @@ class FID1D:
         dic, data = ng.pipe.read(filename=file)
         return cls._from_pipe(dic, data)
 
-    def to_file(self, file: Path | str | io.BytesIO) -> None:
+    def to_file(self, file: Path | str) -> None:
         """Store the 1D FID time domain data in a file in NMRPipe format
 
+        If the filename doesn't end in *.fid, this will automatically append the correct suffix.
+        Will never overwrite. A new file with an increasing counter will be created if a name
+        conflict occurs.
+
         Args:
-            file (Path | str | io.BytesIO): Location to write to. Path, string and in memory buffers
-            are supported
+            file (Path | str): Location to write to
 
         Raises:
-            ValueError: On invalid file name. NMRPipe files must end in `.fid`
+            ValueError: On invalid file name
         """
-        if (isinstance(file, (str, Path))) and Path(file).suffix != ".fid":
-            msg = f"Time domain data files have to end in '.fid'. Invalid filename: {file!s}"
-            raise ValueError(msg)
-        self._pipedic["FDPIPEFLAG"] = 1.0  # Set NMRPipe data stream header
-        ng.pipe.write(file, self._pipedic, self.data, overwrite=False)
+        file = Path(file)
+        if file.suffix != ".fid":
+            file = Path(f"{file}.fid")
+        if file.exists():
+            i = 1
+            file_candidate = file
+            while file_candidate.exists():
+                file_candidate = Path(file.parent / f"{file.stem}{i}{file.suffix}")
+                i += 1
+            file = file_candidate
+        ng.pipe.write(str(file.resolve()), self._get_pipedic(), self.data)
 
     def show_plot(self) -> None:
         fig = self._plot()
@@ -187,9 +336,9 @@ class FID1D:
         fig = self._plot()
         fig.savefig(file)
 
-    def _plot(self, us_scale: bool = False, serif: bool = False) -> Figure:
+    def _plot(self, *, us_scale: bool = False, serif: bool = False) -> Figure:
         fig, axes = make_axes(rows=1, columns=1)
-        uc = ng.pipe.make_uc(self._pipedic, self.data)
+        uc = ng.pipe.make_uc(self._get_pipedic(), self.data)
         axes.plot(uc.us_scale() if us_scale else uc.ms_scale(), self.data)
         axes.set_title(f"FID of {self.label}")
         axes.set_ylabel("Amplitude")
@@ -211,20 +360,74 @@ class FID1D:
         fig = self._plot_simple_fft()
         fig.savefig(file)
 
-    def simple_fft(self) -> tuple[dict, npt.NDArray]:
-        dic, data = copy.deepcopy(self._pipedic), copy.deepcopy(self.data)
-        dic, data = ng.pipe_proc.sp(dic, data)  # Sine bell apodization
-        dic, data = ng.pipe_proc.zf(dic, data, auto=True)  # Zero fill
-        dic, data = ng.pipe_proc.ft(dic, data, auto=True)  # Complex Fourier transform
-        data = ng.proc_autophase.autops(data, fn="acme")  # Auto phase shift
-        dic, data = ng.pipe_proc.di(dic, data)  # Delete imaginaries
-        return dic, data
+    def simple_fft(
+        self,
+        zero_fill_kwargs: Optional[dict | bool] = None,
+        fourier_transform_kwargs: Optional[dict | bool] = None,
+        phase_shift_kwargs: Optional[dict | bool] = None,
+        *,
+        hz_scale: bool = True,
+    ) -> npt.NDArray:
+        """Very simple processing of the time domain data to obtain a frequency spectrum
 
-    def _plot_simple_fft(self, hz_scale: bool = True, serif: bool = False) -> Figure:
-        dic, data = self.simple_fft()
+        Without arguments this function will do an automatic zero fill, an automatic complex fourier
+        transform and an automated phase correction (using 'ACME' algorithm by Chen Li et al. (JMR 2002)).
+
+        Instead of relying on the automation algorithms, arguments to the individual functions can be
+        passed in as dictionaries containing the keyword arguments for the functions. For a detailed
+        desciption of the possible arguments see the `nmrglue` documentation for `pipe_proc.zf`,
+        `pipe_proc.ft`, `pipe_proc.ps` and `pipe_proc.di`.
+
+        For anything more complex a separate post processing is recommended.
+
+        A respective processing step can be disabled by passing `False` instead of a kwargs dictionary.
+
+        Args:
+            zero_fill_kwargs (dict | bool, optional): Arguments for `nmrglue.pipe_proc.zf`. Defaults to None.
+            fourier_transform_kwargs (dict | bool, optional): Arguments for `nmrglue.pipe_proc.ft`. Defaults to None.
+            phase_shift_kwargs (dict | bool, optional): Arguments for `nmrglue.pipe_proc.ps`. Defaults to None.
+            hz_scale (bool, optional): Scale of the 0-dimension. Pass 'True' for Hz scale, 'False'
+            for ppm scale. Defaults to True.
+
+        Returns:
+            tuple[dict, npt.NDArray]: 2D `numpy` array with the frequency data (x-values) in the 0-dimension and
+            the complex fourier transform data (y-data) in the 1-dimension. So you can directly plot it with
+            matplotlib's `plot` function.
+        """
+        # Make independent deep copy
+        dic, data = copy.deepcopy(self._get_pipedic()), copy.deepcopy(self.data)
+
+        # Zero fill
+        if zero_fill_kwargs:
+            dic, data = ng.pipe_proc.zf(dic, data, **zero_fill_kwargs)
+        elif zero_fill_kwargs is None:
+            dic, data = ng.pipe_proc.zf(dic, data, auto=True)
+        else:
+            pass  # Don't zero fill if passed 'False'
+
+        # Complex Fourier Transform
+        if fourier_transform_kwargs:
+            dic, data = ng.pipe_proc.ft(dic, data, **fourier_transform_kwargs)
+        elif fourier_transform_kwargs is None:
+            dic, data = ng.pipe_proc.ft(dic, data, auto=True)
+        else:
+            pass  # Don't fourier transform if passed 'False'
+
+        # Phase Shift
+        if phase_shift_kwargs:
+            dic, data = ng.pipe_proc.ps(dic, data, **phase_shift_kwargs)
+        elif phase_shift_kwargs is None:
+            data = ng.proc_autophase.autops(data, fn="acme")
+        else:
+            pass  # Don't shift if passed 'False'
+
+        unit_converter = ng.pipe.make_uc(dic, data)
+        scale = unit_converter.hz_scale() if hz_scale else unit_converter.ppm_scale()
+        return np.stack([scale, data], axis=1)
+
+    def _plot_simple_fft(self, *, hz_scale: bool = True, serif: bool = False) -> Figure:
         fig, axes = make_axes(rows=1, columns=1)
-        uc = ng.pipe.make_uc(dic, data)
-        axes.plot(uc.hz_scale() if hz_scale else uc.ppm_scale(), data)
+        axes.plot(self.simple_fft(hz_scale=hz_scale))
         axes.set_title(f"Spectrum of {self.label}")
         axes.set_xlabel("Frequency")
         axes.set_ylabel("Amplitude")
@@ -238,3 +441,16 @@ class FID1D:
         return fig
 
         # freq_fft = np.fft.fftshift(np.fft.fftfreq(n=len(data), d=sample_time_us / 1e6))
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            self.carrier_freq == other.carrier_freq
+            and self.label == other.label
+            and self.observation_freq == other.observation_freq
+            and self.spectral_width == other.spectral_width
+            and self.sample == other.sample
+            and self.pulse_file == other.pulse_file
+            and self.spectrometer == other.spectrometer
+            and self.timestamp == other.timestamp
+            and np.allclose(self.data, other.data)
+        )
