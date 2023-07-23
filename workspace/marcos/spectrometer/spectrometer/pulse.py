@@ -2,13 +2,10 @@ import logging
 import socket
 import time
 
-import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 from marcos import Experiment
 from matplotlib.figure import Figure
-
-from spectrometer.plot import make_axes, style_axes
 
 logger = logging.getLogger(__name__)
 
@@ -82,12 +79,6 @@ def send_simple_pulse(
         }
     )
 
-    # Plot sequence (doesn`t show yet)
-    # sequence_fig, tx_axes = plt.subplots(
-    #     4, 1, sharex="all", figsize=(12, 8), layout="constrained"
-    # )
-    # exp.plot_sequence(axes=tx_axes)
-
     # Execute the sequence
     logger.info("Executing experiment: Sending simple pulse sequence...")
     rxd, msgs = exp.run()
@@ -128,3 +119,7 @@ def send_varying_pulses(
         time.sleep(pulse_delay_s)
 
     return peaks
+
+
+def send_spin_echo() -> None:
+    raise NotImplementedError()
