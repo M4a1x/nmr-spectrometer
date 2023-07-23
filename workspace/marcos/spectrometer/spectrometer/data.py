@@ -18,11 +18,15 @@ logger = logging.getLogger(__name__)
 
 
 class FID1D:
-    """Class representing 1D Free Induction Decay (FID) data and metadata
+    """Class representing 1D Free Induction Decay (FID) data and metadata of an NMR experiment
 
-    Convenience methods for conversion of nmrglue data are supplied `_from_udic` and `_from_pipe`,
+    Convenience methods for conversion of `nmrglue` data are supplied `_from_udic` and `_from_pipe`,
     as well as getting back the respective dictionaries (`self._get_udic` and `self._get_pipedic`).
     Using the public interface is strongly preferred, though as this might change at any time!
+
+    This class is intended as a simple and in scope restricted helper for working with a time domain
+    FID measurement. If constructed through __init__() it is guaranteed to be writable as a *.fid
+    file and to be read in again without any loss of information (see test suite).
     """
 
     def __init__(

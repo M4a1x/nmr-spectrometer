@@ -27,7 +27,7 @@ def main() -> None:
         pulse_delay_s=30,
         rx_delay_us=30,
         rx_length_us=10_000,
-        freq=freq,
+        tx_freq=freq,
     )
 
     # Plot
