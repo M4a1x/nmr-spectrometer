@@ -9,7 +9,7 @@ import numpy.typing as npt
 import scipy.optimize as spo
 
 from spectrometer.plot import make_axes, style_axes
-from spectrometer.pulse import send_varying_pulses
+from spectrometer.pulse import send_simple_pulses
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ def main() -> None:
     num_samples = 200
 
     pulse_lengths_us = np.linspace(shortest_pulse_us, longest_pulse_us, num_samples)
-    peaks = send_varying_pulses(
+    peaks = send_simple_pulses(
         pulse_lengths_us,
         pulse_delay_s=30,
         rx_delay_us=30,

@@ -19,7 +19,7 @@ def main() -> None:
         pulse_length_us=1,
         rx_delay_us=25,  # wait between pulse and acquisition for coil to ring down
         rx_length_us=10e3,
-        tx0_freq=freq,
+        tx_freq=freq,
     )
 
     # Create 1D FID object
