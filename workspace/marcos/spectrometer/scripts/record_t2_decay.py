@@ -15,13 +15,13 @@ logger = logging.getLogger(__name__)
 
 
 def main() -> None:
-    # Send series of pulses with increasing length
-    pulse_lengths_us = np.linspace(1, 100, 200)
-    delay_us = 30
+    # Perform multiple spin echoes with increasing delay
+    delays_us = np.linspace(1e3, 10e3, 100)
+    pulse_length_us = 9
     repetition_time_s = 5
     sequences = [
-        PulseSequence.simple(pulse_length_us=pulse_length_us, delay_us=delay_us)
-        for pulse_length_us in pulse_lengths_us
+        PulseSequence.spin_echo(pulse_length_us=pulse_length_us, delay_us=delay_us)
+        for delay_us in delays_us
     ]
     exp = PulseExperiment(tx_freq=25_090_230)
     datas = exp.send_sequences(
@@ -38,17 +38,17 @@ def main() -> None:
             observation_freq=exp.rx_freq,
             label="1H",
             sample="Water",
-            pulse_file=f"one_of_repeated_90_degree_pulses,length={pulse_lengths_us[i]}us,delay={delay_us}us,repetition_time={repetition_time_s}s",
+            pulse_file=f"one_of_repeated_spin_echoes,length={pulse_length_us}us,delay={delays_us[i]}us,repetition_time={repetition_time_s}s",
             spectrometer="magnETHical v0.1",
         )
         timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
         fid.to_file(
-            f"data/{timestr}-{fid.sample}-{fid.label}-rabi-nutation/{timestr}-{fid.sample}-{fid.label}-{fid.pulse_file}.fid"
+            f"data/{timestr}-{fid.sample}-{fid.label}-t2-decay/{timestr}-{fid.sample}-{fid.label}-{fid.pulse_file}.fid"
         )
         fids.append(fid)
 
     # Process
-    signal_strengths = np.empty_like(pulse_lengths_us)
+    signal_strengths = np.empty_like(delays_us)
     for i, fid in enumerate(fids):
         x, y = fid.simple_fft(phase_shift_kwargs=False)
         y2 = np.abs(y) ** 2
@@ -57,9 +57,9 @@ def main() -> None:
 
     # Plot raw data
     fig, ax = make_axes()
-    ax.plot(pulse_lengths_us, signal_strengths, linestyle="", marker=".")
-    ax.set_title("Signal strength over pulse length")
-    ax.set_xlabel("Pulse length")
+    ax.plot(delays_us, signal_strengths, linestyle="", marker=".")
+    ax.set_title("Signal strength over delay")
+    ax.set_xlabel("Delay")
     ax.set_ylabel("Signal strength")
     style_axes(
         ax,
@@ -70,9 +70,9 @@ def main() -> None:
 
     # Try to plot simple least squares fit
     try:
-        fit = fit_decaying_squared_sinusoid(pulse_lengths_us, signal_strengths)
+        fit = fit_decay(delays_us, signal_strengths)
         pulse_lengths_us_fine = np.linspace(
-            pulse_lengths_us[0], pulse_lengths_us[-1], len(pulse_lengths_us) * 10
+            delays_us[0], delays_us[-1], len(delays_us) * 10
         )
         ax.plot(pulse_lengths_us_fine, fit["function"](pulse_lengths_us_fine))
     except (RuntimeError, ValueError, spo.OptimizeWarning) as err:
@@ -87,42 +87,32 @@ def main() -> None:
     plt.show(block=True)
 
 
-def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
-    """Fit a decaying squared sine wave to the input sequence
+def fit_decay(x: npt.NDArray, y: npt.NDArray) -> dict:
+    """Fit a decay exponential to the input sequence
 
-    f(x) = a * e^-lt * sin^2 (w * t + p) + c
+    f(x) = amplitude * e^(-lambda*t) + offset
 
     Returns:
-        Fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"
+        Fitting parameters "amplitude", "lambda", "offset" and the resulting "function"
     """
     x = np.asarray(x, dtype=np.float64)
     y = np.asarray(y, dtype=np.float64)
 
-    def decaying_sinusoid_squared(t, amplitude, lambda_, freq, phase, offset):
-        return (
-            amplitude * np.exp(-lambda_ * t) * np.sin(2 * np.pi * freq * t + phase) ** 2
-            + offset
-        )
+    def decay(t, amplitude, lambda_, offset):
+        return amplitude * np.exp(-lambda_ * t) + offset
 
     # Guess initial fitting parameters
-    frequencies = np.fft.fftfreq(len(x), (x[1] - x[0]))  # assume uniform spacing
-    fft = abs(np.fft.fft(y))
-    # excluding the zero frequency "peak", which is related to offset
-    guess_frequency = np.abs(frequencies[np.argmax(fft[1:]) + 1])
-    guess_amplitude = np.std(y) * 2.0**0.5
-    guess_offset = np.mean(y)
-    guess_phase = 0
+    guess_amplitude = np.max(y) - np.min(y)
+    guess_offset = np.min(y)
     guess_lambda = 0
-    guess = (guess_amplitude, guess_lambda, guess_frequency, guess_phase, guess_offset)
+    guess = (guess_amplitude, guess_lambda, guess_offset)
 
-    popt, _pcov = spo.curve_fit(decaying_sinusoid_squared, x, y, p0=guess)
+    popt, _pcov = spo.curve_fit(decay, x, y, p0=guess)
     return {
         "amplitude": popt[0],
         "lambda": popt[1],
-        "frequency": popt[2],
-        "phase": popt[3],
         "offset": popt[4],
-        "function": lambda t: decaying_sinusoid_squared(t, *popt),
+        "function": lambda t: decay(t, *popt),
     }
 
 
