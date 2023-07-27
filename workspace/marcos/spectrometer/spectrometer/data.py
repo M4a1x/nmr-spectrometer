@@ -13,6 +13,10 @@ from matplotlib.figure import Figure
 from spectrometer.plot import make_axes, style_axes
 
 logger = logging.getLogger(__name__)
+NMRPIPE_MAX_LABEL_LENGTH = 8
+NMRPIPE_MAX_OPERNAME_LENGTH = 32
+NMRPIPE_MAX_TITLE_LENGTH = 60
+NMRPIPE_MAX_COMMENT_LENGTH = 160
 
 # TODO: Write test that verifies save/load cycle doesn't change data
 
@@ -49,13 +53,17 @@ class FID1D:
         Args:
             data (npt.NDArray): 1D complex (i.e. after QI-Demodulation time domain data)
             spectral_width (float): Sampling Bandwidth (inverse of dwell time)
-            carrier_freq (float): Offset freq between observation_freq and resonant_freq (depends on magnet)
+            carrier_freq (float): Offset freq between observation_freq and resonant_freq
+            (depends on magnet)
             observation_freq (float): Assuming downsampling freq and pulse freq to be equal
             label (str): Usually "1H", "13C", "N", ... (8 chars max)
-            sample (str): Sample description (Water, Acteone, Methanol, Benzene, Trifluortoluol, ...) (60 chars max)
-            pulse_file (str | Path): Name of the file describing the used pulse sequence for this FID (160 chars max)
+            sample (str): Sample description (Water, Acteone, Methanol, Benzene,
+            Trifluortoluol, ...) (60 chars max)
+            pulse_file (str | Path): Name of the file describing the used pulse sequence for this
+            FID (160 chars max)
             spectrometer (str): Name of the spectrometer used for capturing the FID, 32 chars max
-            timestamp (datetime.datetime, optional): Time of the experiment in UTC. Defaults to datetime.datetime.now(tz=datetime.UTC)
+            timestamp (datetime.datetime, optional): Time of the experiment in UTC. Defaults to
+            datetime.datetime.now(tz=datetime.UTC)
 
         Raises:
             ValueError: On invalid argument value. e.g. dimension mismatch, invalid char length, ...
@@ -76,19 +84,19 @@ class FID1D:
             msg = f"Pulse file name '{pulse_file}' is invalid"
             raise ValueError(msg) from None
 
-        if len(str(pulse_file)) > 160:
+        if len(str(pulse_file)) > NMRPIPE_MAX_COMMENT_LENGTH:
             msg = f"Length of pulse file name '{pulse_file}' is longer than 160 characters"
             raise ValueError(msg)
 
-        if len(spectrometer) > 32:
+        if len(spectrometer) > NMRPIPE_MAX_OPERNAME_LENGTH:
             msg = f"Name of spectrometer '{spectrometer}' is longer than 32 characters"
             raise ValueError(msg)
 
-        if len(sample) > 60:
+        if len(sample) > NMRPIPE_MAX_TITLE_LENGTH:
             msg = f"Sample description '{sample}' is longer than 60 characters"
             raise ValueError(msg)
 
-        if len(label) > 8:
+        if len(label) > NMRPIPE_MAX_LABEL_LENGTH:
             msg = f"Label '{label}' is longer than 8 characters"
             raise ValueError(msg)
 
@@ -371,7 +379,7 @@ class FID1D:
         phase_shift_kwargs: Optional[dict | bool] = None,
         *,
         hz_scale: bool = True,
-    ) -> npt.NDArray:
+    ) -> tuple[npt.NDArray, npt.NDArray]:
         """Very simple processing of the time domain data to obtain a frequency spectrum
 
         Without arguments this function will do an automatic zero fill, an automatic complex fourier
@@ -379,8 +387,8 @@ class FID1D:
 
         Instead of relying on the automation algorithms, arguments to the individual functions can be
         passed in as dictionaries containing the keyword arguments for the functions. For a detailed
-        desciption of the possible arguments see the `nmrglue` documentation for `pipe_proc.zf`,
-        `pipe_proc.ft`, `pipe_proc.ps` and `pipe_proc.di`.
+        desciption of the possible arguments see the `nmrglue` documentation for `nmrglue.pipe_proc.zf`,
+        `nmrglue.pipe_proc.ft` and `nmrglue.pipe_proc.ps`
 
         For anything more complex a separate post processing is recommended.
 
@@ -394,7 +402,7 @@ class FID1D:
             for ppm scale. Defaults to True.
 
         Returns:
-            tuple[dict, npt.NDArray]: 2D `numpy` array with the frequency data (x-values) in the 0-dimension and
+            tuple[npt.NDArray, npt.NDArray]: 2D `numpy` array with the frequency data (x-values) in the 0-dimension and
             the complex fourier transform data (y-data) in the 1-dimension. So you can directly plot it with
             matplotlib's `plot` function.
         """
@@ -427,11 +435,11 @@ class FID1D:
 
         unit_converter = ng.pipe.make_uc(dic, data)
         scale = unit_converter.hz_scale() if hz_scale else unit_converter.ppm_scale()
-        return np.stack([scale, data], axis=1)
+        return scale, data
 
     def _plot_simple_fft(self, *, hz_scale: bool = True, serif: bool = False) -> Figure:
         fig, axes = make_axes(rows=1, columns=1)
-        axes.plot(self.simple_fft(hz_scale=hz_scale))
+        axes.plot(*self.simple_fft(hz_scale=hz_scale))
         axes.set_title(f"Spectrum of {self.label}")
         axes.set_xlabel("Frequency")
         axes.set_ylabel("Amplitude")

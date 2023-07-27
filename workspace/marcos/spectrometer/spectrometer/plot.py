@@ -51,7 +51,12 @@ def make_axes(
 
 
 def style_axes(
-    axes: Axes, nticks: int = 2, xunit: str = "", yunit: str = "", serif: bool = False
+    axes: Axes,
+    nticks: int = 2,
+    xunit: str = "",
+    yunit: str = "",
+    *,
+    serif: bool = False,
 ) -> None:
     """Style axes inspired by Principae/Tufte
 
@@ -92,7 +97,7 @@ def _remove_margins(axes: Axes) -> None:
     )
 
 
-def _adjust_fonts(ax: Axes, serif: bool = False) -> None:
+def _adjust_fonts(axes: Axes, *, serif: bool = False) -> None:
     wanted_fonts_sans = [
         "Latin Modern Sans",
         "CMU Sans Serif",
@@ -117,12 +122,12 @@ def _adjust_fonts(ax: Axes, serif: bool = False) -> None:
 
     plt.setp(
         [
-            ax.title,
-            ax.xaxis.label,
-            ax.yaxis.label,
-            *ax.get_xticklabels(),
-            *ax.get_yticklabels(),
-            *(ax.get_legend().get_texts() if ax.get_legend() else ()),
+            axes.title,
+            axes.xaxis.label,
+            axes.yaxis.label,
+            *axes.get_xticklabels(),
+            *axes.get_yticklabels(),
+            *(axes.get_legend().get_texts() if axes.get_legend() else ()),
         ],
         family=fonts,
     )
@@ -162,9 +167,9 @@ class _LastTickScalarFormatter(ticker.ScalarFormatter):
     def __init__(
         self,
         unit: str = "",
-        useOffset: Optional[bool | float] = None,
-        useMathText: Optional[bool] = None,
-        useLocale: Optional[bool] = None,
+        useOffset: Optional[bool | float] = None,  # noqa: N803
+        useMathText: Optional[bool] = None,  # noqa: N803
+        useLocale: Optional[bool] = None,  # noqa: N803
     ) -> None:
         super().__init__(useOffset, useMathText, useLocale)
         self.unit = unit

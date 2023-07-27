@@ -1,12 +1,12 @@
+#!/usr/bin/env python3
 import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-logger = logging.getLogger(__name__)
-
-
 from marcos import Experiment
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def test_all_outputs() -> None:
@@ -34,8 +34,8 @@ def test_all_outputs() -> None:
     exp.close_server(only_if_sim=True)
 
     # Print msgs
-    print(rxd)
-    print(msgs)
+    logger.info(rxd)
+    logger.info(msgs)
 
     # Plot results
     rx_mV_factor = 250 / 16.370  # Measured Estimate!

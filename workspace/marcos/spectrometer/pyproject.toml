@@ -129,6 +129,9 @@ ban-relative-imports = "all"
 # Tests can use magic values, assertions, and relative imports
 "tests/**/*" = ["PLR2004", "S101", "TID252"]
 
+[tool.ruff.pep8-naming]
+ignore-names = ["*MHz*", "*mV*"]
+
 [tool.coverage.run]
 source_pkgs = ["spectrometer", "tests"]
 branch = true

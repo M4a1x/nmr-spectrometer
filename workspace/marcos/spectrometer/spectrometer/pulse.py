@@ -6,6 +6,7 @@ from collections.abc import Iterable
 from ipaddress import IPv4Address, IPv6Address
 from typing import Optional, Self
 
+import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 from marcos import Experiment
@@ -24,14 +25,29 @@ class SpectrometerConfig:
 
     def __init__(
         self,
-        ip_address: IPv4Address
-        | IPv6Address = ipaddress.ip_address(config["ip_address"]),
-        port: int = int(config["port"]),
-        fpga_clock_freq: float = float(config["fpga_clock_freq_MHz"]) * 1e6,
+        ip_address: Optional[IPv4Address | IPv6Address] = None,
+        port: Optional[int] = None,
+        fpga_clock_freq: Optional[float] = None,
     ) -> None:
-        self.ip_address = ip_address
-        self.port = port
-        self.fpga_clock_freq = fpga_clock_freq
+        """Create new Sepctrometer config
+
+        Args:
+            ip_address (IPv4Address | IPv6Address, optional): IP address of the spectrometer. If
+            None, tries to load address from config. Defaults to None.
+            port (int, optional): Network Port of the spectrometer. If None, tries to load the port
+            from config. Defaults to None.
+            fpga_clock_freq (float, optional): Frequency of the FPGA clock. If None, tries to load
+            the frequency from config. Defaults to None.
+        """
+        self.ip_address = (
+            ip_address if ip_address else ipaddress.ip_address(config["ip_address"])
+        )
+        self.port = port if port else int(config["port"])
+        self.fpga_clock_freq = (
+            fpga_clock_freq
+            if fpga_clock_freq
+            else float(config["fpga_clock_freq_MHz"]) * 1e6
+        )
 
     @property
     def socket_config(self) -> tuple[str, str]:
@@ -231,8 +247,8 @@ class PulseExperiment:
         self.socket = self._connect(*server_cfg.socket_config)
 
     def send_sequence(
-        self, sequence: PulseSequence, rx_length_us: float
-    ) -> tuple[npt.NDArray, float]:
+        self, sequence: PulseSequence, rx_length_us: float, *, debug: bool = False
+    ) -> npt.NDArray:
         """Send the given excitation pulse sequence to the probe and receive a signal for
         `rx_length_us` after the end of the pulse
 
@@ -308,6 +324,10 @@ class PulseExperiment:
         logger.info("Data:\n%s", rxd)
         logger.info("Messages:\n%s", msgs)
 
+        if debug:
+            exp.plot_sequence()
+            plt.show()
+
         return rxd["rx0"]
 
     def send_sequences(
@@ -315,7 +335,7 @@ class PulseExperiment:
         sequences: Iterable[tuple[npt.NDArray, npt.NDArray]],
         rx_length_us: float,
         repetition_time_s: float,
-    ) -> npt.NDArray:
+    ) -> list[npt.NDArray]:
         """Send a list of sequences while waiting `repetition_time_s` seconds in between each
         sequence to wait for the system to return to rest.
 

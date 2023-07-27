@@ -1,12 +1,12 @@
+#!/usr/bin/env python3
 import logging
 
 import matplotlib.pyplot as plt
 import numpy as np
-
-logger = logging.getLogger(__name__)
-
-
 from marcos import Experiment
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def my_first_experiment():
