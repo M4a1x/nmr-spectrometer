@@ -124,6 +124,11 @@ class FID1D:
         """
         return self.data.shape[0]
 
+    @property
+    def us_scale(self) -> npt.NDArray:
+        uc = ng.pipe.make_uc(self._get_pipedic(), self.data)
+        return uc.us_scale()
+
     def _get_udic(self) -> dict:
         """Generate a `nmrglue` universal_dictionary
 

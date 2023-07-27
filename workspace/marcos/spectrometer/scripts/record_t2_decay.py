@@ -111,7 +111,7 @@ def fit_decay(x: npt.NDArray, y: npt.NDArray) -> dict:
     return {
         "amplitude": popt[0],
         "lambda": popt[1],
-        "offset": popt[4],
+        "offset": popt[2],
         "function": lambda t: decay(t, *popt),
     }
 
