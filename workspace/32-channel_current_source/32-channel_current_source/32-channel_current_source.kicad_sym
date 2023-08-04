@@ -117,7 +117,7 @@
     (property "Value" "TCA0372" (at 0 -5.08 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Package_SO:SOIC-16W_7.5x10.3mm_P1.27mm" (at 0 0 0)
+    (property "Footprint" "32-channel_current_source:SOIC-16W_7.5x10.3mm_P1.27mm_ThermalVias" (at 0 0 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "https://www.onsemi.com/pdf/datasheet/tca0372-d.pdf" (at 0 0 0)
@@ -185,27 +185,19 @@
         (name "V_{CC}" (effects (font (size 1.27 1.27))))
         (number "1" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at -6.35 -2.54 90) (length 2.54) hide
+      (pin no_connect line (at -5.08 -7.62 90) (length 2.54) hide
         (name "NC" (effects (font (size 1.27 1.27))))
         (number "11" (effects (font (size 1.27 1.27))))
       )
-      (pin power_in line (at -2.54 -7.62 90) (length 3.81) hide
-        (name "V_{EE}" (effects (font (size 1.27 1.27))))
-        (number "12" (effects (font (size 1.27 1.27))))
-      )
-      (pin power_in line (at -2.54 -7.62 90) (length 3.81) hide
-        (name "V_{EE}" (effects (font (size 1.27 1.27))))
-        (number "13" (effects (font (size 1.27 1.27))))
-      )
-      (pin no_connect line (at -6.35 -2.54 90) (length 2.54) hide
+      (pin no_connect line (at 0 -7.62 90) (length 2.54) hide
         (name "NC" (effects (font (size 1.27 1.27))))
         (number "14" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at -6.35 -2.54 90) (length 2.54) hide
+      (pin no_connect line (at -7.62 -7.62 90) (length 2.54) hide
         (name "NC" (effects (font (size 1.27 1.27))))
         (number "15" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at -6.35 -2.54 90) (length 2.54) hide
+      (pin no_connect line (at -10.16 -7.62 90) (length 2.54) hide
         (name "NC" (effects (font (size 1.27 1.27))))
         (number "3" (effects (font (size 1.27 1.27))))
       )
@@ -213,11 +205,7 @@
         (name "V_{EE}" (effects (font (size 1.27 1.27))))
         (number "4" (effects (font (size 1.27 1.27))))
       )
-      (pin power_in line (at -2.54 -7.62 90) (length 3.81) hide
-        (name "V_{EE}" (effects (font (size 1.27 1.27))))
-        (number "5" (effects (font (size 1.27 1.27))))
-      )
-      (pin no_connect line (at -6.35 -2.54 90) (length 2.54) hide
+      (pin no_connect line (at 2.54 -7.62 90) (length 2.54) hide
         (name "NC" (effects (font (size 1.27 1.27))))
         (number "6" (effects (font (size 1.27 1.27))))
       )
