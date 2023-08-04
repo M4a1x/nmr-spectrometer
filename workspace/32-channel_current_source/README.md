@@ -80,3 +80,11 @@ Since I'm doing a basic linear regulation, the maximum voltage drop across the c
 
 ### Use current driver IC
 - Device Power Supply IC (MAX32010, acc. 0.15%, 50€ pp)
+
+### PCB Shape
+was made with FreeCAD. Use the 3D step model by Hammond (in the 3dmodels folder) and open it in FreeCAD
+- Use the KiCADStepUp Workbench AddOn
+- Select the PCB that is inside the enclosure (remember to turn off step unification before import to get separate parts)
+- First convert it two 2D ith the corresponding button
+- Then convert the 2D shape to a Sketch with the corresponding button
+- Export the Sketch to dxf (or svg) and import it in KiCAD on the Edge.Cuts Layer. No need to constrain the Sketch, though it is possible using the PDF with the measurements you can download from the Hammond website

@@ -18,8 +18,6 @@ NMRPIPE_MAX_OPERNAME_LENGTH = 32
 NMRPIPE_MAX_TITLE_LENGTH = 60
 NMRPIPE_MAX_COMMENT_LENGTH = 160
 
-# TODO: Write test that verifies save/load cycle doesn't change data
-
 
 class FID1D:
     """Class representing 1D Free Induction Decay (FID) data and metadata of an NMR experiment
@@ -35,7 +33,7 @@ class FID1D:
 
     def __init__(
         self,
-        data: npt.NDArray,  # 1D complex (i.e. after QI-Demodulation) time domain data
+        data: npt.ArrayLike,  # 1D complex (i.e. after QI-Demodulation) time domain data
         spectral_width: float,  # Sampling Bandwidth
         carrier_freq: float,  # Offset freq between observation_freq and resonant_freq (depends on magnet)
         observation_freq: float,  # assuming downsampling freq and pulse freq to be equal
@@ -392,7 +390,7 @@ class FID1D:
 
         Instead of relying on the automation algorithms, arguments to the individual functions can be
         passed in as dictionaries containing the keyword arguments for the functions. For a detailed
-        desciption of the possible arguments see the `nmrglue` documentation for `nmrglue.pipe_proc.zf`,
+        description of the possible arguments see the `nmrglue` documentation for `nmrglue.pipe_proc.zf`,
         `nmrglue.pipe_proc.ft` and `nmrglue.pipe_proc.ps`
 
         For anything more complex a separate post processing is recommended.
@@ -407,9 +405,8 @@ class FID1D:
             for ppm scale. Defaults to True.
 
         Returns:
-            tuple[npt.NDArray, npt.NDArray]: 2D `numpy` array with the frequency data (x-values) in the 0-dimension and
-            the complex fourier transform data (y-data) in the 1-dimension. So you can directly plot it with
-            matplotlib's `plot` function.
+            tuple[npt.NDArray, npt.NDArray]: Tuple of two 1D `numpy` arrays, the first representing the
+            frequency bins and the second representing the complex fourier transform data.
         """
         # Make independent deep copy
         dic, data = copy.deepcopy(self._get_pipedic()), copy.deepcopy(self.data)
