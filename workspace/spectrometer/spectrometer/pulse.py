@@ -1,8 +1,25 @@
+"""Module for creating, sending and receiving NMR pulse sequences
+
+The `SpectrometerConfig` contains the relevant configuration for the spectrometer. This includes
+where to find it (IP address and network port) and the internal clock frequency (depends on the
+hardware used). If no values are supplied the __init__ will try to load them from a
+`local_config.toml` from the current directory or use default values if no config is found.
+
+A `PulseSequence` object contains all information describing an NMR pulse sequence. Convenience
+classmethods exist for creating simple pulses like a single pulse or a standard pulse echo sequence.
+Custom sequences can be created by directly supplying the two arrays with the timestamps and
+corresponding power levels (see `PulseSequence` docs) or through the object oriented programming
+interface by creating a list of `Pulse`s, `Delay`s and and `Record`s and passing that to the
+`PulseSequence.build()` classmethod.
+
+A `PulseExperiment` can be created by supplying a `SpectrometerConfig` to it. Then sequences can
+be sent through the `send_sequence` and `send_sequences` methods, called on a `PulseExperiment`.
+"""
 import ipaddress
 import logging
 import socket
 import time
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from ipaddress import IPv4Address, IPv6Address
 from typing import Optional, Self
 
@@ -55,8 +72,57 @@ class SpectrometerConfig:
         return str(self.ip_address), str(self.port)
 
 
-class PulseSequence:
-    """Class representing a TX Pulse sequence that can be sent by a `PulseExperiment`"""
+class Pulse:
+    """Represents a single NMR pulse with power, duration and phase"""
+
+    def __init__(
+        self, duration_us: float, power: float = 1, phase_rad: float = 0
+    ) -> None:
+        if power < 0 or power > 1:
+            msg = "Power must be from 0 to 1"
+            raise ValueError(msg)
+        if duration_us < 0:
+            msg = "Pulse durations can only be positive"
+            raise ValueError(msg)
+
+        self.power = power
+        self.duration_us = duration_us
+        self.phase_rad = phase_rad % (2 * np.pi)
+
+    @property
+    def pulse_complex(self) -> complex:
+        """Returns the power and phase as complex number with the magnitude (between 0 and 1)
+        representing the power and the phase represented by the complex phase.
+
+        >>> c = self.power * np.exp(1j * self.phase_rad)
+        """
+
+        return self.power * np.exp(1j * self.phase_rad)
+
+
+class Delay:
+    """Represents a delay in us within an NMR pulse sequence"""
+
+    def __init__(self, duration_us) -> None:
+        self.duration_us = duration_us
+
+
+class Record:
+    """Represents an NMR record command within an NMR pulse sequence.
+
+    Note: This does not store the recorded data! This is only for defining
+    an NNR sequence
+    """
+
+    def __init__(self, duration_us) -> None:
+        self.duration_us = duration_us
+
+
+# TODO: Implement Pulseq support
+class NMRSequence:
+    """Class representing an NMR Pulse sequence that can be sent by a `PulseExperiment`
+    consisting of a transmit sequence of pulses and a receive sequence describing when to record
+    data."""
 
     def __init__(self, sequence: tuple[npt.NDArray, npt.NDArray]) -> None:
         """Takes a tuple of two numpy arrays to create a pulse sequence.
@@ -88,7 +154,7 @@ class PulseSequence:
                 "corresponding power level to set the output to"
             )
             raise ValueError(msg)
-        if np.iscomplex(sequence[0]):
+        if np.any(np.iscomplex(sequence[0])):
             msg = (
                 "Complex time (unfortunately) isn't a thing here! Make sure the first array "
                 "contains only real valued timestamps in us"
@@ -100,13 +166,21 @@ class PulseSequence:
         if not np.all(np.diff(sequence[0]) > 0):
             msg = f"The time values of sequence must be strictly monotonically increasing! Values are {sequence[0]}"
             raise ValueError(msg)
-        if sequence[1][-1] != 0:
+        if len(sequence[1]) > 0 and sequence[1][-1] != 0:
             msg = (
                 "The last pulse needs to end! The power of the transmission signal needs to "
                 f"return to zero in the pulse sequence. Values are {sequence[1]}"
             )
             raise ValueError(msg)
         self.sequence = sequence
+
+    @classmethod
+    def empty(cls) -> Self:
+        return cls((np.empty(0), np.empty(0)))
+
+    @classmethod
+    def build(cls, sequence: Sequence[Pulse | Delay | Record]) -> Self:
+        return cls.empty()
 
     @classmethod
     def simple(cls, pulse_length_us: float, delay_us: float) -> Self:
@@ -178,6 +252,15 @@ class PulseSequence:
         )
         return cls(sequence)
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, NMRSequence):
+            try:
+                return np.allclose(self.sequence, other.sequence)
+            except ValueError:
+                return False
+        else:
+            return NotImplemented
+
 
 class PulseExperiment:
     """Class containing the basic information on an experiment (mixing frequencies,
@@ -199,6 +282,9 @@ class PulseExperiment:
 
         After instantiation pulse sequence(s) can be send with the respective `send_...()`
         functions.
+
+        Reminder: Since this class manages the connection to the spectrometer, only one
+        `PulseExperiment` can be created per spectrometer. Successive instantiations will fail.
 
         Args:
             rx_delay_us (float): Wait time after the end of a pulse sequence (i.e. the last event in
@@ -247,7 +333,7 @@ class PulseExperiment:
         self.socket = self._connect(*server_cfg.socket_config)
 
     def send_sequence(
-        self, sequence: PulseSequence, rx_length_us: float, *, debug: bool = False
+        self, sequence: NMRSequence, rx_length_us: float, *, debug: bool = False
     ) -> npt.NDArray:
         """Send the given excitation pulse sequence to the probe and receive a signal for
         `rx_length_us` after the end of the pulse

@@ -8,7 +8,7 @@ import numpy as np
 import numpy.typing as npt
 import scipy.optimize as spo
 
-from spectrometer import FID1D, PulseExperiment, PulseSequence, make_axes, style_axes
+from spectrometer import FID1D, NMRSequence, PulseExperiment, make_axes, style_axes
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ def main() -> None:
     delay_us = 30
     repetition_time_s = 5
     sequences = [
-        PulseSequence.simple(pulse_length_us=pulse_length_us, delay_us=delay_us)
+        NMRSequence.simple(pulse_length_us=pulse_length_us, delay_us=delay_us)
         for pulse_length_us in pulse_lengths_us
     ]
     exp = PulseExperiment(tx_freq=25_090_230)

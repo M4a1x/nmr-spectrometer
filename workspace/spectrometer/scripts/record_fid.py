@@ -8,7 +8,7 @@ import numpy.typing as npt
 import scipy.optimize as spo
 import scipy.signal as sps
 
-from spectrometer import FID1D, PulseExperiment, PulseSequence, make_axes, style_axes
+from spectrometer import FID1D, NMRSequence, PulseExperiment, make_axes, style_axes
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def main() -> None:
     pulse_length_us = 9
     delay_us = 25
-    seq = PulseSequence.simple(
+    seq = NMRSequence.simple(
         pulse_length_us=pulse_length_us, delay_us=delay_us
     )  # Wait 25us for coil to ring down
     exp = PulseExperiment(tx_freq=25_090_230)

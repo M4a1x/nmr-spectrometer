@@ -431,13 +431,16 @@ class FID1D:
         if phase_shift_kwargs:
             dic, data = ng.pipe_proc.ps(dic, data, **phase_shift_kwargs)
         elif phase_shift_kwargs is None:
-            data = ng.proc_autophase.autops(data, fn="acme")
+            data, opt = ng.proc_autophase.autops(data, return_phases=True, fn="acme")
         else:
             pass  # Don't shift if passed 'False'
 
         unit_converter = ng.pipe.make_uc(dic, data)
         scale = unit_converter.hz_scale() if hz_scale else unit_converter.ppm_scale()
-        return scale, data
+        if phase_shift_kwargs is None:
+            return scale, data, opt
+        else:
+            return scale, data
 
     def _plot_simple_fft(self, *, hz_scale: bool = True, serif: bool = False) -> Figure:
         fig, axes = make_axes(rows=1, columns=1)
@@ -457,14 +460,17 @@ class FID1D:
         # freq_fft = np.fft.fftshift(np.fft.fftfreq(n=len(data), d=sample_time_us / 1e6))
 
     def __eq__(self, other: object) -> bool:
-        return (
-            self.carrier_freq == other.carrier_freq
-            and self.label == other.label
-            and self.observation_freq == other.observation_freq
-            and self.spectral_width == other.spectral_width
-            and self.sample == other.sample
-            and self.pulse_file == other.pulse_file
-            and self.spectrometer == other.spectrometer
-            and self.timestamp == other.timestamp
-            and np.allclose(self.data, other.data)
-        )
+        if isinstance(other, FID1D):
+            return (
+                self.carrier_freq == other.carrier_freq
+                and self.label == other.label
+                and self.observation_freq == other.observation_freq
+                and self.spectral_width == other.spectral_width
+                and self.sample == other.sample
+                and self.pulse_file == other.pulse_file
+                and self.spectrometer == other.spectrometer
+                and self.timestamp == other.timestamp
+                and np.allclose(self.data, other.data)
+            )
+        else:
+            return NotImplemented
