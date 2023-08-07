@@ -21,8 +21,11 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "marcos @ git+https://github.com/M4a1x/marcos_client.git",
+  "numpy",
+  "scipy",
+  "matplotlib",
   "nmrglue",
+  "marcos @ git+https://github.com/M4a1x/marcos_client.git",
 ]
 
 [project.urls]
@@ -46,6 +49,7 @@ dependencies = [
   "mypy>=1.0.0",
   "ruff>=0.0.243",
   "pylint",
+  "jupyter",
 ]
 
 [tool.hatch.envs.default.scripts]
