@@ -3,7 +3,7 @@ import logging
 
 import matplotlib.pyplot as plt
 
-from spectrometer import FID1D, NMRSequence, PulseExperiment
+from spectrometer import FID1D, NMRSequence, Spectrometer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ def main() -> None:
     # Send Spin Echo
     pulse_length_us = 9
     delay_us = 4e3
-    exp = PulseExperiment(tx_freq=25_090_230)
+    exp = Spectrometer(tx_freq=25_090_230)
     sequence = NMRSequence.spin_echo(pulse_length_us, delay_us)
     data = exp.send_sequence(sequence=sequence, rx_length_us=10e3)
 

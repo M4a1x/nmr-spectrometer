@@ -457,8 +457,6 @@ class FID1D:
         )
         return fig
 
-        # freq_fft = np.fft.fftshift(np.fft.fftfreq(n=len(data), d=sample_time_us / 1e6))
-
     def __eq__(self, other: object) -> bool:
         if isinstance(other, FID1D):
             return (

@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 # PulseExperiment)
 
 
-class SpectrometerConfig:
+class ConnectionSettings:
     """Simple container containing the necessary information to connect to the spectrometer and
     verify the viability of the requested excitation pulses"""
 
@@ -262,7 +262,7 @@ class NMRSequence:
             return NotImplemented
 
 
-class PulseExperiment:
+class Spectrometer:
     """Class containing the basic information on an experiment (mixing frequencies,
     sampling rate, server information, ...) as well as managing the connection state of
     the spectrometer.
@@ -276,7 +276,7 @@ class PulseExperiment:
         tx_freq: float,
         rx_freq: Optional[float] = None,
         sample_rate: float = 320e3,
-        server_config: Optional[SpectrometerConfig] = None,
+        server_config: Optional[ConnectionSettings] = None,
     ) -> None:
         """Create new basic experiment configuration and connect to the spectrometer.
 
@@ -306,7 +306,7 @@ class PulseExperiment:
             socket.error: If there's an error with the network connection to the spectrometer server
         """
         rx_freq = rx_freq if rx_freq else tx_freq
-        server_cfg = server_config if server_config else SpectrometerConfig()
+        server_cfg = server_config if server_config else ConnectionSettings()
         if sample_rate <= 0:
             msg = f"The the sample_rate must be positive and not zero! {sample_rate}Hz is invalid."
             raise ValueError(msg)
@@ -330,13 +330,16 @@ class PulseExperiment:
         self.tx_freq = tx_freq
         self.rx_freq = rx_freq
         self.sample_rate = sample_rate
-        self.socket = self._connect(*server_cfg.socket_config)
+        self.server_config = server_cfg
+        self.socket = None
 
     def send_sequence(
         self, sequence: NMRSequence, rx_length_us: float, *, debug: bool = False
     ) -> npt.NDArray:
         """Send the given excitation pulse sequence to the probe and receive a signal for
-        `rx_length_us` after the end of the pulse
+        `rx_length_us` after the end of the pulse.
+
+        Needs to be connected to a spectrometer through the `connect()` method
 
         Args:
             sequence (PulseSequence): Event sequence describing a pulse experiment. For details see
@@ -347,6 +350,10 @@ class PulseExperiment:
             tuple[npt.NDArray, float]: Flat array with the received (complex) data in time domain after
             QI-demodulation/downconversion, CIC-filter and sampling.
         """
+        if not self.socket:
+            msg = "Call `connect()` before making any calls on this object"
+            raise ConnectionError(msg)
+
         logger.info("Setting up experiment...")
         exp = Experiment(
             lo_freq=(
@@ -452,9 +459,24 @@ class PulseExperiment:
 
         return fids
 
-    @staticmethod
-    def _connect(ip_address, port) -> socket.socket:
+    def connect(self) -> None:
+        """Connect to spectrometer server (i.e. the MaRCoS server running on the RedPitaya)"""
+        ip_address, port = self.server_config.socket_config
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(5)  # 5s timeout for all commands
         sock.connect((ip_address, port))
-        return sock
+        self.socket = sock
+
+    def disconnect(self) -> None:
+        """Shutdown the connection (by first sending a FIN/EOF to the server) and then try to close
+        the socket.
+
+        Note that the OS level socket might not be deallocated if other processes still
+        have an open handle to it.
+        """
+        # https://docs.python.org/3/howto/sockets.html#disconnecting
+        self.socket.shutdown(socket.SHUT_RDWR)
+        self.socket.close()
+
+    def __del__(self) -> None:
+        self.disconnect()
