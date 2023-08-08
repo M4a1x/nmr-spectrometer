@@ -50,6 +50,7 @@ dependencies = [
   "ruff>=0.0.243",
   "pylint",
   "jupyter",
+  "ipympl",
 ]
 
 [tool.hatch.envs.default.scripts]
