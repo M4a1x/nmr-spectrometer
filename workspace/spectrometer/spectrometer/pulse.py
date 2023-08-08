@@ -103,7 +103,10 @@ class Pulse:
 class Delay:
     """Represents a delay in us within an NMR pulse sequence"""
 
-    def __init__(self, duration_us) -> None:
+    def __init__(self, duration_us: float) -> None:
+        if duration_us < 0:
+            msg = "Delay durations can only be positive"
+            raise ValueError(msg)
         self.duration_us = duration_us
 
 
@@ -114,7 +117,10 @@ class Record:
     an NNR sequence
     """
 
-    def __init__(self, duration_us) -> None:
+    def __init__(self, duration_us: float) -> None:
+        if duration_us < 0:
+            msg = "Delay durations can only be positive"
+            raise ValueError(msg)
         self.duration_us = duration_us
 
 
@@ -467,42 +473,41 @@ class Spectrometer:
             assert_errors=False,
         )
 
-        # Move all timestamps 10us to the future to make room for RX switching as timestamps need
-        # to be positive
-        sequence[0] += 10
+        # Move all timestamps 10us to the future to make room for RX gate switching as
+        # timestamps need to be positive
+        tx_t = sequence.tx_sequence[0] + 10
 
-        # Get TX gate envelope times.
+        # Find pulse edge indexes
+        tx_p = np.concatenate(([0], sequence.tx_sequence[1]))
+        pulse_start_idx = np.nonzero((tx_p[:-1] == 0) & (tx_p[1:] != 0))[0]
+        pulse_end_idx = np.nonzero((tx_p[:-1] != 0) & (tx_p[1:] == 0))[0]
+
+        # Find pulse and recording start and end times
+        pulse_starts = tx_t[pulse_start_idx]
+        pulse_ends = tx_t[pulse_end_idx]
+
         # Don't transmit while switching or transmit gate is off!
-        tx_gate_pre_us = 1
-        tx_gate_post_us = 1
-        start_first_pulse_us = sequence[0][np.nonzero(sequence[1])[0][0]]
-        end_last_pulse_us = sequence[0][np.nonzero(sequence[1])[0][-1] + 1]
-        tx_gate_on_us = start_first_pulse_us - tx_gate_pre_us
-        tx_gate_off_us = end_last_pulse_us + tx_gate_post_us
+        tx_gate_on = pulse_starts - 1
+        tx_gate_off = pulse_ends + 1
+        tx_gate_sequence = _merge_overlapping_ranges(tx_gate_on, tx_gate_off).flatten()
 
-        # Receive after the whole tx sequence is over
-        tx_end_us = sequence[0][-1]
-        rx_start_us = tx_end_us
-        rx_end_us = rx_start_us + rx_length_us
-
-        # Switch RX gate right after the TX gate (can't switch gates simultaneously)
-        rx_gate_on_us = tx_gate_off_us
-        rx_gate_off_us = rx_end_us + 1
+        # Switch rx_gate whenever we receive
+        rx_gate_sequence = sequence.rx_sequence
 
         exp.add_flodict(
             {
-                "tx0": sequence,
+                "tx0": (tx_t, sequence.tx_sequence[1]),
                 "tx_gate": (
-                    np.array([tx_gate_on_us, tx_gate_off_us]),
-                    np.array([1, 0]),
+                    tx_gate_sequence,
+                    np.resize([1, 0], len(tx_gate_sequence)),
                 ),
                 "rx0_en": (
-                    np.array([rx_start_us, rx_end_us]),
-                    np.array([1, 0]),
+                    sequence.rx_sequence,
+                    np.resize([1, 0], len(sequence.rx_sequence)),
                 ),
                 "rx_gate": (
-                    np.array([rx_gate_on_us, rx_gate_off_us]),
-                    np.array([1, 0]),
+                    rx_gate_sequence,
+                    np.array([1, 0], len(rx_gate_sequence)),
                 ),
             }
         )
@@ -577,3 +582,11 @@ class Spectrometer:
 
     def __del__(self) -> None:
         self.disconnect()
+
+
+def _merge_overlapping_ranges(starts: list, ends: list) -> npt.NDArray:
+    p = list(zip(sorted(starts), sorted(ends), strict=True))
+
+    ind = np.where(np.diff(np.array(p).flatten()) <= 0)[0]
+    ind = ind[ind % 2 == 1]  # this is needed for cases when x_i = y_i
+    return np.delete(p, [ind, ind + 1]).reshape(-1, 2)
