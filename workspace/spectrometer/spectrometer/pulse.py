@@ -21,7 +21,7 @@ import socket
 import time
 from collections.abc import Iterable, Sequence
 from ipaddress import IPv4Address, IPv6Address
-from typing import Optional, Self
+from typing import Self
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -42,9 +42,9 @@ class ConnectionSettings:
 
     def __init__(
         self,
-        ip_address: Optional[IPv4Address | IPv6Address] = None,
-        port: Optional[int] = None,
-        fpga_clock_freq: Optional[float] = None,
+        ip_address: IPv4Address | IPv6Address | None = None,
+        port: int | None = None,
+        fpga_clock_freq: float | None = None,
     ) -> None:
         """Create new Sepctrometer config
 
@@ -124,7 +124,9 @@ class NMRSequence:
     consisting of a transmit sequence of pulses and a receive sequence describing when to record
     data."""
 
-    def __init__(self, sequence: tuple[npt.NDArray, npt.NDArray]) -> None:
+    def __init__(
+        self, tx_sequence: tuple[npt.NDArray, npt.NDArray], rx_sequence: npt.NDArray
+    ) -> None:
         """Takes a tuple of two numpy arrays to create a pulse sequence.
 
         The first array contains the timestamps at which the transmission changes. The second array
@@ -148,114 +150,210 @@ class NMRSequence:
             ValueError: Sanity checks are performed. Raises if sequence is impossible or
             contains errors
         """
-        if len(sequence[0]) != len(sequence[1]):
+        if len(tx_sequence[0]) != len(tx_sequence[1]):
             msg = (
-                "Event Timestamps and Power Levels must match in length. Every timestamp needs a "
+                "Event timestamps and rower levels must match in length. Every timestamp needs a "
                 "corresponding power level to set the output to"
             )
             raise ValueError(msg)
-        if np.any(np.iscomplex(sequence[0])):
+        if np.any(np.iscomplex(tx_sequence[0])):
             msg = (
                 "Complex time (unfortunately) isn't a thing here! Make sure the first array "
                 "contains only real valued timestamps in us"
             )
             raise ValueError(msg)
-        if np.any(sequence[0] < 0):
-            msg = f"The time values of sequence must be positive! Values are {sequence[0]}"
+        if np.any(tx_sequence[0] < 0):
+            msg = f"The time values of sequence must be positive! Values are {tx_sequence[0]}"
             raise ValueError(msg)
-        if not np.all(np.diff(sequence[0]) > 0):
-            msg = f"The time values of sequence must be strictly monotonically increasing! Values are {sequence[0]}"
-            raise ValueError(msg)
-        if len(sequence[1]) > 0 and sequence[1][-1] != 0:
+        if not np.all(np.diff(tx_sequence[0]) > 0):
             msg = (
-                "The last pulse needs to end! The power of the transmission signal needs to "
-                f"return to zero in the pulse sequence. Values are {sequence[1]}"
+                "The time values of sequence must be strictly monotonically increasing! "
+                f"Values are {tx_sequence[0]}"
             )
             raise ValueError(msg)
-        self.sequence = sequence
+        if len(tx_sequence[1]) > 0 and tx_sequence[1][-1] != 0:
+            msg = (
+                "The last pulse needs to end! The power of the transmission signal needs to "
+                f"return to zero in the pulse sequence. Values are {tx_sequence[1]}"
+            )
+            raise ValueError(msg)
+        if np.any(rx_sequence < 0):
+            msg = (
+                "The time values of the record sequence must be positive!"
+                f"Values are {rx_sequence}"
+            )
+            raise ValueError(msg)
+        if not np.all(np.diff(rx_sequence) > 0):
+            msg = (
+                "The time values of the record sequence must be "
+                f"strictly monotonically increasing! Values are {rx_sequence}"
+            )
+            raise ValueError(msg)
+        if len(rx_sequence) % 2 != 0:
+            msg = (
+                "The recording needs to end, "
+                "thus the recording sequence needs to have an even number of elements!"
+                f"Values are: {rx_sequence}"
+            )
+            raise ValueError(msg)
+
+        # Find pulse edge indexes
+        tx_p = np.concatenate(([0], tx_sequence[1]))
+        pulse_start_idx = np.nonzero((tx_p[:-1] == 0) & (tx_p[1:] != 0))[0]
+        pulse_end_idx = np.nonzero((tx_p[:-1] != 0) & (tx_p[1:] == 0))[0]
+
+        # Find pulse and recording start and end times
+        pulse_starts = tx_sequence[0][pulse_start_idx]
+        pulse_ends = tx_sequence[0][pulse_end_idx]
+        record_starts = rx_sequence[::2]
+        record_ends = rx_sequence[1::2]
+
+        # Use numpy broadcasting for overlap check
+        # Make sure that there is at least a 1us buffer between
+        # transmit and receive and receive and transmit
+        overlap = np.any(
+            (pulse_starts < (record_ends[:, np.newaxis] + 1))
+            & ((pulse_ends + 1) > record_starts[:, np.newaxis])
+        )
+        if overlap:
+            msg = (
+                "Can't receive and transmit simultaneously! There needs to be a delay of at least"
+                "1us between transmit and receive and 1us between receive and transmit"
+            )
+            raise ValueError(msg)
+
+        self.tx_sequence = tx_sequence
+        self.rx_sequence = rx_sequence
 
     @classmethod
     def empty(cls) -> Self:
-        return cls((np.empty(0), np.empty(0)))
+        return cls((np.empty(0), np.empty(0)), np.empty(0))
 
     @classmethod
     def build(cls, sequence: Sequence[Pulse | Delay | Record]) -> Self:
-        return cls.empty()
+        tx_powers = []
+        tx_times_us = []
+        rx_times_us = []
+
+        current_time_us = 0
+        for event in sequence:
+            match event:
+                case Pulse(duration_us=duration_us, pulse_complex=tx_power):
+                    # Pulse start
+                    tx_powers.append(tx_power)
+                    tx_times_us.append(current_time_us)
+                    current_time_us += duration_us
+
+                    # Pulse end
+                    tx_powers.append(0)
+                    tx_times_us.append(current_time_us)
+                case Delay(duration_us=duration_us):
+                    # Increase time
+                    current_time_us += duration_us
+                case Record(duration_us=duration_us):
+                    # Start recording
+                    rx_times_us.append(current_time_us)
+                    current_time_us += duration_us
+
+                    # End recording
+                    rx_times_us.append(current_time_us)
+                case default:
+                    msg = f"Unknown object found in pulse sequence: {default}"
+                    raise ValueError(msg)
+
+        return cls((np.array(tx_times_us), np.array(tx_powers)), np.array(rx_times_us))
 
     @classmethod
-    def simple(cls, pulse_length_us: float, delay_us: float) -> Self:
+    def simple(
+        cls, pulse_length_us: float, delay_us: float, record_length_us: float
+    ) -> Self:
         """Generate a single simple pulse (p1) with length `pulse_length_us` and a wait time of
-        `delay_us` after that.
+        `delay_us` after that, then record the signal for `record_length_us`.
 
         The received signal will be a simple Free Induction Decay (FID) of the sample,
         It will decay with T2* if executed as independent experiment.
 
-                <  p1  >
-                ┌──────┐
-                │      │
-                │      │<     delay     >
-        ────────┘      └─────────────────
+                < pulse >
+                ┌───────┐
+                │       │
+                │       │<     delay     ><   record   >
+        ────────┘       └───────────────────────────────
 
         Args:
             pulse_length_us (float): Length of the single pulse in us (p1)
             delay_us (float): Length of the wait time in us (d1)
+            record_length_us (float): Length of the recording of the received signal in us
 
         Returns:
             Self: Sequence of a single pulse with given length
         """
-        sequence = (
-            np.array([0, pulse_length_us, pulse_length_us + delay_us]),
-            np.array([1, 0, 0]),
+        tx_sequence = (
+            np.array([0, pulse_length_us]),
+            np.array([1, 0]),
         )
-        return cls(sequence)
+        rx_sequence = np.array(
+            [pulse_length_us + delay_us, pulse_length_us + delay_us + record_length_us]
+        )
+        return cls(tx_sequence, rx_sequence)
 
     @classmethod
-    def spin_echo(cls, pulse_length_us: float, delay_us: float) -> Self:
+    def spin_echo(
+        cls,
+        pulse_length_us: float,
+        delay_tau_us: float,
+        delay_after_p2_us: float,
+        record_length_us: float,
+    ) -> Self:
         """Generate a spin echo sequence with the given 90 degree pulse length (p1) and the given
         delay between the 90 degree pulse (p1) and the 180 degree pulse (p2) as well as the
         180 degree pulse (p2) and acquisition.
 
-        If multiple spin echos are recorded with increasing `delay_us` the T2 relaxation time can
+        If multiple spin echoes are recorded with increasing `delay_tau_us` the T2 relaxation time can
         be estimated through the maxima of the spin echo signals.
 
                 <  p1  >                 <     p2     >
                 ┌──────┐                 ┌────────────┐
                 │      │                 │            │
-                │      │<     delay     >│            │<     delay     >
-        ────────┘      └─────────────────┘            └─────────────────
+                │      │<   delay_tau   >│            │< delay_after_p2 >
+        ────────┘      └─────────────────┘            └──────────────────
                    90°                        180°
 
         Args:
             pulse_length_us (float): Length of a 90 degree pulse for the relevant Nuclei in us (p1)
-            delay_us (float):  Time between the 90 degree and the 180 degree pulse, as well as
+            delay_tau_us (float):  Time between the 90 degree and the 180 degree pulse, as well as
             the time (d12) between the 180 degree pulse and the start of the receiving window.
+            delay_after_p2_us (float): Time to wait after the second pulse before starting a recording
+            record_length_us (float): Time to record the FID
 
         Returns:
             Self: Pulse sequence describing a conventional pulse echo experiment
         """
         pulse_90_start_us = 0
         pulse_90_end_us = pulse_90_start_us + pulse_length_us
-        pulse_180_start_us = pulse_90_end_us + delay_us
+        pulse_180_start_us = pulse_90_end_us + delay_tau_us
         pulse_180_end_us = pulse_180_start_us + 2 * pulse_length_us
-        sequence_end_us = pulse_180_end_us + delay_us
-        sequence = (
+        record_start_us = pulse_180_end_us + delay_after_p2_us
+        record_end_us = record_start_us + record_length_us
+        tx_sequence = (
             np.array(
                 [
                     pulse_90_start_us,
                     pulse_90_end_us,
                     pulse_180_start_us,
                     pulse_180_end_us,
-                    sequence_end_us,
                 ]
             ),
-            np.array([1, 0, 1, 0, 0]),
+            np.array([1, 0, 1, 0]),
         )
-        return cls(sequence)
+        rx_sequence = np.array([record_start_us, record_end_us])
+        return cls(tx_sequence, rx_sequence)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, NMRSequence):
             try:
-                return np.allclose(self.sequence, other.sequence)
+                return np.allclose(self.tx_sequence, other.tx_sequence) and np.allclose(
+                    self.rx_sequence, other.rx_sequence
+                )
             except ValueError:
                 return False
         else:
@@ -274,9 +372,9 @@ class Spectrometer:
     def __init__(
         self,
         tx_freq: float,
-        rx_freq: Optional[float] = None,
+        rx_freq: float | None = None,
         sample_rate: float = 320e3,
-        server_config: Optional[ConnectionSettings] = None,
+        server_config: ConnectionSettings | None = None,
     ) -> None:
         """Create new basic experiment configuration and connect to the spectrometer.
 
@@ -334,7 +432,7 @@ class Spectrometer:
         self.socket = None
 
     def send_sequence(
-        self, sequence: NMRSequence, rx_length_us: float, *, debug: bool = False
+        self, sequence: NMRSequence, *, debug: bool = False
     ) -> npt.NDArray:
         """Send the given excitation pulse sequence to the probe and receive a signal for
         `rx_length_us` after the end of the pulse.
@@ -426,7 +524,6 @@ class Spectrometer:
     def send_sequences(
         self,
         sequences: Iterable[tuple[npt.NDArray, npt.NDArray]],
-        rx_length_us: float,
         repetition_time_s: float,
     ) -> list[npt.NDArray]:
         """Send a list of sequences while waiting `repetition_time_s` seconds in between each
@@ -452,7 +549,7 @@ class Spectrometer:
         fids = []
         for i, sequence in enumerate(sequences):
             logger.info("Sending sequence %s/%s...", i + 1, len(sequences))
-            data = self.send_sequence(sequence, rx_length_us)
+            data = self.send_sequence(sequence)
             fids.append(data)
             logger.info("Sleeping for %ss...", repetition_time_s)
             time.sleep(repetition_time_s)

@@ -1,5 +1,3 @@
-from typing import Optional
-
 import matplotlib as mpl
 import numpy as np
 from cycler import cycler
@@ -167,14 +165,14 @@ class _LastTickScalarFormatter(ticker.ScalarFormatter):
     def __init__(
         self,
         unit: str = "",
-        useOffset: Optional[bool | float] = None,  # noqa: N803
-        useMathText: Optional[bool] = None,  # noqa: N803
-        useLocale: Optional[bool] = None,  # noqa: N803
+        useOffset: bool | float | None = None,  # noqa: N803
+        useMathText: bool | None = None,  # noqa: N803
+        useLocale: bool | None = None,  # noqa: N803
     ) -> None:
         super().__init__(useOffset, useMathText, useLocale)
         self.unit = unit
 
-    def __call__(self, x: float, pos: Optional[int] = None) -> str:
+    def __call__(self, x: float, pos: int | None = None) -> str:
         res = super().__call__(x, pos)
         if x == self.locs[-1]:
             res += self.unit

@@ -1,12 +1,12 @@
 from spectrometer.data import FID1D
 from spectrometer.plot import make_axes, style_axes
 from spectrometer.pulse import (
+    ConnectionSettings,
     Delay,
     NMRSequence,
     Pulse,
-    Spectrometer,
     Record,
-    ConnectionSettings,
+    Spectrometer,
 )
 
 __all__ = [

@@ -16,11 +16,16 @@ logger = logging.getLogger(__name__)
 
 def main() -> None:
     # Perform multiple spin echoes with increasing delay
-    delays_us = np.linspace(1e3, 10e3, 100)
+    delays_us = np.linspace(100, 300, 100)
     pulse_length_us = 9
     repetition_time_s = 5
     sequences = [
-        NMRSequence.spin_echo(pulse_length_us=pulse_length_us, delay_us=delay_us)
+        NMRSequence.spin_echo(
+            pulse_length_us=pulse_length_us,
+            delay_tau_us=delay_us,
+            delay_after_p2_us=30,
+            record_length_us=10_000,
+        )
         for delay_us in delays_us
     ]
     exp = Spectrometer(tx_freq=25_090_230)

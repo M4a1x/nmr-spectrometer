@@ -3,7 +3,7 @@ import datetime as dt
 import io
 import logging
 from pathlib import Path
-from typing import Optional, Self
+from typing import Self
 
 import nmrglue as ng
 import numpy as np
@@ -42,9 +42,8 @@ class FID1D:
         pulse_file: str
         | Path,  # Name of the file describing the used pulse sequence for this FID, 160 chars max
         spectrometer: str,  # Name of the spectrometer used for capturing the FID, 32 chars max
-        timestamp: Optional[
-            dt.datetime
-        ] = None,  # Use current time (UTC) as timestamp if nothing is provided
+        timestamp: dt.datetime
+        | None = None,  # Use current time (UTC) as timestamp if nothing is provided
     ) -> None:
         """Create new simple 1D FID container from time domain data
 
@@ -377,9 +376,9 @@ class FID1D:
 
     def simple_fft(
         self,
-        zero_fill_kwargs: Optional[dict | bool] = None,
-        fourier_transform_kwargs: Optional[dict | bool] = None,
-        phase_shift_kwargs: Optional[dict | bool] = None,
+        zero_fill_kwargs: dict | bool | None = None,
+        fourier_transform_kwargs: dict | bool | None = None,
+        phase_shift_kwargs: dict | bool | None = None,
         *,
         hz_scale: bool = True,
     ) -> tuple[npt.NDArray, npt.NDArray]:
