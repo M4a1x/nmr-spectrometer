@@ -1,10 +1,10 @@
-<p align="center">
+<div align="center">
   <a href="" rel="noopener">
  <img width="25%" height="auto" src="./logo.png" alt="BioNMR Group Logo"></a>
-</p>
+</div>
 
 <h3 align="center">magnETHical</h3>
-<p align="center">Building a 25MHz NMR spectrometer<br \>01.04.2023 - 30.09.2023</p>
+<div align="center">Building a 25MHz NMR spectrometer<br \>01.04.2023 - 30.09.2023</div>
 
 <div align="center">
 
@@ -15,8 +15,8 @@
 
 ---
 
-<p align="center"> magnETHical is a simple low-cost low-field 0.6T NMR spectrometer based on a RedPitaya and custom hardware. This repository contains everything to build your own. This includes simulations, specifications, full hardware descriptions and CAD designs, Python control code and reproducible measurement results.
-</p>
+<div align="center"> magnETHical is a simple low-cost low-field 0.6T NMR spectrometer based on a RedPitaya and custom hardware. This repository contains everything to build your own. This includes simulations, specifications, full hardware descriptions and CAD designs, Python control code and reproducible measurement results.
+</div>
 
 ## 📝 Table of Contents
 - [📝 Table of Contents](#-table-of-contents)
