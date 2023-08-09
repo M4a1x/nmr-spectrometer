@@ -22,7 +22,7 @@
 - [📝 Table of Contents](#-table-of-contents)
 - [🧐 About ](#-about-)
 - [🏁 Getting Started ](#-getting-started-)
-  - [Prerequisites](#prerequisites)
+  - [✅ Prerequisites](#-prerequisites)
   - [🔧 Hardware](#-hardware)
   - [🖥️ Software](#️-software)
 - [⚙️ Running the tests ](#️-running-the-tests-)
@@ -41,7 +41,7 @@ This repository seeks to provide everything needed to order, assemble and operat
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-### Prerequisites
+### ✅ Prerequisites
 Great care has been taken to only use widely available free and open-source software so that this project may be built by anyone without any software licensing fees.
 
 Throughout this README and the linked READMEs below a basic familiarity with the used software is assumed. However, anyone with some time on their hands should be able to follow them without much trouble after a very basic introduction to these programs. If you have trouble understanding any of the instructions, please feel free to open an issue - it's likely an error in this documentation and not on your side.
