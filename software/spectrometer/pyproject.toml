@@ -1,0 +1,150 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spectrometer"
+dynamic = ["version"]
+description = "Interface for controlling the ETH low-cost low-field 0.6T NMR spectrometer"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0-or-later"
+keywords = ["NMR", "spectrometer", "spectroscopy", "ETH", "low-field", "25 MHz"]
+authors = [{ name = "Maximilian Stabel", email = "mstabel@ethz.ch" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+  "numpy",
+  "scipy",
+  "matplotlib",
+  "nmrglue",
+  "marcos @ git+https://github.com/M4a1x/marcos_client.git",
+]
+
+[project.urls]
+Documentation = "https://github.com/M4a1x/nmr-spectrometer#readme"
+Issues = "https://github.com/M4a1x/nmr-spectrometer/issues"
+Source = "https://github.com/M4a1x/nmr-spectrometer"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.version]
+path = "spectrometer/__about__.py"
+
+[tool.hatch.envs.default]
+description = "Default environment"
+path = ".venv"
+dependencies = [
+  "coverage[toml]",
+  "pytest",
+  "black[jupyter]",
+  "mypy",
+  "ruff",
+  "pylint",
+  "jupyter",
+  "ipympl",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "coverage run -m pytest {args:tests}"
+cov-report = ["- coverage combine", "coverage report"]
+cov = ["test-cov", "cov-report"]
+typing = "mypy --install-types --non-interactive {args:spectrometer tests}"
+style = [
+  "black --check --diff {args:.}",
+  "ruff {args:.}",
+  "pylint {args:spectrometer tests}",
+]
+fmt = ["black {args:.}", "ruff --fix {args:.}", "style"]
+all = ["style", "typing"]
+
+[[tool.hatch.envs.all.matrix]]
+python = ["3.10", "3.11"]
+
+[tool.black]
+target-version = ["py310"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+select = [
+  "A",
+  "ARG",
+  "B",
+  "C",
+  "DTZ",
+  "E",
+  "EM",
+  "F",
+  "FBT",
+  "I",
+  "ICN",
+  "ISC",
+  "N",
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
+  "Q",
+  "RUF",
+  "S",
+  "T",
+  "TID",
+  "UP",
+  "W",
+  "YTT",
+]
+ignore = [
+  # Allow non-abstract empty methods in abstract base classes
+  "B027",
+  # Allow boolean positional values in function calls, like `dict.get(... True)`
+  "FBT003",
+  # Ignore checks for possible passwords
+  "S105",
+  "S106",
+  "S107",
+  # Ignore complexity
+  "C901",
+  "PLR0911",
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
+]
+unfixable = [
+  # Don't touch unused imports
+  "F401",
+]
+
+[tool.ruff.isort]
+known-first-party = ["spectrometer"]
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.per-file-ignores]
+# Tests can use magic values, assertions, and relative imports
+"tests/**/*" = ["PLR2004", "S101", "TID252"]
+
+[tool.ruff.pep8-naming]
+ignore-names = ["*MHz*", "*mV*"]
+
+[tool.coverage.run]
+source_pkgs = ["spectrometer", "tests"]
+branch = true
+parallel = true
+omit = ["spectrometer/__about__.py"]
+
+[tool.coverage.paths]
+spectrometer = ["spectrometer", "*/spectrometer/spectrometer"]
+tests = ["tests", "*/spectrometer/tests"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]

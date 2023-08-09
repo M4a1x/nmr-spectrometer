@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "32-channel_current_source")(type "KiCad")(uri "${KIPRJMOD}/32-channel_current_source.pretty")(options "")(descr ""))
+)

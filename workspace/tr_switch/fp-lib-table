@@ -1,4 +1,0 @@
-(fp_lib_table
-  (version 7)
-  (lib (name "tr_switch")(type "KiCad")(uri "${KIPRJMOD}/tr_switch.pretty")(options "")(descr ""))
-)
