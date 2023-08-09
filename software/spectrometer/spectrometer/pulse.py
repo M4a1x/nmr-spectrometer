@@ -17,19 +17,28 @@ be sent through the `send_sequence` and `send_sequences` methods, called on a `P
 """
 import ipaddress
 import logging
+import shutil
 import socket
+import tempfile
 import time
 from collections.abc import Iterable, Sequence
+from datetime import UTC, datetime
 from ipaddress import IPv4Address, IPv6Address
 from typing import Self
+from urllib import request
 
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
+from fabric import Connection
 from marcos import Experiment
 from marcos.local_config import config
 
 logger = logging.getLogger(__name__)
+MARCOS_EXTRAS_URL = "https://github.com/vnegnev/marcos_extras/raw/77df0e4a33cec07eb751f0b1947a6aead99e8478"
+MARCOS_SERVER_URL = (
+    "https://github.com/vnegnev/marcos_server/archive/refs/heads/master.zip"
+)
 
 # TODO: Probably better to move RX "calculation" into the PulseSequence class, especially if the
 # user wants to receive multiple times within a sequence/between pulses (currently in
@@ -158,7 +167,7 @@ class NMRSequence:
         """
         if len(tx_sequence[0]) != len(tx_sequence[1]):
             msg = (
-                "Event timestamps and rower levels must match in length. Every timestamp needs a "
+                "Event timestamps and power levels must match in length. Every timestamp needs a "
                 "corresponding power level to set the output to"
             )
             raise ValueError(msg)
@@ -561,6 +570,62 @@ class Spectrometer:
 
         return fids
 
+    def setup_fpga(self, red_pitaya_model: str = "rp-122") -> None:
+        with Connection(host=self.server_config.ip_address, user="root") as conn:
+            match conn.run("uname -n", hide=True).stdout.strip():
+                case "redpitaya":
+                    # Standard RedPitaya Image
+                    _transfer_file(
+                        from_url=f"{MARCOS_EXTRAS_URL}/marcos_fpga_{red_pitaya_model}.bit.bin",
+                        to_conn=conn,
+                        to_file="/lib/firmware/marcos_fpga.bit.bin",
+                    )
+                    _transfer_file(
+                        from_url=f"{MARCOS_EXTRAS_URL}/marcos_fpga_{red_pitaya_model}.dtbo",
+                        to_conn=conn,
+                        to_file="/lib/firmware/marcos_fpga.dtbo",
+                    )
+                    if conn.run(
+                        "[ -d '/sys/kernel/config/device-tree/overlays/full' ]",
+                        warn=True,
+                        hide=True,
+                    ):
+                        conn.run("rmdir /sys/kernel/config/device-tree/overlays/full")
+                    conn.run("echo 0 > /sys/class/fpga_manager/fpga0/flags")
+                    conn.run("mkdir /sys/kernel/config/device-tree/overlays/full")
+                    conn.run(
+                        "echo -n 'marcos_fpga.dtbo' > /sys/kernel/config/device-tree/overlays/full/path"
+                    )
+
+                case _:
+                    # Ocra image
+                    _transfer_file(
+                        from_url=f"{MARCOS_EXTRAS_URL}/marcos_fpga_{red_pitaya_model}.bit",
+                        to_conn=conn,
+                        to_file="/tmp/marcos_fpga.bit",  # noqa: S108
+                    )
+                    conn.run("cat /tmp/marcos_fpga.bit > /dev/xdevcfg")
+                    conn.run("rm /tmp/marcos_fpga.bit")
+
+    def setup_server(self) -> None:
+        with Connection(host=self.server_config.ip_address, user="root") as conn:
+            now = datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%S,%f000%z")
+            now = f"{now[:-2]}:{now[-2:]}"
+            conn.run(f"date -Ins -s '{now}'")
+
+            _transfer_file(
+                from_url="https://github.com/vnegnev/marcos_server/archive/refs/heads/master.zip",
+                to_conn=conn,
+                to_file="/tmp/marcos_server.zip",  # noqa: S108
+            )
+            with conn.cd("/tmp"):  # noqa: S108
+                conn.run("unzip marcos_server.zip")
+                conn.run("mkdir /tmp/marcos_server-master/build")
+            with conn.cd("/tmp/marcos_server-master/build"):  # noqa: S108
+                conn.run("cmake ../src")
+                conn.run("make -j2")
+                conn.run("cp marcos_server ~/")
+
     def connect(self) -> None:
         """Connect to spectrometer server (i.e. the MaRCoS server running on the RedPitaya)"""
         ip_address, port = self.server_config.socket_config
@@ -590,3 +655,10 @@ def _merge_overlapping_ranges(starts: list, ends: list) -> npt.NDArray:
     ind = np.where(np.diff(np.array(p).flatten()) <= 0)[0]
     ind = ind[ind % 2 == 1]  # this is needed for cases when x_i = y_i
     return np.delete(p, [ind, ind + 1]).reshape(-1, 2)
+
+
+def _transfer_file(from_url: str, to_conn: Connection, to_file: str) -> None:
+    with request.urlopen(from_url) as response:  # noqa: S310
+        with tempfile.TemporaryFile() as tmp_file:
+            shutil.copyfileobj(response, tmp_file)
+            to_conn.put(tmp_file, remote=to_file)

@@ -25,6 +25,7 @@ dependencies = [
   "matplotlib",
   "nmrglue",
   "marcos @ git+https://github.com/M4a1x/marcos_client.git",
+  "fabric",
 ]
 
 [project.urls]
@@ -61,7 +62,7 @@ typing = "mypy --install-types --non-interactive {args:spectrometer tests}"
 style = [
   "black --check --diff {args:.}",
   "ruff {args:.}",
-  "pylint {args:spectrometer tests}",
+  "pylint {args:spectrometer}",
 ]
 fmt = ["black {args:.}", "ruff --fix {args:.}", "style"]
 all = ["style", "typing"]
