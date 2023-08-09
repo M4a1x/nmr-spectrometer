@@ -3,7 +3,7 @@
  <img width="25%" height="auto" src="./logo.png" alt="BioNMR Group Logo"></a>
 </div>
 
-<h3 align="center">magnETHical</h3>
+<div align="center"><h3>magnETHical</h3></div>
 <div align="center">Building a 25MHz NMR spectrometer<br \>01.04.2023 - 30.09.2023</div>
 
 <div align="center">
