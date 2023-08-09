@@ -72,7 +72,7 @@ class ConnectionSettings:
         self.fpga_clock_freq = (
             fpga_clock_freq
             if fpga_clock_freq
-            else float(config["fpga_clock_freq_MHz"]) * 1e6
+            else float(config["fpga_clk_freq_MHz"]) * 1e6
         )
 
     @property
@@ -614,7 +614,7 @@ class Spectrometer:
             conn.run(f"date -Ins -s '{now}'")
 
             _transfer_file(
-                from_url="https://github.com/vnegnev/marcos_server/archive/refs/heads/master.zip",
+                from_url=MARCOS_SERVER_URL,
                 to_conn=conn,
                 to_file="/tmp/marcos_server.zip",  # noqa: S108
             )
@@ -625,6 +625,18 @@ class Spectrometer:
                 conn.run("cmake ../src")
                 conn.run("make -j2")
                 conn.run("cp marcos_server ~/")
+
+    def start_server(self) -> None:
+        with Connection(host=self.server_config.ip_address, user="root") as conn:
+            if "server" in conn.run("ps -ef | grep [m]arcos").stdout.strip():
+                msg = "MaRCoS server is already running! Kill it before starting a new instance."
+                raise RuntimeError(msg)
+            conn.run("nohup ./marcos_server &>./marcos_server.log </dev/null &")
+
+    def stop_server(self) -> None:
+        with Connection(host=self.server_config.ip_address, user="root") as conn:
+            if "server" not in conn.run("ps -ef | grep [m]arcos").stdout.strip():
+                conn.run("pkill marcos_server")
 
     def connect(self) -> None:
         """Connect to spectrometer server (i.e. the MaRCoS server running on the RedPitaya)"""
