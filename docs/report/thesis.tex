@@ -1,12 +1,32 @@
 \documentclass[
     a4paper, % Page size
-    fontsize=10pt, % Base font size
+    fontsize=11pt, % Base font size
     twoside=true, % Use different layouts for even and odd pages (in particular, if twoside=true, the margin column will be always on the outside)
 	%open=any, % If twoside=true, uncomment this to force new chapters to start on any page, not only on right (odd) pages
 	%chapterentrydots=true, % Uncomment to output dots from the chapter name to the page number in the table of contents
 	numbers=noenddot, % Comment to output dots after chapter numbers; the most common values for this option are: enddot, noenddot and auto (see the KOMAScript documentation for an in-depth explanation)
 	fontmethod=modern, % Can also use "modern" with XeLaTeX or LuaTex; "tex" is the default for PdfLaTex, and "modern" is the default for those two.
 ]{kaobook}
+
+\setromanfont[
+	%Scale=1.04
+	Numbers=Lowercase,
+]{TeX Gyre Pagella}
+\setsansfont[
+	%Scale=1
+]{Merriweather Sans}
+\setmonofont[
+	Scale=MatchLowercase,
+	AutoFakeSlant,
+]{inconsolata}
+\setmathfont[
+	mathrm=sym,
+    mathit=sym,
+    mathsf=sym,
+    mathbf=sym,
+    mathtt=sym,
+    NFSSFamily=tgpl,
+]{TeX Gyre Pagella Math}
 
 % Use English
 \usepackage{polyglossia}
