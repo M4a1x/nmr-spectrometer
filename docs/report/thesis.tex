@@ -8,6 +8,7 @@
 	fontmethod=modern, % Can also use "modern" with XeLaTeX or LuaTex; "tex" is the default for PdfLaTex, and "modern" is the default for those two.
 ]{kaobook}
 
+% Load my own additions
 \usepackage[language=english,debug=false]{ethesis}
 
 % Use English
@@ -28,14 +29,14 @@
 % Load the package for hyperreferences
 \usepackage{kaorefs}
 
-\graphicspath{{examples/documentation/images/}{images/}} % Paths in which to look for images
+\graphicspath{{images/}} % Paths in which to look for images
 
 \makeindex[columns=3, title=Alphabetical Index, intoc] % Make LaTeX produce the files required to compile the index
 
 \makeglossaries % Make LaTeX produce the files required to compile the glossary
-\input{glossary.tex} % Include the glossary definitions
+\import{./}{glossary.tex} % Include the glossary definitions
 
-\makenomenclature % Make LaTeX produce the files required to compile the nomenclature
+\makenomenclature{} % Make LaTeX produce the files required to compile the nomenclature
 
 % Reset sidenote counter at chapters
 %\counterwithin*{sidenote}{chapter}
@@ -45,7 +46,7 @@
 \begin{document}
 
 %----------------------------------------------------------------------------------------
-%	BOOK INFORMATION
+%	THESIS INFORMATION
 %----------------------------------------------------------------------------------------
 
 \title{Building a \qty{25}{\mega\hertz} NMR Spectrometer}
@@ -115,7 +116,7 @@
 %	PREFACE
 %----------------------------------------------------------------------------------------
 
-\import{chapters/}{abstract.tex}
+\import{chapters/}{abstract.tex}%
 \index{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -152,7 +153,7 @@
 %	MAIN BODY
 %----------------------------------------------------------------------------------------
 
-\mainmatter % Denotes the start of the main document content, resets page numbering and uses arabic numbers
+\mainmatter{} % Denotes the start of the main document content, resets page numbering and uses arabic numbers
 \setchapterstyle{kao} % Choose the default chapter heading style
 
 \input{chapters/introduction.tex}
@@ -184,7 +185,7 @@
 \pagelayout{wide}
 \setchapterstyle{kao}
 \chapter{Test}
-\blindtext
+\blindtext{}
 
 %----------------------------------------------------------------------------------------
 
@@ -266,7 +267,7 @@
 %	Declaration of Originality
 %----------------------------------------------------------------------------------------
 
-\cleardoubleoddpage
+\cleardoubleoddpage{}
 
 \chapter{Declaration of originality}
 
@@ -285,7 +286,7 @@ I hereby confirm that I am the sole author of the written work here enclosed and
 
 \vfill
 
-With my signature I confirm that
+With my signature, I confirm that
 \begin{itemize}
 	\item I have committed none of the forms of plagiarism described in the \enquote{\href{https://www.ethz.ch/content/dam/ethz/main/education/rechtliches-abschluesse/leistungskontrollen/plagiarism-citationetiquette.pdf}{Citation~etiquette}} information sheet.
 	\item I have documented all methods, data and processes truthfully.
