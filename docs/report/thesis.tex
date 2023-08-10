@@ -115,8 +115,8 @@
 %	PREFACE
 %----------------------------------------------------------------------------------------
 
-\input{chapters/preface.tex}
-\index{preface}
+\import{chapters/}{abstract.tex}
+\index{abstract}
 
 %----------------------------------------------------------------------------------------
 %	TABLE OF CONTENTS & LIST OF FIGURES/TABLES
@@ -263,16 +263,39 @@
 \printindex % Output the index
 
 %----------------------------------------------------------------------------------------
-%	BACK COVER
+%	Declaration of Originality
 %----------------------------------------------------------------------------------------
 
-% If you have a PDF/image file that you want to use as a back cover, uncomment the following lines
+\cleardoubleoddpage
 
-%\clearpage
-%\thispagestyle{empty}
-%\null%
-%\clearpage
-%\includepdf{cover-back.pdf}
+\chapter{Declaration of originality}
+
+I hereby confirm that I am the sole author of the written work here enclosed and that I have compiled it in my own words. Parts excepted are corrections of form and content by the supervisor.
+
+\vfill
+
+\makeatletter
+\begin{center}
+	\begin{tabular}[t]{@{}ll@{}}%
+		\textbf{Title of work}: & \@title  \\
+		\textbf{Authored by}:   & \@author \\
+	\end{tabular}
+\end{center}
+\makeatother
+
+\vfill
+
+With my signature I confirm that
+\begin{itemize}
+	\item I have committed none of the forms of plagiarism described in the \enquote{\href{https://www.ethz.ch/content/dam/ethz/main/education/rechtliches-abschluesse/leistungskontrollen/plagiarism-citationetiquette.pdf}{Citation~etiquette}} information sheet.
+	\item I have documented all methods, data and processes truthfully.
+	\item I have not manipulated any data.
+	\item I have mentioned all persons who were significant facilitators of the work.
+\end{itemize}
+
+I am aware that the work may be screened electronically for plagiarism.
+
+\signaturefield{}
 
 %----------------------------------------------------------------------------------------
 

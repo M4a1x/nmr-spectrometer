@@ -626,3 +626,26 @@ pdfdisplaydoctitle,% https://tex.stackexchange.com/a/435434/120853
         },%
 }
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A signature field with places for the date and time
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\signaturefield}[1][\@author]{%
+    % This should only occur on pages with a lot of other pages behind it, to support
+    % writing on it here.
+    % If is occurs at the beginning of the document, put it recto. At the end, verso.
+    % Else, writing and stamping on here won't have much support.
+    \vspace*{1.5cm}% Leave room for signature
+    \begin{center}
+        \begin{tabular}{%
+                % Columns widths control signature line length
+                M{12em}
+                M{4em}% Empty middle
+                M{12em}
+            }
+            \cmidrule{1-1}            \cmidrule{3-3}
+            Place, date &  & #1 \\
+        \end{tabular}
+    \end{center}
+}
