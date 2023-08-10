@@ -1,7 +1,11 @@
 \ProvidesPackage{kaorefs}
 
-% Easily label and reference elements
-% Note that \label must appear after \caption
+%----------------------------------------------------------------------------------------
+%	PACKAGE OPTIONS AND DEPENDENCIES
+%----------------------------------------------------------------------------------------
+
+% Easily label and reference elements with this package
+% Note that, in figures and tables, \label must appear after \caption
 % Load this package last
 
 % Pass this package's options to hyperref and varioref
@@ -11,12 +15,16 @@
 \ProcessOptions\relax
 
 \let\thmname\relax % Workaround to get rid of an annoying error
+\RequirePackage{amsthm} % Needed by cleveref
 \RequirePackage{varioref}
 \RequirePackage{hyperref}
 \RequirePackage[capitalise,nameinlink,noabbrev]{cleveref}
 
 
-% Language-specific strings
+%----------------------------------------------------------------------------------------
+%	LANGUAGE-SPECIFIC STRINGS
+%----------------------------------------------------------------------------------------
+
 % #LANGUAGE
 \newcommand{\chapternameshort}{}
 \newcommand{\sectionname}{}
@@ -37,70 +45,93 @@
 \newcommand{\examplename}{}
 \newcommand{\exercisename}{}
 
+\addto\captionsgerman{%
+	\renewcommand{\chapternameshort}{Kap.}
+	\renewcommand{\sectionname}{Abschnitt}
+	\renewcommand{\sectionnameshort}{Abschn.}
+	\renewcommand{\subsectionname}{Unterabschnitt}
+	\renewcommand{\subsectionnameplural}{Unterabschnitte}
+	\renewcommand{\subsectionnameshort}{Unterabschn.}
+	\renewcommand{\figurenameshort}{Abb.}
+	\renewcommand{\tablenameshort}{Tab.}
+	\renewcommand{\eqname}{Gleichung}
+	\renewcommand{\eqnameshort}{Gl.}
+	\renewcommand{\defname}{Definition}
+	\renewcommand{\assumname}{Hypothese}
+	\renewcommand{\thmname}{Satz}
+	\renewcommand{\propname}{Proposition}
+	\renewcommand{\lemmaname}{Lemma}
+	\renewcommand{\remarkname}{Bemerkung}
+	\renewcommand{\examplename}{Beispiel}
+	\renewcommand{\exercisename}{Übung}
+}
 \addto\captionsdanish{%
-  \renewcommand{\chapternameshort}{Kap.}
-  \renewcommand{\sectionname}{Sektion}
-  \renewcommand{\sectionnameshort}{Sek.}
-  \renewcommand{\subsectionname}{Undersektion}
-  \renewcommand{\subsectionnameplural}{Undersectioner}
-  \renewcommand{\subsectionnameshort}{Undersek.}
-  \renewcommand{\figurenameshort}{Fig.}
-  \renewcommand{\tablenameshort}{Tab.}
-  \renewcommand{\eqname}{Formel}
-  \renewcommand{\eqnameshort}{Frml.}
-  \renewcommand{\defname}{Definition}
-  \renewcommand{\assumname}{Hypotese}
-  \renewcommand{\thmname}{Sætning}
-  \renewcommand{\propname}{Postulat}
-  \renewcommand{\lemmaname}{Hjælpesætning}
-  \renewcommand{\remarkname}{Bemærkning}
-  \renewcommand{\examplename}{Eksempel}
-  \renewcommand{\exercisename}{Øvelse}
+	\renewcommand{\chapternameshort}{Kap.}
+	\renewcommand{\sectionname}{Sektion}
+	\renewcommand{\sectionnameshort}{Sek.}
+	\renewcommand{\subsectionname}{Undersektion}
+	\renewcommand{\subsectionnameplural}{Undersectioner}
+	\renewcommand{\subsectionnameshort}{Undersek.}
+	\renewcommand{\figurenameshort}{Fig.}
+	\renewcommand{\tablenameshort}{Tab.}
+	\renewcommand{\eqname}{Formel}
+	\renewcommand{\eqnameshort}{Frml.}
+	\renewcommand{\defname}{Definition}
+	\renewcommand{\assumname}{Hypotese}
+	\renewcommand{\thmname}{Sætning}
+	\renewcommand{\propname}{Postulat}
+	\renewcommand{\lemmaname}{Hjælpesætning}
+	\renewcommand{\remarkname}{Bemærkning}
+	\renewcommand{\examplename}{Eksempel}
+	\renewcommand{\exercisename}{Øvelse}
 }
 \addto\captionsenglish{%
-  \renewcommand{\chapternameshort}{Chap.}
-  \renewcommand{\sectionname}{Section}
-  \renewcommand{\sectionnameshort}{Sec.}
-  \renewcommand{\subsectionname}{Subsection}
-  \renewcommand{\subsectionnameplural}{Subsections}
-  \renewcommand{\subsectionnameshort}{Subsec.}
-  \renewcommand{\figurenameshort}{Fig.}
-  \renewcommand{\tablenameshort}{Tab.}
-  \renewcommand{\eqname}{Equation}
-  \renewcommand{\eqnameshort}{Eq.}
-  \renewcommand{\defname}{Definition}
-  \renewcommand{\assumname}{Assumption}
-  \renewcommand{\thmname}{Theorem}
-  \renewcommand{\propname}{Proposition}
-  \renewcommand{\lemmaname}{Lemma}
-  \renewcommand{\remarkname}{Remark}
-  \renewcommand{\examplename}{Example}
-  \renewcommand{\exercisename}{Exercise}
+	\renewcommand{\chapternameshort}{Chap.}
+	\renewcommand{\sectionname}{Section}
+	\renewcommand{\sectionnameshort}{Sec.}
+	\renewcommand{\subsectionname}{Subsection}
+	\renewcommand{\subsectionnameplural}{Subsections}
+	\renewcommand{\subsectionnameshort}{Subsec.}
+	\renewcommand{\figurenameshort}{Fig.}
+	\renewcommand{\tablenameshort}{Tab.}
+	\renewcommand{\eqname}{Equation}
+	\renewcommand{\eqnameshort}{Eq.}
+	\renewcommand{\defname}{Definition}
+	\renewcommand{\assumname}{Assumption}
+	\renewcommand{\thmname}{Theorem}
+	\renewcommand{\propname}{Proposition}
+	\renewcommand{\lemmaname}{Lemma}
+	\renewcommand{\remarkname}{Remark}
+	\renewcommand{\examplename}{Example}
+	\renewcommand{\exercisename}{Exercise}
 }
 \addto\captionsitalian{%
-  \renewcommand{\chapternameshort}{Cap.}
-  \renewcommand{\sectionname}{Sezione}
-  \renewcommand{\sectionnameshort}{Sez.}
-  \renewcommand{\subsectionname}{Sottosezione}
-  \renewcommand{\subsectionnameplural}{Sottosezioni}
-  \renewcommand{\subsectionnameshort}{Sottosezione}
-  \renewcommand{\figurenameshort}{Fig.}
-  \renewcommand{\tablenameshort}{Tab.}
-  \renewcommand{\eqname}{Equazione}
-  \renewcommand{\eqnameshort}{Eq.}
-  \renewcommand{\defname}{Definizione}
-  \renewcommand{\assumname}{Assunzione}
-  \renewcommand{\thmname}{Teorema}
-  \renewcommand{\propname}{Proposizione}
-  \renewcommand{\lemmaname}{Lemma}
-  \renewcommand{\remarkname}{Osservazione}
-  \renewcommand{\examplename}{Esempio}
-  \renewcommand{\exercisename}{Esercizio}
+	\renewcommand{\chapternameshort}{Cap.}
+	\renewcommand{\sectionname}{Sezione}
+	\renewcommand{\sectionnameshort}{Sez.}
+	\renewcommand{\subsectionname}{Sottosezione}
+	\renewcommand{\subsectionnameplural}{Sottosezioni}
+	\renewcommand{\subsectionnameshort}{Sottosezione}
+	\renewcommand{\figurenameshort}{Fig.}
+	\renewcommand{\tablenameshort}{Tab.}
+	\renewcommand{\eqname}{Equazione}
+	\renewcommand{\eqnameshort}{Eq.}
+	\renewcommand{\defname}{Definizione}
+	\renewcommand{\assumname}{Assunzione}
+	\renewcommand{\thmname}{Teorema}
+	\renewcommand{\propname}{Proposizione}
+	\renewcommand{\lemmaname}{Lemma}
+	\renewcommand{\remarkname}{Osservazione}
+	\renewcommand{\examplename}{Esempio}
+	\renewcommand{\exercisename}{Esercizio}
 }
 % Do you speak other languages? Please, feel free to add the captions!
 
 
-% Labelling commands
+%----------------------------------------------------------------------------------------
+%	LABELLING COMMANDS
+%----------------------------------------------------------------------------------------
+
 \newcommand{\labpage}[1]{\label{page:#1}}
 \newcommand{\labpart}[1]{\label{part:#1}}
 \newcommand{\labch}[1]{\label{ch:#1}}
@@ -119,7 +150,10 @@
 \newcommand{\labexercise}[1]{\label{exercise:#1}}
 
 
-% Referencing commands
+%----------------------------------------------------------------------------------------
+%	REFERENCING COMMANDS
+%----------------------------------------------------------------------------------------
+
 \newcommand{\refpage}[1]{\hyperref[#1]{\pagename}\xspace\pageref{page:#1}} % Page 84
 \newcommand{\vrefpage}[1]{\vpageref*{page:#1}} % on the following page, on page 84
 
@@ -191,7 +225,9 @@
 \newcommand{\vrefexercise}[1]{\hyperref[exercise:#1]\exercisename\xspace\vref{exercise:#1}}
 
 
-% cleveref customisation
+%----------------------------------------------------------------------------------------
+%	CLEVEREF CUSTOMISATION
+%----------------------------------------------------------------------------------------
 
 % Hyperlink the page reference as well
 \let\oldvpageref\vpageref

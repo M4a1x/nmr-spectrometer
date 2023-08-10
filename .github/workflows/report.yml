@@ -4,8 +4,10 @@ jobs:
   compile:
     runs-on: ubuntu-latest
     container:
-      image: texlive/texlive
+      image: texlive/texlive:latest
     steps:
+      - name: Install inkscape
+        run: apt-get update && apt-get install --yes --no-install-recommends inkscape
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build all LaTeX PDFs

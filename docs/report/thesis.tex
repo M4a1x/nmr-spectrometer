@@ -1,27 +1,20 @@
-%----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%----------------------------------------------------------------------------------------
-
 \documentclass[
-	a4paper, % Page size
-	fontsize=10pt, % Base font size
-	twoside=true, % Use different layouts for even and odd pages (in particular, if twoside=true, the margin column will be always on the outside)
+    a4paper, % Page size
+    fontsize=10pt, % Base font size
+    twoside=true, % Use different layouts for even and odd pages (in particular, if twoside=true, the margin column will be always on the outside)
 	%open=any, % If twoside=true, uncomment this to force new chapters to start on any page, not only on right (odd) pages
 	%chapterentrydots=true, % Uncomment to output dots from the chapter name to the page number in the table of contents
 	numbers=noenddot, % Comment to output dots after chapter numbers; the most common values for this option are: enddot, noenddot and auto (see the KOMAScript documentation for an in-depth explanation)
+	fontmethod=modern, % Can also use "modern" with XeLaTeX or LuaTex; "tex" is the default for PdfLaTex, and "modern" is the default for those two.
 ]{kaobook}
 
-% Choose the language
-\ifxetexorluatex
-	\usepackage{polyglossia}
-	\setmainlanguage{english}
-\else
-	\usepackage[english]{babel} % Load characters and hyphenation
-\fi
+% Use English
+\usepackage{polyglossia}
+\setmainlanguage{english}
 \usepackage[english=british]{csquotes}	% English quotes
 
 % Load packages for testing
-\usepackage{blindtext}
+\usepackage{blindtext} % Print text without any meaning for testing purposes
 %\usepackage{showframe} % Uncomment to show boxes around the text area, margin, header and footer
 %\usepackage{showlabels} % Uncomment to output the content of \label commands to the document where they are used
 
@@ -158,17 +151,20 @@
 
 % Turn on compatibility mode for the etoc package
 \etocstandarddisplaystyle % "toc display" as if etoc was not loaded
-\etocstandardlines % "toc lines" as if etoc was not loaded
+\etocstandardlines % "toc lines as if etoc was not loaded
 
 \tableofcontents % Output the table of contents
 
 \listoffigures % Output the list of figures
 
-% Comment both of the following lines to have the LOF and the LOT on different pages
+% Comment both of the following lines to have the LOF and the LOT on 
+% different pages
 \let\cleardoublepage\bigskip
 \let\clearpage\bigskip
 
 \listoftables % Output the list of tables
+
+\listoflstlistings % Output the list of listings
 
 \endgroup
 
@@ -204,6 +200,11 @@
 \pagelayout{margin} % Restore margins
 
 \input{chapters/appendix.tex}
+
+\pagelayout{wide}
+\setchapterstyle{kao}
+\chapter{Test}
+\blindtext
 
 %----------------------------------------------------------------------------------------
 
