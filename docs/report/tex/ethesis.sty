@@ -50,6 +50,56 @@
 \RequirePackage{import}		% Relative path imports
 \RequirePackage{pdflscape} 	% Pages in landscape format
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Scientifics Typesetting
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{siunitx}% Typesetting physical units correctly
+\sisetup{%
+    % For siunitx v3, the following block replaces what used to be
+    % `detect-all` (removed in that release, see
+    % https://github.com/josephwright/siunitx/blob/main/CHANGELOG.md#v300 ).
+    % It allows the `siunitx` output to match surrounding text/math (italics/bold/...,
+    % roman/sans/... etc. as much as possible)
+    mode=match,
+    propagate-math-font=true,
+    reset-math-version=false,
+    reset-text-family=false,
+    reset-text-series=false,
+    reset-text-shape=false,% Not part of official fix, but still added (see https://collaborating.tuhh.de/alex/latex-cookbook/-/issues/8)
+    text-family-to-math=true,
+    text-series-to-math=true,
+    %
+    % Requires siunitx v3+, see also https://tex.stackexchange.com/a/468031/120853,
+    % https://github.com/josephwright/siunitx/issues/532 :
+    text-font-command=\unitnumberfont,
+    %
+    % Alternative range-phrase:
+    % en-dash via '--', but inside \text{}, so it's not 'two minus signs'
+    % range-phrase={\,\text{--}\,},
+    range-units=single,% single: Print unit only once, at end
+    per-mode=symbol,
+}%
+% Second setup step, with locales. See also
+% https://tex.stackexchange.com/a/46979/120853
+\gappto{\blockextras@german}{%
+    \sisetup{locale=DE}
+}
+\gappto{\blockextras@english}{%
+    \sisetup{locale=US}
+}
+
+% Declare units ourselves:
+% Set as text so it stays a hyphen in math mode, as opposed to minus sign
+\DeclareSIUnit{\volpercent}{Vol.\text{-}\%}
+\DeclareSIUnit{\watthour}{Wh}%
+\DeclareSIUnit{\annum}{a}%
+\DeclareSIUnit{\atmosphere}{atm}%
+\DeclareSIUnit{\partspermillion}{ppm}%
+\DeclareSIUnit{\bar}{bar}% https://tex.stackexchange.com/a/598473/120853
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Colour
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -226,6 +276,58 @@
 % since that could be ambiguous
 \RequirePackage[shortcuts]{extdash}
 
+% Looking at CTAN, `fontawesome5' looks much more recent and packs many more symbols
+% in comparison to `fontawesome'.
+% It ships with its own font files, so no need to specify here.
+\RequirePackage{fontawesome5}% High-quality Unicode vector web symbols
+
+% Helper functions with regex to print the current font (LaTeX3)
+% Intro to LaTeX3: https://www.latex-project.org/help/documentation/usrguide3.pdf
+\ExplSyntaxOn
+\cs_generate_variant:Nn \regex_extract_once:nnN { nx }  % Generate nxN variant from nnN variant
+\NewDocumentCommand{\matchfirstword}{m}{
+    \regex_extract_once:nxN { \A \W*([A-Za-z\-\_]*).* \Z } { #1 } \l_tmpa_seq  % Match regex and store first match
+    \seq_item:Nn \l_tmpa_seq {2}  % Print the first group (first element is the whole match, i.e. everything)
+}
+\NewDocumentCommand{\matchlastnumber}{m}{
+    \regex_extract_once:nxN { \d+(\.\d*)?pt } { #1 } \l_tmpb_seq  % Match regex and store first match in \l_tmpb_seq
+    \seq_if_empty:NTF \l_tmpb_seq { \f@size{}pt } { \seq_item:Nn \l_tmpb_seq{1} }  % Print the first group, if the sequence is not empty. if it is, print \f@size
+}
+
+% Place in group '{}' to "contain" the effects of the '\normalsize' font switch
+% define new global command with \tl_gset:Nx,
+% first argument is a literal command name (N) thus without braces
+% second argument will be fully expanded at time of definition, i.e. now (x)
+{ \normalsize \tl_gset:Nx \normalfontsize {\f@size} }
+\ExplSyntaxOff
+
+% Convenience functions to show the font and fontsize
+%\NewDocumentCommand{\showfont}{}{\directlua{tex.print(font.fonts[font.current()].fullname)}}
+\NewDocumentCommand{\showfont}{}{\matchfirstword{\fontname\font}}
+\NewDocumentCommand{\mathfont}{}{\matchfirstword{\fontname\textfont0}}
+\NewDocumentCommand{\mathoperatorfont}{}{\matchfirstword{\fontname\textfont1}}
+\NewDocumentCommand{\showfontsize}{}{\matchlastnumber{\fontname\font}}
+\NewDocumentCommand{\mathfontsize}{}{\matchlastnumber{\fontname\textfont0}}
+\NewDocumentCommand{\mathoperatorfontsize}{}{\matchlastnumber{\fontname\textfont1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Headings (Chapter/Section/...)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Set KOMA fonts for book-specific elements
+% \addtokomafont{part}{\normalfont\scshape\bfseries}
+% \addtokomafont{partentry}{\normalfont\scshape\lsstyle\MakeUppercase}
+% \addtokomafont{chapter}{\normalfont\scshape\lsstyle\MakeUppercase}
+% \addtokomafont{chapterentry}{\normalfont\scshape\lsstyle\MakeUppercase}
+
+% % Set KOMA fonts for elements common to all classes
+\addtokomafont{section}{\normalfont\scshape\lsstyle\MakeLowercase}
+\addtokomafont{subsection}{\normalfont\scshape\lsstyle\MakeLowercase}
+% \addtokomafont{subsubsection}{\normalfont\scshape\lsstyle\MakeLowercase}
+% \addtokomafont{paragraph}{\normalfont\normalsize}
+% \setkomafont{descriptionlabel}{\normalfont\scshape\lsstyle\MakeLowercase}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Deliberately blank pages
@@ -253,3 +355,274 @@
 ]{blankpage.fg}
 \DeclarePageStyleByLayers{blank}{blankpage.fg}
 \KOMAoptions{cleardoublepage=blank}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% System Information Banner
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Provides \hologo and \Hologo to typeset various logos, like the LuaLaTeX logo.
+\RequirePackage{hologo}
+
+% Using fontspec, this document is incompatible with anything but XeLaTeX/LuaLaTeX.
+% LuaLaTeX can grab additional memory as needed, therefore no issues with tikz and no
+% need to tikzexternalize (!).
+% Further, contour-package and XeLaTeX are strictly incompatible (LuaLaTeX works).
+% Therefore, only ever use LuaLaTeX anyway.
+
+\RequirePackage{xstring}% String manipulation macros
+
+% Print only what occurs after 'This is ' and store in macro given in brackets at end.
+% luatexbanner is provided by luatex engine, but prints 'This is luatex XYX' usually.
+% https://tex.stackexchange.com/a/394043/120853
+\StrBehind*{\luatexbanner}{This is }[\shortbanner]
+
+% Take input and substitute strings; here: make plain LuaTeX string into pretty logo.
+% StrSubstitue has no starred variant, therefore dekotenize.
+% https://tex.stackexchange.com/a/350583/120853
+\StrSubstitute{\shortbanner}{\detokenize{LuaTeX}}{\hologo{LuaTeX}}[\prettybanner]
+
+% Generate some control sequences which contain metadata, which can be inserted e.g.
+% into the PDF metadata (e.g. to have the exact git commit SHA of a build).
+% See % https://www.overleaf.com/learn/latex/Articles/An_Introduction_to_LuaTeX_(Part_2):_Understanding_%5Cdirectlua
+% for how to inline Lua code in TeX.
+% It's an absolute abomination; the below code first passes through TeX, gets expanded,
+% then gets processed by Lua.
+% Hence, there is a lot of escaping going on.
+\directlua{%
+local function get_cmd_stdout(cmd)
+% -- See: https://stackoverflow.com/a/326715/11477374
+local fh = assert(io.popen(cmd))
+local first_line = assert(fh:read())
+fh:close()
+return first_line
+end
+%
+% -- Environment variables as used e.g. in GitLab CI.
+% -- Otherwise, e.g. when developing locally, use commands as a fallback.
+local macro_content_sources = {
+GitRefName = {
+        env = "CI_COMMIT_REF_NAME",
+        cmd = "git rev-parse --abbrev-ref HEAD",
+    },
+GitShortSHA = {
+        env = "CI_COMMIT_SHORT_SHA",
+        cmd = "git rev-parse --short HEAD",
+    },
+}
+%
+for macro_name, content_sources in pairs(macro_content_sources) do
+% -- Default: check for environment variable:
+local env = content_sources.env
+local cmd = content_sources.cmd
+% -- Default value:
+local content = "n.a."
+local env_content = os.getenv(env)
+%
+% -- Empty string evaluates to true:
+if env_content and env_content \noexpand~= "" then
+texio.write_nl("Found and will be using environment variable '"..env.."'.")
+content = env_content
+else
+texio.write_nl("Environment variable '"..env.."' undefined or empty, trying fallback command.")
+% -- luatex reference for shell escape:
+% -- "0 means disabled, 1 means anything is permitted, and 2 is restricted"
+if status.shell_escape == 1 then
+local cmd_success, cmd_stdout = pcall(get_cmd_stdout, cmd)
+if cmd_success then
+texio.write_nl("Fallback command '"..cmd.."' succeeded.")
+content = cmd_stdout
+else
+texio.write_nl("Fallback command '"..cmd.."' unsuccessful.")
+end
+else
+texio.write_nl("shell-escape is disabled, cannot use fallback command.")
+end
+end
+%
+% -- Shouldn't happen, would be programmer error, therefore assert Python-style
+assert(content, "Content not defined (neither success nor fallback present)")
+%
+% --[[
+%     The `content` can contain unprintable characters, like underscores in git branch
+%     names. Towards this end, use detokenize in the macro itself, which will make all
+%     characters printable (assigns category code 12). See also:
+%     https://www.overleaf.com/learn/latex/Articles/An_Introduction_to_LuaTeX_(Part_2):_Understanding_%5Cdirectlua
+% --]]
+local escaped_content = "\unexpanded{\\detokenize{"..content.."}"}
+%
+texio.write_nl("Providing new macro '"..macro_name.."' with contents: '"..escaped_content.."'.")
+% --  Set a macro (newcommand) see also: https://tex.stackexchange.com/a/450892/120853
+token.set_macro(macro_name, escaped_content)
+end
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Arrays / Tables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{tabu}  % For longtabu in the glossary
+
+\RequirePackage{array}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % Vert.+Hor. centered cells
+
+% A command to have a cell with vertical text as a multirow:
+\newcommand*{\multirotatecell}[2]{%
+    \multirow{#1}{*}{%
+        \begin{tabular}{@{}c@{}}%
+            \rotatebox[origin=c]{90}{#2}%
+        \end{tabular}%
+    }%
+}%
+
+\RequirePackage{tabularray} % Powerful, up and coming package
+\UseTblrLibrary{booktabs}   % Get `\toprule` etc. for tabularrays
+\UseTblrLibrary{siunitx}    % Get S column type
+
+\RequirePackage{multirow}   % Cells spanning multiple rows (like multicolumn)
+\RequirePackage{booktabs}   % Pretty tables; an absolute must
+
+% More vertical stretch for more relaxed visuals in all tables (global setting)
+\renewcommand*{\arraystretch}{1.3}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Default Titlepage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% This uses the information from \title{}, \author{}, ... to generate a titlepage
+% with the '\maketitle' command. Adapted from latex-mimosis
+\RequirePackage{datetime2}
+
+% Set the fonts for the titlepage
+\newkomafont{titlepagetext}{\normalfont\normalsize}
+\setkomafont{title}{\Large\scshape\lsstyle}
+\setkomafont{author}{\Large\scshape\lsstyle}
+\setkomafont{subtitle}{\usekomafont{titlepagetext}}
+\setkomafont{date}{\usekomafont{titlepagetext}}
+\newkomafont{born}{\usekomafont{titlepagetext}}
+\newkomafont{examiner}{\usekomafont{titlepagetext}}
+\newkomafont{supervisor}{\usekomafont{examiner}}
+\newkomafont{degree}{\usekomafont{titlepagetext}}
+
+% Make the default titlepage command
+% Don't use \\ for space _between_ paragraphs
+% use \vfill, \vspace, \bigskip, \medskip, \smallskip, ... instead
+% use \par to force a paragraph end (and then use above command)
+% If copying elsewhere, remember that spaces and newlines are handled different inside *.cls files!
+\renewcommand{\maketitle}{
+\begin{titlepage}
+    \begin{center}
+
+        \vspace*{\fill} % starred version to not discard space at beginning/end of page
+
+        {\color{titlecolor}\usekomafont{title}\@title}\par
+        \bigskip
+
+        {\usekomafont{author}\@author}\par
+        \bigskip
+
+        {
+            \usekomafont{born}
+            born on \@born\\
+            citizen of \@citizen
+            \par % Line spacing is only updated after paragraph ends
+        }
+        \vfill
+
+
+        {\usekomafont{titlepagetext}{A thesis submitted to attain the degree of}\par}
+        {
+            \usekomafont{degree}
+            \@degree\\
+            (\@shortdegree)\par
+        }
+
+
+        \vfill
+
+        \@logo\par
+        {\usekomafont{titlepagetext}{examined by}\par}
+        \smallskip
+        {\usekomafont{examiner}\@examiner\par}
+
+        \bigskip
+
+        {\usekomafont{titlepagetext}{supervised by\par}}
+        \smallskip
+        {\usekomafont{supervisor}\@supervisor\par}
+
+        \bigskip
+
+        {\usekomafont{date}\@date}
+    \end{center}
+\end{titlepage}
+
+{
+\thispagestyle{empty}
+\vspace*{\fill}
+\@lowertitleback
+}
+
+{
+\cleardoubleoddpage
+\thispagestyle{empty}
+\begin{center}
+    \vspace*{\fill}
+    \@dedication
+    \vspace*{\fill}
+\end{center}
+}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Hyperref and PDFs appearance
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{hyperref}
+\PassOptionsToPackage{pdfusetitle}{hyperref}
+\hypersetup{%
+% Unicode settings are automatically true for luatex engine,
+% don't specify manually
+colorlinks=true,		% No ugly frames, but still colored
+linkcolor=internallink, % Color of normal internal links
+citecolor=reflink,		% Color of bibliographical citations in text
+filecolor=externallink, % Color for URLs which open local files
+urlcolor=externallink,  % Color for linked URLs
+% hidelinks,			% Toggle here!
+plainpages=false,%
+pdfsubject={%
+        \@subtitle
+    },
+pdfkeywords={%
+        latex,%
+        lualatex,%
+        modern,%
+        thesis,%
+    },
+pdfcreator={%
+LuaLaTeX with hyperref,
+glossaries-extra/bib2gls
+and biblatex/biber
+[\GitRefName{}@\GitShortSHA{}]%
+},
+bookmarksnumbered=true,%
+% Default opening of the document in supported PDF viewers:
+pdfpagelayout=TwoPageRight,
+pdfdisplaydoctitle,% https://tex.stackexchange.com/a/435434/120853
+}%
+
+% Appearance of the bookmarks popup in viewers that support it
+\RequirePackage{bookmark}% Control bookmark appearance in PDF
+\bookmarksetup{%
+    open,% Open bookmark pane in PDF viewer
+    openlevel=1,% Open first two levels, hide all subsections etc. (0-indexed)
+    addtohook={%
+            \ifnum\bookmarkget{level}=0% Only print top-level (0) bookmarks bold
+                \bookmarksetup{bold}%
+            \fi%
+        },%
+}
+

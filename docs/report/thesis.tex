@@ -48,87 +48,67 @@
 %	BOOK INFORMATION
 %----------------------------------------------------------------------------------------
 
-\titlehead{The \texttt{kaobook} class}
-\subject{Use this document as a template}
-
-\title[Example and documentation of the {\normalfont\texttt{kaobook}} class]{Example and documentation \\ of the {\normalfont\texttt{kaobook}} class}
-\subtitle{Customise this page according to your needs}
-
-\author[Federico Marotta]{Federico Marotta\thanks{A \LaTeX\ lover}}
-
+\title{Building a \qty{25}{\mega\hertz} NMR Spectrometer}
+\subtitle{}
+\logo{\includegraphics[width=4cm]{ethlogo}}
+\author{Maximilian Stabel}
+\born{03.11.1995}
+\citizen{Germany}
 \date{\today}
 
-\publishers{An Awesome Publisher}
+\examiner{Prof.\ Roland Riek\\Prof.\ Sebastian Kozerke}
+\supervisor{Dr.\ Takuya Segawa}
+
+\degree{Master of Science ETH in Electrical Engineering and Information Technology}
+\shortdegree{MSc ETH EEIT}
+\idnumber{20\=/954\=/590}  % Student ID
 
 %----------------------------------------------------------------------------------------
 
 \frontmatter % Denotes the start of the pre-document content, uses roman numerals
 
 %----------------------------------------------------------------------------------------
-%	OPENING PAGE
+%	COLOPHON
 %----------------------------------------------------------------------------------------
-
-%\makeatletter
-%\extratitle{
-%	% In the title page, the title is vspaced by 9.5\baselineskip
-%	\vspace*{9\baselineskip}
-%	\vspace*{\parskip}
-%	\begin{center}
-%		% In the title page, \huge is set after the komafont for title
-%		\usekomafont{title}\huge\@title
-%	\end{center}
-%}
-%\makeatother
-
-%----------------------------------------------------------------------------------------
-%	COPYRIGHT PAGE
-%----------------------------------------------------------------------------------------
-
-\makeatletter
-\uppertitleback{\@titlehead} % Header
 
 \lowertitleback{
-	\textbf{Disclaimer}\\
-	You can edit this page to suit your needs. For instance, here we have a no copyright statement, a colophon and some other information. This page is based on the corresponding page of Ken Arroyo Ohori's thesis, with minimal changes.
+	\hypersetup{hidelinks}
+	\color{blankcolor}
+	\footnotesize
 
-	\medskip
-
-	\textbf{No copyright}\\
-	\cczero\ This book is released into the public domain using the CC0 code. To the extent possible under law, I waive all copyright and related or neighbouring rights to this work.
-
-	To view a copy of the CC0 code, visit: \\\url{http://creativecommons.org/publicdomain/zero/1.0/}
-
-	\medskip
-
-	\textbf{Colophon} \\
-	This document was typeset with the help of \href{https://sourceforge.net/projects/koma-script/}{\KOMAScript} and \href{https://www.latex-project.org/}{\LaTeX} using the \href{https://github.com/fmarotta/kaobook/}{kaobook} class.
-
-	The source code of this book is available at:\\\url{https://github.com/fmarotta/kaobook}
-
-	(You are welcome to contribute!)
-
-	\medskip
-
-	\textbf{Publisher} \\
-	First printed in May 2019 by \@publishers
+	\begin{tblr}{@{}rX[l]@{}}
+		Name                                                    & \texttt{\textbf{\jobname{}}}                                                                                                      \\
+		Compiled on                                             & \textbf{\DTMnow{}}                                                                                                                \\
+		\faIcon{git-alt}                                        & \texttt{\textbf{\GitShortSHA{}} (\GitRefName{})}                                                                                  \\
+		Engine                                                  & \prettybanner{}                                                                                                                   \\
+		\href{https://www.latex-project.org/}{\LaTeX{} Version} & \hologo{\fmtname} (\fmtversion)                                                                                                   \\
+		\glossaryname{}                                         & \texttt{makeglossaries}                                                                                                           \\
+		\bibname{}                                              & biblatex + \hologo{biber}                                                                                                         \\
+		Generator                                               & \texttt{latexmk}                                                                                                                  \\
+		Class                                                   & \href{https://sourceforge.net/projects/koma-script/}{\KOMAScriptVersion{}} + \href{https://github.com/fmarotta/kaobook/}{kaobook} \\
+		Font                                                    & \textrm{\showfont}, \textsf{Sans:\ \showfont}, \texttt{Mono:\ \showfont}                                                          \\
+		Math Font                                               & \mathfont, Operators:\ \mathoperatorfont                                                                                          \\
+		Font Size                                               & \normalfontsize{}pt                                                                                                               \\
+	\end{tblr}%
 }
-\makeatother
 
 %----------------------------------------------------------------------------------------
 %	DEDICATION
 %----------------------------------------------------------------------------------------
 
 \dedication{
-	The harmony of the world is made manifest in Form and Number, and the heart and soul and all the poetry of Natural Philosophy are embodied in the concept of mathematical beauty.\\
-	\flushright -- D'Arcy Wentworth Thompson
+	\textit{%
+		I may not have gone where I intended to go,\\
+		but I think I have ended up where I needed to be.\\
+	}%
+	--- Douglas Adams
 }
 
 %----------------------------------------------------------------------------------------
 %	OUTPUT TITLE PAGE AND PREVIOUS
 %----------------------------------------------------------------------------------------
 
-% Note that \maketitle outputs the pages before here
-
+% Includes colophon, dedication, ...
 \maketitle
 
 %----------------------------------------------------------------------------------------
