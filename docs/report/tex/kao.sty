@@ -1096,6 +1096,14 @@
 		mathtt=sym,
 		NFSSFamily=tgpl,
 	]{TeX Gyre Pagella Math}
+	\newfontfamily{\unitnumberfont}[
+		% New font family for typesetting units.
+		% Required since otherwise, numbers typeset with \qty/\num etc. from siunitx
+		% might be hanging if that feature is turned on in the main font (OldStyle numbers).
+		% To ensure these physical numbers are always upright, set Numbers:
+		Numbers=Uppercase,
+		% Color=LightCyan4,% Toggle color for debugging (should be xcolor name)
+	]{TeX Gyre Pagella}% Load existing fond, see also https://tex.stackexchange.com/a/351100/120853
 }
 \newcommand{\kao@fontmethodTex}{%
 	\RequirePackage[utf8]{inputenc} % utf8 encoding in the input (.tex) file
