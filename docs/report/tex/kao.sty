@@ -265,54 +265,54 @@
 % Header style with chapter number, chapter title, and page in the header (used throughout the document)
 \renewpagestyle{scrheadings}{%
 	{\smash{\hspace{-\headmarginparwidth}\hspace{-\headmarginparsep}\makebox[\headtotal][l]{%
-		\makebox[7\hscale][r]{\thepage}%
-		\makebox[3\hscale]{}\rule[-1mm]{0.5pt}{19\vscale-1mm}\makebox[3\hscale]{}%
-		\makebox[\headtextwidth][l]{\leftmark}}}}%
-	{\smash{\makebox[0pt][l]{\makebox[\headtotal][r]{%
-		\makebox[\headtextwidth][r]{\hfill\rightmark}%
-		\makebox[3\hscale]{}\rule[-1mm]{0.5pt}{19\vscale-1mm}\makebox[3\hscale]{}%
-		\makebox[7\hscale][l]{\thepage}}}}}%
-	{\smash{\makebox[0pt][l]{\makebox[\headtotal][r]{%
-		\makebox[\headtextwidth][r]{\hfill\rightmark}%
-		\makebox[3\hscale]{}\rule[-1mm]{0.5pt}{19\vscale-1mm}\makebox[3\hscale]{}%
-		\makebox[7\hscale][l]{\thepage}}}}}%
+					\makebox[7\hscale][r]{\thepage}%
+					\makebox[3\hscale]{}\rule[-1mm]{0.5pt}{19\vscale-1mm}\makebox[3\hscale]{}%
+					\makebox[\headtextwidth][l]{\leftmark}}}}%
+		{\smash{\makebox[0pt][l]{\makebox[\headtotal][r]{%
+						\makebox[\headtextwidth][r]{\hfill\rightmark}%
+						\makebox[3\hscale]{}\rule[-1mm]{0.5pt}{19\vscale-1mm}\makebox[3\hscale]{}%
+						\makebox[7\hscale][l]{\thepage}}}}}%
+		{\smash{\makebox[0pt][l]{\makebox[\headtotal][r]{%
+						\makebox[\headtextwidth][r]{\hfill\rightmark}%
+						\makebox[3\hscale]{}\rule[-1mm]{0.5pt}{19\vscale-1mm}\makebox[3\hscale]{}%
+						\makebox[7\hscale][l]{\thepage}}}}}%
 }{%
 	{}%
-	{}%
-	{}%
+		{}%
+		{}%
 }
 
 % Header style with neither header nor footer (used for special pages)
 \renewpagestyle{plain.scrheadings}{%
 	{}%
-	{}%
-	{}%
+		{}%
+		{}%
 }{%
 	{}%
-	{}%
-	{}%
+		{}%
+		{}%
 }
 
 % Header style with an empty header and the page number in the footer
 \newpagestyle{pagenum.scrheadings}{%
 	{}%
-	{}%
-	{}%
+		{}%
+		{}%
 }{%
 	{\makebox[\textwidth][r]{\thepage}}%
-	{\makebox[\textwidth][l]{\thepage}}%
-	{\makebox[\textwidth][l]{\thepage}}%
+		{\makebox[\textwidth][l]{\thepage}}%
+		{\makebox[\textwidth][l]{\thepage}}%
 }
 
 % Header style with an empty header and the page number in the footer
 \newpagestyle{centeredpagenum.scrheadings}{%
 	{}%
-	{}%
-	{}%
+		{}%
+		{}%
 }{%
 	{\hspace{-\headmarginparwidth}\hspace{-\headmarginparsep}\makebox[\headtotal][l]{\hfill\thepage\hfill}}
-	{\makebox[0pt][l]{\makebox[\headtotal][r]{\hfill\thepage\hfill}}}%
-	{\makebox[0pt][l]{\makebox[\headtotal][r]{\hfill\thepage\hfill}}}%
+		{\makebox[0pt][l]{\makebox[\headtotal][r]{\hfill\thepage\hfill}}}%
+		{\makebox[0pt][l]{\makebox[\headtotal][r]{\hfill\thepage\hfill}}}%
 }
 
 % Command to print a blank page
@@ -376,8 +376,8 @@
 	}%
 	\else%
 	\begin{addmargin}[0cm]{-\marginparwidth-\marginparsep}%
-	\fi%
-}{%
+		\fi%
+		}{%
 	\end{addmargin}%
 }
 
@@ -391,17 +391,17 @@
 	}%
 	\else%
 	\begin{addmargin}[-1in-\hoffset-\oddsidemargin]{-\paperwidth+1in+\hoffset+\oddsidemargin+\textwidth}%
-	\fi% 
-}{%
+		\fi% 
+		}{%
 	\end{addmargin}%
 }
 
 % Environment for a wide equation
 \NewDocumentEnvironment{wideequation}{}{%
 	\begin{widepar}%
-	\begin{equation}%
-}{%
-	\end{equation}%
+		\begin{equation}%
+			}{%
+		\end{equation}%
 	\end{widepar}%
 }
 
@@ -579,10 +579,10 @@
 	\FloatBarrier%
 	\marginskip{\kaomarginskipabove}%
 	\begin{lrbox}{\@sidenotes@marginfigurebox}%
-	\begin{minipage}{\marginparwidth}%
-		\captionsetup{type=figure}%
-}{%
-	\end{minipage}%
+		\begin{minipage}{\marginparwidth}%
+			\captionsetup{type=figure}%
+			}{%
+		\end{minipage}%
 	\end{lrbox}%
 	\marginnote[#1]{\usebox{\@sidenotes@marginfigurebox}}%
 	\marginskip{\kaomarginskipbelow}%
@@ -593,10 +593,10 @@
 	\FloatBarrier%
 	\marginskip{\kaomarginskipabove}%
 	\begin{lrbox}{\@sidenotes@margintablebox}%
-	\begin{minipage}{\marginparwidth}%
-		\captionsetup{type=table}%
-}{%
-	\end{minipage}%
+		\begin{minipage}{\marginparwidth}%
+			\captionsetup{type=table}%
+			}{%
+		\end{minipage}%
 	\end{lrbox}%
 	\marginnote[#1]{\usebox{\@sidenotes@margintablebox}}%
 	\marginskip{\kaomarginskipbelow}%
@@ -608,10 +608,10 @@
 	\FloatBarrier%
 	\marginskip{\kaomarginskipabove}%
 	\begin{lrbox}{\@sidenotes@marginlistingbox}%
-	\begin{minipage}{\marginparwidth}%
-		\captionsetup{type=lstlisting}%
-}{%
-	\end{minipage}%
+		\begin{minipage}{\marginparwidth}%
+			\captionsetup{type=lstlisting}%
+			}{%
+		\end{minipage}%
 	\end{lrbox}%
 	\marginnote[#1]{\usebox{\@sidenotes@marginlistingbox}}%
 	\marginskip{\kaomarginskipbelow}%
@@ -677,9 +677,9 @@
 \newsavebox\mycap
 \DeclareCaptionFormat{llap}{%
 	\begin{lrbox}{\mycap}%
-	\begin{minipage}{\marginparwidth}%
-	\@margin@par #1:#2#3%
-	\end{minipage}%
+		\begin{minipage}{\marginparwidth}%
+			\@margin@par #1:#2#3%
+		\end{minipage}%
 	\end{lrbox}%
 	\marginnote[0.2cm]{\usebox\mycap}%
 }
@@ -702,135 +702,135 @@
 
 % Captions for the 'margin' layout
 \NewDocumentCommand{\marginfloatsetup}{}{%
-\if@twoside%
-	\floatsetup[figure]{% Captions for figures
-		margins=hangoutside,% Put captions in the margins
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={bottom,outside},%
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,% Width of the figure equal to the width of the text
-	}%
-	\floatsetup[widefigure]{% Captions for wide figures
-		margins=hangoutside,% Put captions below the figure
-		facing=yes,%
-		capposition=bottom%
-	}%
-	\floatsetup[table]{% Captions for tables
-		margins=hangoutside,% Put captions in the margin
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={top,outside},%
-		%capbesideposition=outside,
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,% Width of the figure equal to the width of the text
-	}%
-	\floatsetup[widetable]{% Captions for wide tables
-		margins=hangoutside,% Put captions above the table
-		facing=yes,%
-		capposition=above%
-	}%
-	\floatsetup[longtable]{% Captions for longtables
-		margins=raggedright,% Overwrite the hangright setting from the `table' environment
-		%LTcapwidth=table,% Set the width of the caption equal to the table's
-	}%
-	\floatsetup[lstlisting]{% Captions for lstlistings
-		margins=hangoutside,% Put captions in the margin
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={top,outside},%
-		%capbesideposition=outside,
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,% Width of the figure equal to the width of the text
-	}%
-	\floatsetup[listing]{% Captions for listings (minted package)
-		margins=hangoutside,% Put captions in the margin
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={top,outside},%
-		%capbesideposition=outside,
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,%Width of the figure equal to the width of the text
-	}%
-	\captionsetup*[lstlisting]{%
-		format=llap,%
-		labelsep=space,%
-		singlelinecheck=no,%
-		belowskip=-0.6cm,%
-	}%
-\else%
-	\floatsetup[figure]{% Captions for figures
-		margins=hangright,% Put captions in the margins
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={bottom,right},%
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,% Width of the figure equal to the width of the text
-	}%
-	\floatsetup[widefigure]{% Captions for wide figures
-		margins=hangright,% Put captions below the figure
-		facing=no,%
-		capposition=bottom%
-	}%
-	\floatsetup[table]{% Captions for tables
-		margins=hangright,% Put captions in the margin
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={top,right},%
-		%capbesideposition=outside,
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,% Width of the figure equal to the width of the text
-	}%
-	\floatsetup[widetable]{% Captions for wide tables
-		margins=hangright,% Put captions above the table
-		facing=no,%
-		capposition=above%
-	}%
-	\floatsetup[longtable]{% Captions for longtables
-		margins=raggedright,% Overwrite the hangright setting from the `table' environment
-		%LTcapwidth=table,% Set the width of the caption equal to the table's
-	}%
-	\floatsetup[lstlisting]{% Captions for lstlisting
-		margins=hangright,% Put captions in the margin
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={top,right},%
-		%capbesideposition=outside,
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,% Width of the figure equal to the width of the text
-	}%
-	\floatsetup[listing]{% Captions for listing (minted package)
-		margins=hangright,% Put captions in the margin
-		facing=yes,%
-		capposition=beside,%
-		capbesideposition={top,right},%
-		%capbesideposition=outside,
-		capbesideframe=yes,%
-		capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
-		capbesidesep=marginparsep,%
-		floatwidth=\textwidth,% Width of the figure equal to the width of the text
-	}%
-	\captionsetup*[lstlisting]{%
-		format=llap,%
-		labelsep=space,%
-		singlelinecheck=no,%
-		belowskip=-0.6cm,%
-	}%
-\fi%
+	\if@twoside%
+		\floatsetup[figure]{% Captions for figures
+			margins=hangoutside,% Put captions in the margins
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={bottom,outside},%
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,% Width of the figure equal to the width of the text
+		}%
+		\floatsetup[widefigure]{% Captions for wide figures
+			margins=hangoutside,% Put captions below the figure
+			facing=yes,%
+			capposition=bottom%
+		}%
+		\floatsetup[table]{% Captions for tables
+			margins=hangoutside,% Put captions in the margin
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={top,outside},%
+			%capbesideposition=outside,
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,% Width of the figure equal to the width of the text
+		}%
+		\floatsetup[widetable]{% Captions for wide tables
+			margins=hangoutside,% Put captions above the table
+			facing=yes,%
+			capposition=above%
+		}%
+		\floatsetup[longtable]{% Captions for longtables
+			margins=raggedright,% Overwrite the hangright setting from the `table' environment
+			%LTcapwidth=table,% Set the width of the caption equal to the table's
+		}%
+		\floatsetup[lstlisting]{% Captions for lstlistings
+			margins=hangoutside,% Put captions in the margin
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={top,outside},%
+			%capbesideposition=outside,
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,% Width of the figure equal to the width of the text
+		}%
+		\floatsetup[listing]{% Captions for listings (minted package)
+			margins=hangoutside,% Put captions in the margin
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={top,outside},%
+			%capbesideposition=outside,
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,%Width of the figure equal to the width of the text
+		}%
+		\captionsetup*[lstlisting]{%
+			format=llap,%
+			labelsep=space,%
+			singlelinecheck=no,%
+			belowskip=-0.6cm,%
+		}%
+	\else%
+		\floatsetup[figure]{% Captions for figures
+			margins=hangright,% Put captions in the margins
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={bottom,right},%
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,% Width of the figure equal to the width of the text
+		}%
+		\floatsetup[widefigure]{% Captions for wide figures
+			margins=hangright,% Put captions below the figure
+			facing=no,%
+			capposition=bottom%
+		}%
+		\floatsetup[table]{% Captions for tables
+			margins=hangright,% Put captions in the margin
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={top,right},%
+			%capbesideposition=outside,
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,% Width of the figure equal to the width of the text
+		}%
+		\floatsetup[widetable]{% Captions for wide tables
+			margins=hangright,% Put captions above the table
+			facing=no,%
+			capposition=above%
+		}%
+		\floatsetup[longtable]{% Captions for longtables
+			margins=raggedright,% Overwrite the hangright setting from the `table' environment
+			%LTcapwidth=table,% Set the width of the caption equal to the table's
+		}%
+		\floatsetup[lstlisting]{% Captions for lstlisting
+			margins=hangright,% Put captions in the margin
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={top,right},%
+			%capbesideposition=outside,
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,% Width of the figure equal to the width of the text
+		}%
+		\floatsetup[listing]{% Captions for listing (minted package)
+			margins=hangright,% Put captions in the margin
+			facing=yes,%
+			capposition=beside,%
+			capbesideposition={top,right},%
+			%capbesideposition=outside,
+			capbesideframe=yes,%
+			capbesidewidth=\marginparwidth,% Width of the caption equal to the width of the margin
+			capbesidesep=marginparsep,%
+			floatwidth=\textwidth,% Width of the figure equal to the width of the text
+		}%
+		\captionsetup*[lstlisting]{%
+			format=llap,%
+			labelsep=space,%
+			singlelinecheck=no,%
+			belowskip=-0.6cm,%
+		}%
+	\fi%
 }
 
 % Captions for the 'wide' layout
@@ -951,29 +951,29 @@
 \let\oldsubsection\subsection	% save the old command
 
 \RenewDocumentCommand\section{s o m o}{%
-	\IfBooleanTF{#1}{%
-		\oldsection*{#3}
-		\IfNoValueF{#2}{% if TOC arg is given create a TOC entry
-			\addxcontentsline{toc}{section}[\thesection]{#2}%
-		}%
-	}{% no star given
-		\IfNoValueTF{#2}{%
-			\oldsection{#3}%
-		}{% no TOC arg
-			\oldsection[#2]{#3}%
-		}%
-		\IfNoValueTF{#4}{% optional label given, if not we do nothing
-			% \mtocsection{#3}%
-			\IfNoValueTF{#2}{%
-				\mtocsection{#3}% when no optional toc title, use main title
-			}{% no TOC arg
-				\mtocsection{#2}% when toc optional title is given, use it
-			}%
-		}{%
-			\mtocsection{#4}%
-		}%
-	}%
-}
+  \IfBooleanTF{#1}{%
+	  \oldsection*{#3}
+	  \IfNoValueF{#2}{% if TOC arg is given create a TOC entry
+		  \addxcontentsline{toc}{section}[\thesection]{#2}%
+	  }%
+  }{% no star given
+	  \IfNoValueTF{#2}{%
+		  \oldsection{#3}%
+	  }{% no TOC arg
+		  \oldsection[#2]{#3}%
+	  }%
+	  \IfNoValueTF{#4}{% optional label given, if not we do nothing
+		  % \mtocsection{#3}%
+		  \IfNoValueTF{#2}{%
+			  \mtocsection{#3}% when no optional toc title, use main title
+		  }{% no TOC arg
+			  \mtocsection{#2}% when toc optional title is given, use it
+		  }%
+	  }{%
+		  \mtocsection{#4}%
+	  }%
+  }%
+ }
 
 \RenewDocumentCommand\subsection{s o m o}{%
 	\IfBooleanTF{#1}{%
@@ -1005,67 +1005,67 @@
 % Command to print a table of contents in the margin
 \NewDocumentCommand{\margintoc}{O{\mtocshift}}{ % The first parameter is the vertical offset; by default it is \mtocshift
 	\begingroup%
-		% Move regular section and subsection to level 6 so that they won't be included and instead set let the mtoc versions take their place.
-		% Adapted from https://tex.stackexchange.com/a/133559/226693
-		\etocsetlevel{section}{6}
-		\etocsetlevel{subsection}{6}
-		\etocsetlevel{mtocsection}{1}
-		\etocsetlevel{mtocsubsection}{2}
+	% Move regular section and subsection to level 6 so that they won't be included and instead set let the mtoc versions take their place.
+	% Adapted from https://tex.stackexchange.com/a/133559/226693
+	\etocsetlevel{section}{6}
+	\etocsetlevel{subsection}{6}
+	\etocsetlevel{mtocsection}{1}
+	\etocsetlevel{mtocsubsection}{2}
 
-		% Define default widths
-		\def\margintocnumwidth{-.8mm}%
-		\def\margintocpagenumwidth{8pt}%
-		\setlength{\RaggedRightParfillskip}{0pt}
+	% Define default widths
+	\def\margintocnumwidth{-.8mm}%
+	\def\margintocpagenumwidth{8pt}%
+	\setlength{\RaggedRightParfillskip}{0pt}
 
-		% Dry run to get the needed widths
-		\etocsetstyle{mtocsection}%
-			{}%
-			{\setbox0\hbox{{\usekomafont{section}\small\etocthenumber\kern.8mm}}%%
-			 \setbox1\hbox{{\usekomafont{section}\small\etocthepage}}}%
-			{\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%%
-			 \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
-			{}%
-		\etocsetstyle{mtocsubsection}%
-			{}%
-			{\setbox0\hbox{{\usekomafont{section}\small\mdseries\etocthenumber\kern.8mm}}%
-			 \setbox1\hbox{{\usekomafont{section}\small\mdseries\etocthepage}}}%
-			{\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%
-			 \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
-			{}%
-		\etocsetstyle{subsubsection}%
-			{}%
-			{}%
-			{}%
-			{}%
-		\etocsetstyle{paragraph}%
-			{}%
-			{}%
-			{}%
-			{}%
-		\etocsettocstyle{}{%
-			\global\let\margintocnumwidth\margintocnumwidth%
-			\global\let\margintocpagenumwidth\margintocpagenumwidth%
-		}%
-		\localtableofcontents%
+	% Dry run to get the needed widths
+	\etocsetstyle{mtocsection}%
+	{}%
+	{\setbox0\hbox{{\usekomafont{section}\small\etocthenumber\kern.8mm}}%%
+		\setbox1\hbox{{\usekomafont{section}\small\etocthepage}}}%
+	{\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%%
+		\ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
+	{}%
+	\etocsetstyle{mtocsubsection}%
+	{}%
+	{\setbox0\hbox{{\usekomafont{section}\small\mdseries\etocthenumber\kern.8mm}}%
+		\setbox1\hbox{{\usekomafont{section}\small\mdseries\etocthepage}}}%
+	{\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%
+		\ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
+	{}%
+	\etocsetstyle{subsubsection}%
+	{}%
+	{}%
+	{}%
+	{}%
+	\etocsetstyle{paragraph}%
+	{}%
+	{}%
+	{}%
+	{}%
+	\etocsettocstyle{}{%
+		\global\let\margintocnumwidth\margintocnumwidth%
+		\global\let\margintocpagenumwidth\margintocpagenumwidth%
+	}%
+	\localtableofcontents%
 
-		% Set the style for section entries
-		\etocsetstyle{mtocsection}%
-		{\parindent 0pt \parskip 2.5pt \parfillskip 0pt \RaggedRight}%
-		{\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
-		{\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\etocnumber}}\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\etocpage}}\par}%
-		{}%
-		% Set the style for subsection entries
-		\etocsetstyle{mtocsubsection}%
-		{\parindent 0pt \parskip 0pt \parfillskip 0pt \RaggedRight}%
-		{\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
-		{\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\mdseries\etocnumber}}{\mdseries\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\mdseries\etocpage}}}\par}%
-		{\parskip 2.5pt}%
-		% Set the global style of the toc
-		\etocsettocstyle{\usekomafont{section}\small}{}%
-		\etocsetnexttocdepth{\themargintocdepth}%
-		% Print the table of contents in the margin
-		\marginnote[#1]{\localtableofcontents}%
-		\FloatBarrier%
+	% Set the style for section entries
+	\etocsetstyle{mtocsection}%
+	{\parindent 0pt \parskip 2.5pt \parfillskip 0pt \RaggedRight}%
+	{\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
+	{\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\etocnumber}}\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\etocpage}}\par}%
+	{}%
+	% Set the style for subsection entries
+	\etocsetstyle{mtocsubsection}%
+	{\parindent 0pt \parskip 0pt \parfillskip 0pt \RaggedRight}%
+	{\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
+	{\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\mdseries\etocnumber}}{\mdseries\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\mdseries\etocpage}}}\par}%
+	{\parskip 2.5pt}%
+	% Set the global style of the toc
+	\etocsettocstyle{\usekomafont{section}\small}{}%
+	\etocsetnexttocdepth{\themargintocdepth}%
+	% Print the table of contents in the margin
+	\marginnote[#1]{\localtableofcontents}%
+	\FloatBarrier%
 	\endgroup%
 }
 
@@ -1077,20 +1077,25 @@
 	\RequirePackage{amssymb} % Must be loaded before unicode-math
 	\RequirePackage[force]{filehook} % Fixes an error
 	\RequirePackage{unicode-math} % Math fonts in xetexorluatex
-	\setromanfont[ % Libertinus Serif font
-		Scale=1.04
-	]{Libertinus Serif}
-	\setsansfont[ % Libertinus Sans font
-		Scale=1
-	]{Libertinus Sans}
-	\setmonofont[ % Libertinus Mono font
-		Scale=.89
-	]{Liberation Mono}
-	\setmathfont{Libertinus Math} % Libertinus Math font
-	\ifluatex
-	\else
-		\RequirePackage{morewrites} % Fix some errors related to floats (not necessary with LuaLaTeX
-	\fi%
+	\setromanfont[
+		Numbers=Lowercase,
+		Scale=1.04,
+	]{TeX Gyre Pagella}
+	\setsansfont[
+		Scale=1,
+	]{Merriweather Sans}
+	\setmonofont[
+		Scale=0.89,
+		AutoFakeSlant,
+	]{inconsolata}
+	\setmathfont[
+		mathrm=sym,
+		mathit=sym,
+		mathsf=sym,
+		mathbf=sym,
+		mathtt=sym,
+		NFSSFamily=tgpl,
+	]{TeX Gyre Pagella Math}
 }
 \newcommand{\kao@fontmethodTex}{%
 	\RequirePackage[utf8]{inputenc} % utf8 encoding in the input (.tex) file
@@ -1105,16 +1110,17 @@
 }
 
 \ifthenelse%
-	{\equal{modern}{\kao@fontmethod}}{\kao@fontmethodModern}%
+{\equal{modern}{\kao@fontmethod}}{\kao@fontmethodModern}%
 {\ifthenelse%
 	{\equal{tex}{\kao@fontmethod}}{\kao@fontmethodTex}%
-{
-	\PackageError{kao}{%
-		Invalid fontmethod choice \kao@fontmethod.%
-	}{%
-		Should be one of "modern" or "tex"%
+	{
+		\PackageError{kao}{%
+			Invalid fontmethod choice \kao@fontmethod.%
+		}{%
+			Should be one of "modern" or "tex"%
+		}
 	}
-}}
+}
 
 % When using the Palatino (newpxtext) font, it is better to use a 
 % slightly larger stretch.
@@ -1179,9 +1185,9 @@
 \renewcommand\@makefntext[1]{%
 	\renewcommand\@makefnmark{%
 		\mbox{\textsuperscript{\normalfont%
-			\hyperref[\BackrefFootnoteTag]{%
-				\color{\@footnotecolor}{\@thefnmark}%
-			}}\,%
+				\hyperref[\BackrefFootnoteTag]{%
+					\color{\@footnotecolor}{\@thefnmark}%
+				}}\,%
 		}%
 	}%
 	\BHFN@OldMakefntext{#1}%
@@ -1269,7 +1275,7 @@
 \newenvironment{kaocounter}{
 	\refstepcounter{kaocounter}
 	\begin{kaobox}[title=Comment~\thekaocounter\autodot]
-}{
+		}{
 	\end{kaobox}
 }
 
@@ -1422,6 +1428,6 @@
 \newcommand{\hangstar}{\makebox[0pt][l]{*}} % Create asterisks in tables which take up no horizontal space - this improves column spacing
 
 % A command to print the current month and year (from tufte-latex)
-\newcommand{\monthyear}{\ifcase\month\or January\or February\or March\or 
-April\or May\or June\or July\or August\or September\or October\or 
-November\or December\fi\space\number\year}
+\newcommand{\monthyear}{\ifcase\month\or January\or February\or March\or
+		April\or May\or June\or July\or August\or September\or October\or
+		November\or December\fi\space\number\year}

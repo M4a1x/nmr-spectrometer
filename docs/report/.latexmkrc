@@ -13,7 +13,8 @@ ensure_path( 'BSTINPUTS', './tex//' );
 
 # Configure latexmk
 
-our  $out_dir            = 'thesis.out'; # Set output directory to reduce clutter
+our $biber = "biber --validate-datamodel %O %S";
+our $out_dir            = 'thesis.out'; # Set output directory to reduce clutter
 our @default_files      = ('thesis.tex');# Compile only thesis.tex
 our $show_time          = 1;             # Show used CPU time
 our $bibtex_use         = 1.5;           # delete .bbl if and only if .bib exists
@@ -22,7 +23,7 @@ our $pdf_mode           = 4;             # pdflatex|ps2pdf|dvipdf|lualatex|xelat
 our $postscript_mode    = 0;             # Explicitly disable postscript output
 our $dvi_mode           = 0;             # Explicitly disable dvi output
 our $rc_report          = 0;             # do not print which rc files were read
-our $max_repeat         = 7;             # default: 5
+our $max_repeat         = 10;            # default: 5
 our $warnings_as_errors = 0;             # set to 1 for debugging
 our $cleanup_includes_generated = 1;     # cleanup generated files as well
 our $clean_ext .= " acr acn alg glo gls glg %R-*.glstex %R_contourtmp*.* _minted-%R %R.ist %R.xdy";
