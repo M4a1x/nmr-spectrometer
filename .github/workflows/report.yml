@@ -1,5 +1,8 @@
 name: Compile Report PDF
-on: [push]
+on:
+  push:
+    paths:
+      - 'docs/report/*'
 jobs:
   compile:
     runs-on: ubuntu-latest
