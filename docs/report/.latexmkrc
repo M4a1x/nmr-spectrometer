@@ -14,7 +14,7 @@ ensure_path( 'BSTINPUTS', './tex//' );
 # Configure latexmk
 
 our $biber = "biber --validate-datamodel %O %S";
-our $out_dir            = 'thesis.out'; # Set output directory to reduce clutter
+our $out_dir            = 'out';         # Set output directory to reduce clutter
 our @default_files      = ('thesis.tex');# Compile only thesis.tex
 our $show_time          = 1;             # Show used CPU time
 our $bibtex_use         = 1.5;           # delete .bbl if and only if .bib exists
