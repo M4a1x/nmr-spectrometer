@@ -64,6 +64,8 @@ By default the extension compiles the project on changed files. This can lead to
 
 To manually compile your program hit `Ctrl+Shift+P` and look for `LaTeX Workshop: Build with recipe` and then choose `latexmk`.
 
+If you decide not to use the LaTeX Workshop plugin, make sure to occasionally run `latexindent.pl` from this folder (so it can find the `.latexindent.yaml` configuration). And if you add other (external) "custom dependencies" reading on [how to edit the `.latexmkrc` file](https://mirror.init7.net/ctan/support/latexmk/latexmk.pdf) might be worth it. The little known [official `.latexmkrc` examples](https://www.ctan.org/tex-archive/support/latexmk/example_rcfiles) are *very* helpful as well (or even more so).
+
 ## 📜 Note on LaTeX <a name = "note-on-latex"></a>
 If you're unfamiliar with LaTeX I warmly recommend reading up on the basics a little before delving into the code. LaTeX is quite old and a lot of results from Google can be confusing, way more complicated than they need be or plain wrong (i.e. they cause problems elsewhere). Nowadays a lot of the stuff is simpler to achieve than it used to be. A *very* good place to delve into LaTeX is [Tobias Oetiker's "The Not So Short Introduction to LaTeX"](https://tobi.oetiker.ch/lshort/lshort.pdf) which can be read front to back or just used as a reference (as I still do).
 
