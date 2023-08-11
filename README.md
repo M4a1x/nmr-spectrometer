@@ -1,9 +1,8 @@
 <div align="center">
   <a href="" rel="noopener">
- <img width="25%" height="auto" src="./logo.png" alt="BioNMR Group Logo"></a>
+ <img width="25%" height="auto" src="./logo_magnETHical.svg" alt="BioNMR Group Logo"></a>
 </div>
 
-<div align="center"><h3>magnETHical</h3></div>
 <div align="center">Building a 25MHz NMR spectrometer<br \>01.04.2023 - 30.09.2023</div>
 
 <div align="center">
@@ -105,3 +104,8 @@ Add notes about how to use the system.
 - Support
   - [**Alexander Däpp**](https://ssnmr.ethz.ch/the-group/people/person-detail.html?persid=147372) for his support and patience with the RF hardware
   - [**Tiago Ferreira das Neves**](https://chab.ethz.ch/en/the-department/people/a-z/person-detail.MjU3NzM4.TGlzdC82MDEsLTIxMzAxOTI4MDM=.html) for his electronics support
+
+<div align="center">
+  <a href="" rel="noopener">
+ <img width="25%" height="auto" src="./logo_bionmr.png" alt="BioNMR Group Logo"></a>
+</div>

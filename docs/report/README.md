@@ -29,6 +29,11 @@ To compile the project a full `texlive` installation including `xindy` is necess
 $> sudo dnf install texlive-scheme-full texlive-xindy python-pygments
 ```
 
+In Ubuntu you need
+```bash
+$> sudo apt install texlive-full xindy python-pygments
+```
+
 ### 🛠️ Setup <a name = "setup"></a>
 
 After installing the `LaTeX` environment above you'll need to checkout this repository. Either do a [partial clone](https://github.blog/2020-12-21-get-up-to-speed-with-partial-clone-and-shallow-clone/) (supported in newer git versions) or a full clone of the repository. For simplicity we will do a full clone here
