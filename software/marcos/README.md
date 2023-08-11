@@ -31,11 +31,15 @@ The [MaRCoS](https://github.com/vnegnev/marcos_server) code is written by [Vlad 
 
 ## Setup
 
+> **Note**  
+> This guide includes the full description on how to manually setup and configure the Laptop and RedPitaya with MaRCoS. To simply use the `spectrometer` Python package to perform experiments most of these instructions are unnecessary (though they won't hurt).
+> See the `spectrometer` `README.md` file for a description on how to setup and perform a measurement only.
+
 ### Console / Laptop
 
 The current system uses `Fedora 38 Workstation`, but any modern Linux (recent!) like Ubuntu or Arch would work as well. Fedora was chosen for its extensive support, backing by RedHat, and wide use of its sibling CentOS in the scientific community, while still being more recent and modern with a quick release schedule without the drawbacks of a rolling release system.
 
-After installation of the base system the [MaRCoS client](https://github.com/vnegnev/marcos_client) was set up according to the [tutorial in the wiki](https://github.com/vnegnev/marcos_extras/wiki/tut_set_up_marcos_software), _but_ in a new python (3.11.2) virtual environment as is best practice. An extended C & Electronics group was installed as well do ease development. In short:
+After installation of the base system the [MaRCoS client](https://github.com/vnegnev/marcos_client) was set up according to the [tutorial in the wiki](https://github.com/vnegnev/marcos_extras/wiki/tut_set_up_marcos_software), _but_ in a new python (3.11.2) virtual environment as is best practice. An extended C & Electronics group was installed as well to ease development. In short:
 
 #### OS Setup
 
@@ -113,7 +117,7 @@ When you then run an experiment from Python `exp.run()` and then close the serve
 python plot_csv.py ../marga/build/marga_sim.csv
 ```
 
-> **Note**
+> **Note**  
 > When running your sequences later, remember that in the `marga` simulator `tx0` is directly connected to `rx0` and `tx1` is directly connected to `rx1`. So you should see any transmitted sequence 1-to-1 received if you enabled the receive channel at the same time.
 
 ### Red Pitaya
