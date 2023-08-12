@@ -7,8 +7,13 @@
 
 <div align="center">
 
-  [![Status](https://img.shields.io/badge/status-active-success.svg)]() 
-  [![License](https://img.shields.io/badge/license-GPL--3.0-orange.svg)](/LICENSE)
+  [![status][status-badge]]() 
+  [![python - version][python-badge]][python]
+  [![project - hatch][hatch-badge]][hatch]
+  [![linting - Ruff][ruff-badge]][ruff]
+  [![code style - Black][black-badge]][black]
+  [![types - Mypy][mypy-badge]][mypy]
+  [![License][license-badge]][license]
 
 </div>
 
@@ -21,13 +26,17 @@
 - [🧐 About ](#-about-)
 - [🏁 Getting Started ](#-getting-started-)
   - [✅ Prerequisites](#-prerequisites)
-  - [🔧 Hardware](#-hardware)
-  - [🖥️ Software](#️-software)
+  - [🔧 Installation](#-installation)
+    - [Python \& Git](#python--git)
+    - [Virtual Environment](#virtual-environment)
+      - [Manual environment](#manual-environment)
+      - [Automatic creating using `Hatch`](#automatic-creating-using-hatch)
+    - [Spectrometer Packet](#spectrometer-packet)
 - [⚙️ Running the tests ](#️-running-the-tests-)
 - [🧪 Usage ](#-usage-)
 - [⛏️ Built Using ](#️-built-using-)
 - [✍️ Authors ](#️-authors-)
-- [🎉 Acknowledgements ](#-acknowledgements-)
+- [Notes](#notes)
 
 ## 🧐 About <a name = "about"></a>
 The magnETHical spectrometer is a low-cost low-field home-made NMR spectrometer developed at ETH Zürich. This project is providing an interface for setting up the spectrometer software on the RedPitaya 122-16 (SDRLab) system, sending and recording pulse sequences.
@@ -145,9 +154,7 @@ $> magnethical --version
 magnETHical v0.1.0
 ```
 
-### 🖥️ Software
-Having built the hardware above the [Python control software]() can be used to capture spectra. See the linked article for a detailed guide on how to set up the software. We recommend a dedicated computer setup to run the experiments.
-
+Congrats! The spectrometer control library is now installed!
 ## ⚙️ Running the tests <a name = "tests"></a>
 The simplest test is running marcos test without/with water. measure coil ringing
 
@@ -162,42 +169,12 @@ Add notes about how to use the system.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- Hardware
-  - [KiCAD](https://www.kicad.org/) - ECAD for PCB Design
-  - [FreeCAD](https://www.freecad.org/) - MCAD for Enclosures
-  - [OpenSCAD](https://openscad.org/) - Parametric CAD for the probe
-  - [LTSpice](https://www.analog.com/en/design-center/design-tools-and-calculators/ltspice-simulator.html) - Simulation of electronic circuits
-- Software
   - [MaRCoS](https://github.com/vnegnev/marcos_extras) - Low-level control software for the RedPitaya and FPGA
   - [NumPy](https://numpy.org/)/[SciPy](https://scipy.org/)/[Matplotlib](https://matplotlib.org/) - High-level control software and analysis
-- Documentation
-  - [LaTeX](https://www.latex-project.org/) - Advanced typesetting system
   - [Sphinx](https://www.sphinx-doc.org) - Beautiful documentation
 
 ## ✍️ Authors <a name = "authors"></a>
 - [Maximilian Stabel](mailto:mstabel@student.ethz.ch) - Idea & Initial work including Hardware & Software
-
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-- Supervisor
-  - [**Takuya Segawa**](https://chab.ethz.ch/forschung/institute-und-laboratorien/LPC/personen/people-details.html?persid=120573) for his supervision and encouragement
-- Professors
-  - [**Roland Riek**](https://chab.ethz.ch/en/the-department/people/faculty/person-detail.rriek.html) for giving me this opportunity
-  - [**Sebastian Kozerke**](https://biomed.ee.ethz.ch/institute/People/person-detail.html?persid=61641) for taking me in as his Master's student
-- Support
-  - [**Alexander Däpp**](https://ssnmr.ethz.ch/the-group/people/person-detail.html?persid=147372) for his support and patience with the RF hardware
-  - [**Tiago Ferreira das Neves**](https://chab.ethz.ch/en/the-department/people/a-z/person-detail.MjU3NzM4.TGlzdC82MDEsLTIxMzAxOTI4MDM=.html) for his electronics support
-
-<div align="center">
-  <a href="" rel="noopener">
- <img width="25%" height="auto" src="./logo_bionmr.png" alt="BioNMR Group Logo"></a>
-</div>
-
-
-
-
-# Spectrometer
-
-This project contains sequences to send to the marcos_server for NMR experiments.
 
 ## Notes
 
@@ -209,3 +186,18 @@ For analysis of later spectra:
 Other noteworthy data formats:
 - [`nmrML`](https://github.com/nmrML/nmrML) open NMR data format. read supported by NMRglue
 - [`JCAMP-DX`](http://www.jcamp-dx.org/) Open NMR data format. Read supported by NMRglue
+
+
+[status-badge]: https://img.shields.io/badge/status-active-success.svg
+[python-badge]: https://img.shields.io/badge/python->=3.7-blue
+[python]: https://www.python.org/downloads/
+[hatch]: https://github.com/pypa/hatch
+[hatch-badge]: https://img.shields.io/badge/%F0%9F%A5%9A-Hatch-4051b5.svg
+[ruff]: https://github.com/charliermarsh/ruff
+[ruff-badge]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v0.json
+[black]: https://github.com/psf/black
+[black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
+[mypy]: https://github.com/python/mypy
+[mypy-badge]: https://img.shields.io/badge/types-Mypy-blue.svg
+[license-badge]: https://img.shields.io/badge/license-GPL--3.0-orange.svg
+[license]: /LICENSE
