@@ -572,12 +572,51 @@ class Spectrometer:
 
         return fids
 
-    def setup_fpga(self, red_pitaya_model: str = "rp-122") -> None:
-        if self.server_running():
-            logger.warning("MaRCoS server is already running! Stopping server...")
-            self.stop_server()
+    def connect(self) -> None:
+        """Connect to spectrometer server (i.e. the MaRCoS server running on the RedPitaya)"""
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5)  # 5s timeout for all commands
+        sock.connect(self.server_config.socket_config)
+        self.socket = sock
 
-        with Connection(host=self.server_config.ip_address, user="root") as conn:
+    def disconnect(self) -> None:
+        """Shutdown the connection (by first sending a FIN/EOF to the server) and then try to close
+        the socket.
+
+        Note that the OS level socket might not be deallocated if other processes still
+        have an open handle to it.
+        """
+        # https://docs.python.org/3/howto/sockets.html#disconnecting
+        self.socket.shutdown(socket.SHUT_RDWR)
+        self.socket.close()
+
+    def __del__(self) -> None:
+        self.disconnect()
+        self.stop_server()
+
+class Server:
+    def __init__(self, ip_address: IPv4Address | IPv6Address | None = None, port: int | None = None) -> None:
+        """Create new connection the the RedPitaya for managing the server
+
+        Args:
+            ip_address (IPv4Address | IPv6Address, optional): IP address of the spectrometer. If
+            None, tries to load address from config. Defaults to None.
+            port (int, optional): Network Port of the spectrometer. If None, tries to load the port
+            from config. Defaults to None.
+        """
+        self.ip_address = (
+            ip_address
+            if ip_address
+            else ipaddress.ip_address(config["server"]["ip_address"])
+        )
+        self.port = port if port else int(config["server"]["port"])
+
+    def flash_fpga(self, red_pitaya_model: str = "rp-122") -> None:
+        if self.is_running():
+            logger.warning("MaRCoS server is already running! Stopping server...")
+            self.stop()
+
+        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
             if _file_exists(conn, "/opt/redpitaya/version.txt"):
                 # Standard RedPitaya Image
                 _transfer_file(
@@ -608,12 +647,12 @@ class Spectrometer:
                     "echo -n 'marcos_fpga.dtbo' > /sys/kernel/config/device-tree/overlays/full/path"
                 )
 
-    def setup_server(self) -> None:
-        if self.server_running():
+    def setup(self) -> None:
+        if self.is_running():
             logger.warning("MaRCoS server is already running! Stopping server...")
-            self.stop_server()
+            self.stop()
 
-        with Connection(host=self.server_config.ip_address, user="root") as conn:
+        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
             now = datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%S,%f000%z")
             now = f"{now[:-2]}:{now[-2:]}"
             conn.run(f"date -Ins -s '{now}'", hide=True)
@@ -631,47 +670,26 @@ class Spectrometer:
                 conn.run("make -j2", hide=True)
                 conn.run("cp marcos_server ~/")
 
-    def start_server(self) -> None:
-        if self.server_running():
+    def start(self) -> None:
+        if self.is_running():
             logger.warning("MaRCoS server is already running! Restarting...")
-            self.stop_server()
+            self.stop()
 
-        with Connection(host=self.server_config.ip_address, user="root") as conn:
+        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
             conn.run("nohup ./marcos_server &>./marcos_server.log </dev/null &")
 
-    def stop_server(self) -> None:
-        if self.server_running():
-            with Connection(host=self.server_config.ip_address, user="root") as conn:
+    def stop(self) -> None:
+        if self.is_running():
+            with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
                 conn.run("pkill marcos_server")
             logger.info("Server stopped")
         else:
             logger.warning("Server is not running! Skipping...")
 
-    def server_running(self) -> bool:
-        with Connection(host=self.server_config.ip_address, user="root") as conn:
+    def is_running(self) -> bool:
+        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
             return bool(conn.run("pgrep marcos", warn=True, hide=True).stdout.strip())
 
-    def connect(self) -> None:
-        """Connect to spectrometer server (i.e. the MaRCoS server running on the RedPitaya)"""
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(5)  # 5s timeout for all commands
-        sock.connect(self.server_config.socket_config)
-        self.socket = sock
-
-    def disconnect(self) -> None:
-        """Shutdown the connection (by first sending a FIN/EOF to the server) and then try to close
-        the socket.
-
-        Note that the OS level socket might not be deallocated if other processes still
-        have an open handle to it.
-        """
-        # https://docs.python.org/3/howto/sockets.html#disconnecting
-        self.socket.shutdown(socket.SHUT_RDWR)
-        self.socket.close()
-
-    def __del__(self) -> None:
-        self.disconnect()
-        self.stop_server()
 
 
 def _merge_overlapping_ranges(starts: list, ends: list) -> npt.NDArray:

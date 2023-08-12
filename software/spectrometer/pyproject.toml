@@ -33,6 +33,9 @@ Documentation = "https://github.com/M4a1x/nmr-spectrometer#readme"
 Issues = "https://github.com/M4a1x/nmr-spectrometer/issues"
 Source = "https://github.com/M4a1x/nmr-spectrometer"
 
+[project.scripts]
+magnethical = "spectrometer.cli:main"
+
 [tool.hatch.metadata]
 allow-direct-references = true
 

@@ -7,6 +7,7 @@ from spectrometer.pulse import (
     Pulse,
     Record,
     Spectrometer,
+    Server,
 )
 
 __all__ = [
@@ -19,4 +20,5 @@ __all__ = [
     "Delay",
     "Pulse",
     "Record",
+    "Server",
 ]
