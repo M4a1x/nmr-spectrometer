@@ -112,6 +112,59 @@
 \DeclareSIUnit{\partspermillion}{ppm}%
 \DeclareSIUnit{\bar}{bar}% https://tex.stackexchange.com/a/598473/120853
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tikz + Plots
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{pgfplots}		% Also loads Tikz
+\pgfplotsset{compat=1.18}       % Set compatibility version. Can be updated as required
+\RequirePackage{pgfplotstable}	% For advanced table calcs, e.g. 'y expr' to mathematically process input data:
+\RequirePackage[edges]{forest}	% Comprehensive trees
+\RequirePackage{tikz-3dplot}
+\RequirePackage[european, siunitx]{circuitikz}
+
+% Only use libraries as needed to keep compilation times low
+\usetikzlibrary{
+    positioning,	% Relative positioning etc.
+    calc,			% Calculate distances, coordinates etc.
+    shapes, 		% For cross out
+    backgrounds,	% Draw on background layer
+    fit,			% Fit new node around existing coordinates
+    decorations,
+    arrows,
+    arrows.spaced,
+    intersections,
+    trees,
+    circuits.ee.IEC,% Electrical engineering circuits lib
+    patterns,
+    3d,
+    tikzmark,		% Marks/coordinates at arbitrary positions
+}
+\usepgfplotslibrary{
+    colorbrewer,
+    units,
+    dateplot,
+    fillbetween,
+    groupplots,
+}
+
+% Print a contour around letters, e.g. black text with a white border on some noisy
+% background, so that text remains legible.
+% NOT COMPATIBLE WITH XELATEX! Requires pdflatex or lualatex (our case)
+\RequirePackage[outline]{contour}
+\contourlength{0.12em}
+
+\newcommand*{\ctrw}[1]{% Black text, white contour
+    \hypersetup{hidelinks}% Hide links, which might be colored
+    \contour{white}{\textcolor{black}{#1}}%
+}%
+
+\newcommand*{\ctrb}[1]{% White text, black contour
+    \hypersetup{hidelinks}% Hide links, which might be colored
+    \contour{black}{\textcolor{white}{#1}}%
+}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Colour
