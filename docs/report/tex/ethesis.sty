@@ -48,7 +48,7 @@
 % Use English
 \RequirePackage{polyglossia}
 \setmainlanguage{english}
-\RequirePackage[english=british]{csquotes}
+\RequirePackage[english=british,autostyle=true]{csquotes}
 \RequirePackage[\ETH@language]{tracklang}  % Language Tracking, i.e. what has polyglossia been requested to use?
 
 
@@ -58,8 +58,10 @@
 
 \RequirePackage{scrhack}	% Fix packages incompatible with KOMA features
 \RequirePackage{etoolbox}  	% Programming facilities
+\RequirePackage{xpatch}     % Enhanced version of etoolbox
 \RequirePackage{import}		% Relative path imports
 \RequirePackage{pdflscape} 	% Pages in landscape format
+\RequirePackage{xspace}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,7 +118,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load this before unicode-math font specifications to make colors available there
-\RequirePackage{xcolor}
+\RequirePackage[usenames,dvipsnames]{xcolor}
 
 % ETH color scheme
 % https://ethz.ch/staffnet/en/service/communication/corporate-design/farbe.html
@@ -292,6 +294,41 @@
 % It ships with its own font files, so no need to specify here.
 \RequirePackage{fontawesome5}% High-quality Unicode vector web symbols
 
+% Redefine modern kaofonts
+\RenewDocumentCommand{\kao@fontmethodModern}{}{%
+    \RequirePackage{amssymb}         % Must be loaded before unicode-math
+    \RequirePackage[force]{filehook} % Fixes an error
+    \RequirePackage{unicode-math}    % Math fonts in xetexorluatex
+    \setromanfont[
+        Numbers=Lowercase,
+        Scale=1.04,
+    ]{TeX Gyre Pagella}
+    \setsansfont[
+        Scale=1,
+    ]{Merriweather Sans}
+    \setmonofont[
+        Scale=0.89,
+        AutoFakeSlant,
+    ]{inconsolata}
+    \setmathfont[
+        mathrm=sym,
+        mathit=sym,
+        mathsf=sym,
+        mathbf=sym,
+        mathtt=sym,
+        NFSSFamily=tgpl,
+    ]{TeX Gyre Pagella Math}
+    \newfontfamily{\unitnumberfont}[
+        % New font family for typesetting units.
+        % Required since otherwise, numbers typeset with \qty/\num etc. from siunitx
+        % might be hanging if that feature is turned on in the main font (OldStyle numbers).
+        % To ensure these physical numbers are always upright, set Numbers:
+        Numbers=Uppercase,
+        % Color=LightCyan4,% Toggle color for debugging (should be xcolor name)
+    ]{TeX Gyre Pagella}% Load existing fond, see also https://tex.stackexchange.com/a/351100/120853
+}
+\kao@fontmethodModern
+
 % Helper functions with regex to print the current font (LaTeX3)
 % Intro to LaTeX3: https://www.latex-project.org/help/documentation/usrguide3.pdf
 \ExplSyntaxOn
@@ -327,18 +364,33 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Set KOMA fonts for book-specific elements
-% \addtokomafont{part}{\normalfont\scshape\bfseries}
-% \addtokomafont{partentry}{\normalfont\scshape\lsstyle\MakeUppercase}
-% \addtokomafont{chapter}{\normalfont\scshape\lsstyle\MakeUppercase}
-% \addtokomafont{chapterentry}{\normalfont\scshape\lsstyle\MakeUppercase}
+\addtokomafont{part}{\normalfont\scshape\lsstyle\bfseries}
+\addtokomafont{partentry}{\normalfont\scshape\lsstyle\bfseries}
+\addtokomafont{chapter}{\normalfont\scshape\lsstyle}
+\addtokomafont{chapterentry}{\normalfont\scshape\lsstyle}
 
-% % Set KOMA fonts for elements common to all classes
-\addtokomafont{section}{\normalfont\scshape\lsstyle}
-\addtokomafont{subsection}{\normalfont\scshape\lsstyle}
-% \addtokomafont{subsubsection}{\normalfont\scshape\lsstyle\MakeLowercase}
-% \addtokomafont{paragraph}{\normalfont\normalsize}
-% \setkomafont{descriptionlabel}{\normalfont\scshape\lsstyle\MakeLowercase}
+% Set KOMA fonts for elements common to all classes
+\addtokomafont{section}{\normalfont\scshape\lsstyle}%\MakeLowercase}
+\addtokomafont{subsection}{\normalfont\scshape\lsstyle}%\MakeLowercase}
+\addtokomafont{subsubsection}{\normalfont\scshape\lsstyle}%\MakeLowercase}
+\addtokomafont{paragraph}{\normalfont\normalsize}
+\setkomafont{descriptionlabel}{\normalfont\scshape\lsstyle}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Graphics
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{graphicx}
+\graphicspath{{images/}{figures/}{./}} % Paths in which to look for images
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Penalties
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\clubpenalty         = 10000  % No single line at the end of a page
+\widowpenalty        = 10000  % No single line at the beginning of a page
+\displaywidowpenalty = 10000  % No single line of an equation on a new page
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Deliberately blank pages
@@ -587,6 +639,76 @@ end
 }
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Redefine Kaobook's Margin TOC
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\RenewDocumentCommand{\margintoc}{O{\mtocshift}}{ % The first parameter is the vertical offset; by default it is \mtocshift
+    \begingroup%
+    % Move regular section and subsection to level 6 so that they won't be included and instead set let the mtoc versions take their place.
+    % Adapted from https://tex.stackexchange.com/a/133559/226693
+    \etocsetlevel{section}{6}
+    \etocsetlevel{subsection}{6}
+    \etocsetlevel{mtocsection}{1}
+    \etocsetlevel{mtocsubsection}{2}
+
+    % Define default widths
+    \def\margintocnumwidth{8mm}% was -.8mm before  <--- CHANGE HERE
+    \def\margintocpagenumwidth{8pt}%
+    \setlength{\RaggedRightParfillskip}{0pt}
+
+    % Dry run to get the needed widths
+    \etocsetstyle{mtocsection}%
+    {}%
+    {\setbox0\hbox{{\usekomafont{section}\small\etocthenumber\kern.8mm}}%%
+        \setbox1\hbox{{\usekomafont{section}\small\etocthepage}}}%
+    {\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%%
+        \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
+    {}%
+    \etocsetstyle{mtocsubsection}%
+    {}%
+    {\setbox0\hbox{{\usekomafont{section}\small\mdseries\etocthenumber\kern.8mm}}%
+        \setbox1\hbox{{\usekomafont{section}\small\mdseries\etocthepage}}}%
+    {\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%
+        \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
+    {}%
+    \etocsetstyle{subsubsection}%
+    {}%
+    {}%
+    {}%
+    {}%
+    \etocsetstyle{paragraph}%
+    {}%
+    {}%
+    {}%
+    {}%
+    \etocsettocstyle{}{%
+        \global\let\margintocnumwidth\margintocnumwidth%
+        \global\let\margintocpagenumwidth\margintocpagenumwidth%
+    }%
+    \localtableofcontents%
+
+    % Set the style for section entries
+    \etocsetstyle{mtocsection}%
+    {\parindent 0pt \parskip 2.5pt \parfillskip 0pt \RaggedRight}%
+    {\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
+    {\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\etocnumber}}\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\etocpage}}\par}%
+    {}%
+    % Set the style for subsection entries
+    \etocsetstyle{mtocsubsection}%
+    {\parindent 0pt \parskip 0pt \parfillskip 0pt \RaggedRight}%
+    {\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
+    {\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\mdseries\etocnumber}}{\mdseries\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\mdseries\etocpage}}}\par}%
+    {\parskip 2.5pt}%
+    % Set the global style of the toc
+    \etocsettocstyle{\usekomafont{section}\small}{}%
+    \etocsetnexttocdepth{\themargintocdepth}%
+    % Print the table of contents in the margin
+    \marginnote[#1]{\localtableofcontents}%
+    \FloatBarrier%
+    \endgroup%
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Hyperref and PDFs appearance
