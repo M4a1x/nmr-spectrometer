@@ -30,8 +30,6 @@
 % \DeclareOption*{\PackageWarning{examplepackage}{Unknown '\CurrentOption'}}
 % \ProcessOptions\relax  % Execute above options
 
-\RequirePackage[\ETH@language]{tracklang}  % Language Tracking, i.e. what has polyglossia been requested to use?
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Debug
@@ -42,6 +40,16 @@
     \RequirePackage{showlabels} % Output the content of \label commands to the document where they are used
     \KOMAoptions{draft=true}		% Print markers for overfull boxes/lines
 \fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Set language
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Use English
+\RequirePackage{polyglossia}
+\setmainlanguage{english}
+\RequirePackage[english=british]{csquotes}
+\RequirePackage[\ETH@language]{tracklang}  % Language Tracking, i.e. what has polyglossia been requested to use?
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -325,8 +333,8 @@
 % \addtokomafont{chapterentry}{\normalfont\scshape\lsstyle\MakeUppercase}
 
 % % Set KOMA fonts for elements common to all classes
-\addtokomafont{section}{\normalfont\scshape\lsstyle\MakeLowercase}
-\addtokomafont{subsection}{\normalfont\scshape\lsstyle\MakeLowercase}
+\addtokomafont{section}{\normalfont\scshape\lsstyle}
+\addtokomafont{subsection}{\normalfont\scshape\lsstyle}
 % \addtokomafont{subsubsection}{\normalfont\scshape\lsstyle\MakeLowercase}
 % \addtokomafont{paragraph}{\normalfont\normalsize}
 % \setkomafont{descriptionlabel}{\normalfont\scshape\lsstyle\MakeLowercase}
