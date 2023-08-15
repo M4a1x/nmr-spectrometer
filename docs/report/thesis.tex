@@ -1,3 +1,4 @@
+% TODO: ETH colors
 \documentclass[
     a4paper, 				% Page size
     fontsize=11pt, 			% Base font size
@@ -16,7 +17,7 @@
 ]{ethesis}
 
 \usepackage{blindtext} 					% Print text without any meaning for testing purposes
-\usepackage{kaobiblio}  				% Load special bib packages
+\usepackage[style=ieee]{kaobiblio}  				% Load special bib packages
 \addbibresource{thesis.bib} 			% Bibliography file
 \usepackage[framed=true]{kaotheorems}	% Load special math packages, incl. theorem envs
 \usepackage{kaorefs}  					% Load special hyperref packages
@@ -147,15 +148,19 @@
 \import{chapters/}{introduction.tex}
 \import{chapters/}{background.tex}
 \import{chapters/}{methods.tex}
-\import{chapters/}{results.tex}
-\import{chapters/}{discussion.tex}
+\import{chapters/}{results-discussion.tex}
 \import{chapters/}{conclusion.tex}
 
+\appendix % From here onwards, chapters are numbered with letters, as is the appendix convention
 
+\pagelayout{wide} % No margins
+\addpart{Appendix}
+\pagelayout{margin} % Restore margins
+
+\import{chapters/}{appendix.tex}
 
 %%% KAO stuff - Remove later!
 \import{chapters/kao/}{introduction.tex}
-
 \pagelayout{wide} % No margins
 \addpart{Class Options, Commands and Environments}
 \pagelayout{margin} % Restore margins
