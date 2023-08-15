@@ -1077,33 +1077,20 @@
 	\RequirePackage{amssymb} % Must be loaded before unicode-math
 	\RequirePackage[force]{filehook} % Fixes an error
 	\RequirePackage{unicode-math} % Math fonts in xetexorluatex
-	\setromanfont[
-		Numbers=Lowercase,
-		Scale=1.04,
-	]{TeX Gyre Pagella}
-	\setsansfont[
-		Scale=1,
-	]{Merriweather Sans}
-	\setmonofont[
-		Scale=0.89,
-		AutoFakeSlant,
-	]{inconsolata}
-	\setmathfont[
-		mathrm=sym,
-		mathit=sym,
-		mathsf=sym,
-		mathbf=sym,
-		mathtt=sym,
-		NFSSFamily=tgpl,
-	]{TeX Gyre Pagella Math}
-	\newfontfamily{\unitnumberfont}[
-		% New font family for typesetting units.
-		% Required since otherwise, numbers typeset with \qty/\num etc. from siunitx
-		% might be hanging if that feature is turned on in the main font (OldStyle numbers).
-		% To ensure these physical numbers are always upright, set Numbers:
-		Numbers=Uppercase,
-		% Color=LightCyan4,% Toggle color for debugging (should be xcolor name)
-	]{TeX Gyre Pagella}% Load existing fond, see also https://tex.stackexchange.com/a/351100/120853
+	\setromanfont[ % Libertinus Serif font
+		Scale=1.04
+	]{Libertinus Serif}
+	\setsansfont[ % Libertinus Sans font
+		Scale=1
+	]{Libertinus Sans}
+	\setmonofont[ % Libertinus Mono font
+		Scale=.89
+	]{Liberation Mono}
+	\setmathfont{Libertinus Math} % Libertinus Math font
+	\ifluatex
+	\else
+		\RequirePackage{morewrites} % Fix some errors related to floats (not necessary with LuaLaTeX
+	\fi%
 }
 \newcommand{\kao@fontmethodTex}{%
 	\RequirePackage[utf8]{inputenc} % utf8 encoding in the input (.tex) file
@@ -1127,8 +1114,7 @@
 		}{%
 			Should be one of "modern" or "tex"%
 		}
-	}
-}
+	}}
 
 % When using the Palatino (newpxtext) font, it is better to use a 
 % slightly larger stretch.
