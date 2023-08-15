@@ -104,7 +104,7 @@
 %	PREFACE
 %----------------------------------------------------------------------------------------
 
-\import{chapters/}{abstract.tex}%
+\import{chapters/kao/}{abstract.tex}%
 \index{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -144,23 +144,23 @@
 \mainmatter{} % Denotes the start of the main document content, resets page numbering and uses arabic numbers
 \setchapterstyle{kao} % Choose the default chapter heading style
 
-\input{chapters/introduction.tex}
+\import{chapters/kao/}{introduction.tex}
 
 \pagelayout{wide} % No margins
 \addpart{Class Options, Commands and Environments}
 \pagelayout{margin} % Restore margins
 
-\input{chapters/options.tex}
-\input{chapters/textnotes.tex}
-\input{chapters/figsntabs.tex}
-\input{chapters/references.tex}
+\import{chapters/kao/}{options.tex}
+\import{chapters/kao/}{textnotes.tex}
+\import{chapters/kao/}{figsntabs.tex}
+\import{chapters/kao/}{references.tex}
 
 \pagelayout{wide} % No margins
 \addpart{Design and Additional Features}
 \pagelayout{margin} % Restore margins
 
-\input{chapters/layout.tex}
-\input{chapters/mathematics.tex}
+\import{chapters/kao/}{layout.tex}
+\import{chapters/kao/}{mathematics.tex}
 
 \appendix % From here onwards, chapters are numbered with letters, as is the appendix convention
 
@@ -168,7 +168,7 @@
 \addpart{Appendix}
 \pagelayout{margin} % Restore margins
 
-\input{chapters/appendix.tex}
+\import{chapters/kao/}{appendix.tex}
 
 \pagelayout{wide}
 \setchapterstyle{kao}
