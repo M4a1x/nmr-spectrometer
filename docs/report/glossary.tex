@@ -1,9 +1,30 @@
+% used with \gls
 \newglossaryentry{computer}{
 	name=computer,
 	description={is a programmable machine that receives input, stores and manipulates data, and provides output in a useful format}
+}
+\newglossaryentry{MR}{
+	name=Magnetic Resonance,
+	description={is a phenomenon where atomic nuclei in a strong constant magnetic field, excited by a second oscillating magnetic field of correct frequency resonate and emit a corresponding electromagnetic signal}
+}
+\newglossaryentry{NMR}{
+	name=Nuclear Magnetic Resonance spectroscopy,
+	description={is a spectroscopic technique to observe shifts in magnetic field strengths in atomic nuclei}
+}
+\newglossaryentry{CW-NMR}{
+	name=Continous Wave Nuclear Magnetic Resonance spectroscopy,
+	description={is an \gls{NMR} experiment performed by slowly varying the excitation frequency and observing the resonance behaviour of nuclei inside the sample}
+}
+\newglossaryentry{FT-NMR}{
+	name=Fourier Transform Nuclear Magnetic Resonance spectroscopy,
+	description={Instead of slowly varying the frequency as in \gls{CW-NMR}, a single pulse of a given length with a fixed frequency is sent. According to Fourier's theory, this \enquote{smears} the frequency and excites nuclei with different resonant frequencies simultaneously}
 }
 
 % Glossary entries (used in text with e.g. \acrfull{fpsLabel} or \acrshort{fpsLabel})
 \newacronym[longplural={Frames per Second}]{fpsLabel}{FPS}{Frame per Second}
 \newacronym[longplural={Tables of Contents}]{tocLabel}{TOC}{Table of Contents}
 
+\newacronym{mr}{MR}{\gls{MR}}
+\newacronym{nmr}{NMR}{\gls{NMR}}
+\newacronym{ftnmr}{FT-NMR}{\gls{FT-NMR}}
+\newacronym{cwnmr}{CW-NMR}{\gls{CW-NMR}}
