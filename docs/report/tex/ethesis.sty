@@ -435,7 +435,62 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \RequirePackage{graphicx}
-\graphicspath{{images/}{figures/}{./}} % Paths in which to look for images
+\graphicspath{{images/}{figures/}{pictures/}{plots/}{schematics/}{./}{data/}}  % Paths in which to look for images
+
+\RequirePackage{svg}
+% See also:
+% https://tex.stackexchange.com/a/158612/120853.
+% pdftexcmds package etc. no longer seems necessary.
+% svg package documentation states that it is a dependency, but done automatically.
+% https://tex.stackexchange.com/a/74693/120853
+
+% Build failed on my system due to lack of the 'canberra' module,
+% see for a fix: https://askubuntu.com/a/872397/978477
+
+% Running the document to generate the PDF and PDF_TEX file from the original SVG
+% will require SHELL ESCAPE (--shell-escape), aka elevation.
+% However, after the auxiliary images have been created, they only need to be input;
+% shell-escape will no longer be required.
+\svgsetup{%
+    inkscapepath=svgsubdir,% Put into subdirectory of where original SVG was found
+    % In most cases, we include SVGs that contain no text, then add it in a
+    % tikzpicture overlay. Therefore, don't generate *.pdf_tex file.
+    % Toggle this back to true wherever needed, on a per-file basis
+    inkscapelatex=false,
+}
+
+% When placing nodes over included SVGs using Tikz,
+% we require some help to debug the positions:
+\newcommand*{\debugtikzsvg}{%
+    % This has to be evoked within a TikZ scope of:
+    % `\begin{scope}[x={(image.south east)},y={(image.north west)}]`
+    % The image we invoke the grid "on top of" needs to be labelled "image":
+    \draw[help lines, xstep=0.02,ystep=0.02, opacity=0.5]
+    (image.south west) grid (image.north east);
+    \draw[gray, thick, xstep=0.1,ystep=0.1, opacity=0.8]
+    (image.south west) grid (image.north east);
+    %
+    \foreach \posfraction in {%
+            0, 0.1, ...,1%
+        }{%
+            \foreach \startpoint/\endpoint/\nodeorientation in {% 2D-grid
+                    south west/south east/below,%
+                    north west/north east/above,%
+                    south east/north east/right,%
+                    south west/north west/left%
+                }{
+                    \node[\nodeorientation, opacity=0.5]
+                    at ($(image.\startpoint)!\posfraction!(image.\endpoint)$)
+                    {%
+                        \pgfmathparse{int(\posfraction*10)}% Round result
+                        \num{\pgfmathresult}%
+                    };
+                }%
+        }%
+}%
+
+\NewDocumentCommand{\captiontitle}{m}{\textbf{#1}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Penalties
