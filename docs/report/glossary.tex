@@ -3,28 +3,54 @@
 	name=computer,
 	description={is a programmable machine that receives input, stores and manipulates data, and provides output in a useful format}
 }
-\newglossaryentry{MR}{
+\newglossaryentry{MRlbl}{
 	name=Magnetic Resonance,
 	description={is a phenomenon where atomic nuclei in a strong constant magnetic field, excited by a second oscillating magnetic field of correct frequency resonate and emit a corresponding electromagnetic signal}
 }
-\newglossaryentry{NMR}{
+\newglossaryentry{NMRlbl}{
 	name=Nuclear Magnetic Resonance spectroscopy,
-	description={is a spectroscopic technique to observe shifts in magnetic field strengths in atomic nuclei}
+	description={is a spectroscopic technique to observe shifts in magnetic field strengths in atomic nuclei. Or in simpler terms a \href{https://blogs.bath.ac.uk/csct/2016/hidden-force-looking-machine/}{Hidden Force Looking Machine}}
 }
-\newglossaryentry{CW-NMR}{
+\newglossaryentry{CW-NMRlbl}{
 	name=Continous Wave Nuclear Magnetic Resonance spectroscopy,
-	description={is an \gls{NMR} experiment performed by slowly varying the excitation frequency and observing the resonance behaviour of nuclei inside the sample}
+	description={is an \gls{NMRlbl} experiment performed by slowly varying the excitation frequency and observing the resonance behaviour of nuclei inside the sample}
 }
-\newglossaryentry{FT-NMR}{
+\newglossaryentry{FT-NMRlbl}{
 	name=Fourier Transform Nuclear Magnetic Resonance spectroscopy,
-	description={Instead of slowly varying the frequency as in \gls{CW-NMR}, a single pulse of a given length with a fixed frequency is sent. According to Fourier's theory, this \enquote{smears} the frequency and excites nuclei with different resonant frequencies simultaneously}
+	description={Instead of slowly varying the frequency as in \gls{CW-NMRlbl}, a single pulse of a given length with a fixed frequency is sent. According to Fourier's theory, this \enquote{smears} the frequency and excites nuclei with different resonant frequencies simultaneously}
+}
+\newglossaryentry{BNClbl}{
+	name=Bayonet Neill-Concelman connector,
+	description={is a widely used small coaxial RF connector with a quick bayonet connection designed for up to a few GHz. A \qty{50}{\ohm} and a \qty{75}{\ohm} variant exist. It is used on radio systems, oscilloscopes, test equipment and video hardware}
+}
+\newglossaryentry{SMAlbl}{
+	name=SubMiniature version A connector,
+	description={is a common small coaxial RF connector with a screw-on connection designed for high frequencies (tens of GHz) often used for WiFi antennas and handheld radio devices among others}
+}
+\newglossaryentry{python}{
+	name=Python,
+	description={is a high-level interpreted general-purpose cross-platform programming language designed by Guido van Rossum. It focuses on readability and ease of use with a \enquote{batteries included} approach. The \href{https://peps.python.org/pep-0020/}{Zen of Python} states among others: \enquote{There should be one -- and preferably only one -- obvious way to do it}. (For the seasoned \enquote{Pythoneer}: Try \enquote{\lstinline[language=Python]{import this}} and \enquote{\lstinline[language=Python]{import antigravity}})}
+}
+\newglossaryentry{RPlbl}{
+	name=RedPitaya,
+	description={is a company producing credit card sized computers including an \acrshort{fpga} which run open-source software (the hardware itself is \emph{not} open-source). In the context of the thesis, this refers to the specific board used -- a RedPitaya \href{https://redpitaya.com/sdrlab-122-16/}{SDRlab 122-16} based on a Xilinx \acrshort{soc} (Zynq 7020 with Dual ARM Cortex A9, \qty{122.88}{\mega\hertz} clock and \qty{50}{\ohm} terminated \acrshort{rf} inputs)}
 }
 
 % Glossary entries (used in text with e.g. \acrfull{fpsLabel} or \acrshort{fpsLabel})
 \newacronym[longplural={Frames per Second}]{fpsLabel}{FPS}{Frame per Second}
 \newacronym[longplural={Tables of Contents}]{tocLabel}{TOC}{Table of Contents}
 
-\newacronym{mr}{MR}{\gls{MR}}
-\newacronym{nmr}{NMR}{\gls{NMR}}
-\newacronym{ftnmr}{FT-NMR}{\gls{FT-NMR}}
-\newacronym{cwnmr}{CW-NMR}{\gls{CW-NMR}}
+\newacronym{mr}{MR}{\gls{MRlbl}}
+\newacronym{nmr}{NMR}{\gls{NMRlbl}}
+\newacronym{ftnmr}{FT-NMR}{\gls{FT-NMRlbl}}
+\newacronym{cwnmr}{CW-NMR}{\gls{CW-NMRlbl}}
+\newacronym{sma}{SMA}{\gls{SMAlbl}}
+\newacronym{bnc}{BNC}{\gls{BNClbl}}
+\newacronym{rf}{RF}{radio frequency}
+\newacronym{tx}{TX}{transmit}
+\newacronym{rx}{RX}{receive}
+\newacronym{lna}{LNA}{low-noise amplifier}
+\newacronym{rp}{RP}{\gls{RPlbl}}
+\newacronym{fpga}{FPGA}{field-programmable gate array}
+\newacronym{soc}{SoC}{System on a chip}
+\newacronym{pa}{PA}{power amplifier}
