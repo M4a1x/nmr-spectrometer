@@ -30,7 +30,7 @@ def main() -> None:
     data = spec.send_sequence(seq)
     spec.disconnect()
 
-    logger.info("Saving sequence...")
+    logger.info("Saving FIDs...")
     fid = FID1D(
         data=data,
         spectral_width=spec.sample_rate,
@@ -38,11 +38,11 @@ def main() -> None:
         observation_freq=spec.rx_freq,
         label="1H",
         sample="Water",
-        pulse_file=f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us",
+        pulse=f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us",
         spectrometer="magnETHical v0.1",
     )
     time = fid.timestamp.strftime("%Y%m%d-%H%M%S")
-    file = Path(f"data/{time}-{fid.sample}-{fid.label}-{fid.pulse_file}.fid")
+    file = Path(f"data/{time}-{fid.sample}-{fid.label}-{fid.pulse}.fid")
     fid.to_file(file)
     logger.info("Saved sequence to %s", file)
 
