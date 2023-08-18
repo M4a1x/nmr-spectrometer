@@ -36,15 +36,15 @@ def main():
     # Commands
     match args.command:
         case "flash_fpga":
-            Server(ip_address=args.ip, port=args.port).flash_fpga()
+            Server(ip_address=args.ip).flash_fpga()
         case "setup":
-            Server(ip_address=args.ip, port=args.port).setup()
+            Server(ip_address=args.ip).setup()
         case "start":
-            Server(ip_address=args.ip, port=args.port).start()
+            Server(ip_address=args.ip).start()
         case "stop":
-            Server(ip_address=args.ip, port=args.port).stop()
+            Server(ip_address=args.ip).stop()
         case "is_running":
-            Server(ip_address=args.ip, port=args.port).is_running()
+            Server(ip_address=args.ip).is_running()
 
 
 def _parse_args() -> argparse.Namespace:
