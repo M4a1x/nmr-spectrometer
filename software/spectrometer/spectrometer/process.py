@@ -2,6 +2,8 @@ import numpy as np
 import numpy.typing as npt
 import scipy.optimize as spo
 
+from nmrglue.process.proc_base import ps
+
 
 def exp_decay(
     t: npt.NDArray, amplitude: float, lambda_: float, offset: float
@@ -147,3 +149,44 @@ def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
         "offset": popt[4],
         "function": lambda t: decaying_sinusoid_squared(t, *popt),
     }
+
+
+def auto_find_phase_shift(
+    data: npt.NDArray, p0_start: float = 0, peak_width: float = 100
+) -> float:
+    """Find a zero order phase shift that minimizes the minima around the peak
+
+    Args:
+        data (npt.NDArray): Spectral data (i.e. y-values) containing peaks
+        p0_start (float, optional): Offset to start optimizing from. Defaults to 0.
+
+    Returns:
+        float: Zero order phase shift that minimizes the minima around the peak
+    """
+
+    (p0,) = spo.fmin(
+        _phase_shift_score, x0=p0_start, args=(data, peak_width), disp=False
+    )
+    return p0
+
+
+def _phase_shift_score(p0: float, data: npt.NDArray, peak_width: float) -> float:
+    """Shift `data` by zero order phase of `p0` and return the absolute difference between the
+    two minima surrounding the highest peak. This can be used for scoring how good the provided
+    phase shift `p0` is
+
+    Args:
+        p0 (float): Zero order phase shift in degrees
+        data (npt.NDArray): Spectral data (i.e. y-values) containing at least one peak
+        peak_width (float): Width around the highest peak to look for minima in
+
+    Returns:
+        float: Absolute difference between the two minima surrounding the highest peak
+    """
+    data = ps(data, p0=p0).real
+
+    max_idx = np.argmax(data)
+    left_minimum = np.min(data[max_idx - peak_width : max_idx])
+    right_minimum = np.min(data[max_idx : max_idx + peak_width])
+
+    return np.abs(left_minimum - right_minimum)

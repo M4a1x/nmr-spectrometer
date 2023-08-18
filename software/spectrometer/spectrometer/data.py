@@ -11,6 +11,7 @@ import numpy.typing as npt
 from matplotlib.figure import Figure
 
 from spectrometer.plot import style_axes, subplots
+from spectrometer.process import auto_find_phase_shift
 
 logger = logging.getLogger(__name__)
 NMRPIPE_MAX_LABEL_LENGTH = 8
@@ -427,14 +428,15 @@ class FID1D:
         if phase_shift_kwargs:
             dic, data = ng.pipe_proc.ps(dic, data, **phase_shift_kwargs)
         elif phase_shift_kwargs is None:
-            data, opt = ng.proc_autophase.autops(data, return_phases=True, fn="acme")
+            p0 = auto_find_phase_shift(data)
+            dic, data = ng.pipe_proc.ps(dic, data, p0=p0)
         else:
             pass  # Don't shift if passed 'False'
 
         unit_converter = ng.pipe.make_uc(dic, data)
         scale = unit_converter.hz_scale() if hz_scale else unit_converter.ppm_scale()
         if phase_shift_kwargs is None:
-            return scale, data, opt
+            return scale, data, p0
         else:
             return scale, data
 
