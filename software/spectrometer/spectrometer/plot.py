@@ -1,15 +1,64 @@
 import matplotlib as mpl
-import numpy as np
-from cycler import cycler
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-# TODO: Look at matplotx/mplx dufte style - might be better
+
+def format_for_thesis(axes: Axes) -> None:
+    """Adjust the style of the axes for a thesis
+
+    Note: The axes should have been created with the `make_subplots(...)` function in this module
+    for optimal layout
+
+    Note: This function has side effects (it sets global matplotlib options!). This might lead to
+    confusingly formatted graphs later on if you change the style.
+
+    Args:
+        axes (Axes): Axes to style
+    """
+
+    # Adjust axis
+    axes.spines[["top", "right"]].set_visible(False)
+    axes.spines[["left", "bottom"]].set_position(("outward", 20))
+    plt.setp(
+        [
+            *axes.lines,
+            *axes.tables,
+            *axes.artists,
+            *axes.images,
+            *axes.patches,
+            *axes.texts,
+            *axes.collections,
+        ],
+        clip_on=False,
+    )
+
+    # Set axis colour to ETH Grey
+    color = "#575757"  # normal grey: "#6F6F6F", dark grey: "#575757"
+    axes.tick_params(colors=color)
+    axes.spines[["left", "bottom", "top", "right"]].set_color(color)
+    axes.xaxis.label.set_color(color)
+    axes.yaxis.label.set_color(color)
+
+    # Change font
+    plt.setp(
+        [
+            axes.title,
+            axes.xaxis.label,
+            axes.yaxis.label,
+            *axes.get_xticklabels(),
+            *axes.get_yticklabels(),
+            *(axes.get_legend().get_texts() if axes.get_legend() else ()),
+        ],
+        family=["Tex Gyre Pagella"],
+    )
+
+    # Adjust ticks
+    axes.tick_params(axis="both", direction="in")
 
 
-def make_axes(
+def subplots(
     rows: int = 1, columns: int = 1, **kwargs
 ) -> tuple[Figure, Axes | list[Axes]]:
     if rows < 1:
@@ -20,31 +69,16 @@ def make_axes(
         raise ValueError(msg)
 
     plt.rcParams["axes.autolimit_mode"] = "round_numbers"
+    plt.rcParams["axes.xmargin"] = 0
+    plt.rcParams["axes.ymargin"] = 0
 
     fig, axes = plt.subplots(
         nrows=rows,
         ncols=columns,
-        figsize=(7, 4),
         layout="constrained",  # Alternative: tight_layout=True
         **kwargs,
     )
 
-    # Use ETH colours for plots
-    if isinstance(axes, np.ndarray):
-        for ax in axes:
-            ax.set_prop_cycle(
-                cycler(
-                    color=[
-                        "#215CAF",  # ETH blue
-                        "#B7352D",  # ETH red
-                        "#627313",  # ETH green
-                        "#A7117A",  # ETH purple
-                        "#8E6713",  # ETH bronze
-                        "#007894",  # ETH petrol
-                        "#6F6F6F",  # ETH gray
-                    ],
-                )
-            )
     return fig, axes
 
 
