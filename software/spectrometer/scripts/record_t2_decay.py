@@ -43,12 +43,12 @@ def main() -> None:
             observation_freq=exp.rx_freq,
             label="1H",
             sample="Water",
-            pulse_file=f"one_of_repeated_spin_echoes,length={pulse_length_us}us,delay={delays_us[i]}us,repetition_time={repetition_time_s}s",
+            pulse=f"one_of_repeated_spin_echoes,length={pulse_length_us}us,delay={delays_us[i]}us,repetition_time={repetition_time_s}s",
             spectrometer="magnETHical v0.1",
         )
         timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
         fid.to_file(
-            f"data/{timestr}-{fid.sample}-{fid.label}-t2-decay/{timestr}-{fid.sample}-{fid.label}-{fid.pulse_file}.fid"
+            f"data/{timestr}-{fid.sample}-{fid.label}-t2-decay/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid"
         )
         fids.append(fid)
 

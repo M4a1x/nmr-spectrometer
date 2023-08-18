@@ -1713,7 +1713,7 @@ def test_from_pipe():
         label="C13",
         observation_freq=125_680_999.75585938,
         sample="Unknown Sample",
-        pulse_file="unknown.fid",
+        pulse="unknown.fid",
         spectrometer="Unknown Spectrometer",
         timestamp=dt.datetime(
             year=2012, month=11, day=29, hour=11, minute=33, second=33, tzinfo=dt.UTC
@@ -1736,7 +1736,7 @@ def test_get_pipe():
         label="C13",
         observation_freq=125_680_999.75585938,
         sample="Unknown Sample",
-        pulse_file="unknown.fid",
+        pulse="unknown.fid",
         spectrometer="Unknown Spectrometer",
         timestamp=dt.datetime(
             year=2012, month=11, day=29, hour=11, minute=33, second=33, tzinfo=dt.UTC
@@ -1768,7 +1768,7 @@ def test_from_udic():
         label="C13",
         observation_freq=125_680_999.75585938,
         sample="",
-        pulse_file="",
+        pulse="",
         spectrometer="",
         timestamp=dt.datetime.now(tz=dt.UTC).replace(microsecond=0),
     )
@@ -1790,7 +1790,7 @@ def test_get_udic():
         label="C13",
         observation_freq=125_680_999.75585938,
         sample="",
-        pulse_file="",
+        pulse="",
         spectrometer="",
         timestamp=dt.datetime.now(tz=dt.UTC).replace(microsecond=0),
     )

@@ -25,11 +25,11 @@ def main() -> None:
         observation_freq=exp.rx_freq,
         label="1H",
         sample="Water",
-        pulse_file=f"spin_echo,length={pulse_length_us}us,delay={delay_us}us",
+        pulse=f"spin_echo,length={pulse_length_us}us,delay={delay_us}us",
         spectrometer="magnETHical v0.1",
     )
     timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
-    fid.to_file(f"data/{timestr}-{fid.sample}-{fid.label}-{fid.pulse_file}.fid")
+    fid.to_file(f"data/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid")
 
     # Plot
     fid.show_plot()

@@ -33,17 +33,15 @@ class FID1D:
 
     def __init__(
         self,
-        data: npt.ArrayLike,  # 1D complex (i.e. after QI-Demodulation) time domain data
-        spectral_width: float,  # Sampling Bandwidth
-        carrier_freq: float,  # Offset freq between observation_freq and resonant_freq (depends on magnet)
-        observation_freq: float,  # assuming downsampling freq and pulse freq to be equal
-        label: str,  # usually "1H", "13C","N",..., 8 chars max
-        sample: str,  # sample description (Water, Acteone, Methanol, Benzene, Trifluortoluol, ...), 60 chars max
-        pulse_file: str
-        | Path,  # Name of the file describing the used pulse sequence for this FID, 160 chars max
-        spectrometer: str,  # Name of the spectrometer used for capturing the FID, 32 chars max
-        timestamp: dt.datetime
-        | None = None,  # Use current time (UTC) as timestamp if nothing is provided
+        data: npt.ArrayLike,
+        spectral_width: float,
+        carrier_freq: float,
+        observation_freq: float,
+        label: str,
+        sample: str,
+        pulse: str | Path,
+        spectrometer: str,
+        timestamp: dt.datetime | None = None,
     ) -> None:
         """Create new simple 1D FID container from time domain data
 
@@ -57,7 +55,7 @@ class FID1D:
             sample (str): Sample description (Water, Acteone, Methanol, Benzene,
             Trifluortoluol, ...) (60 chars max)
             pulse_file (str | Path): Name of the file describing the used pulse sequence for this
-            FID (160 chars max)
+            FID, or a description of the pulse sequence (160 chars max)
             spectrometer (str): Name of the spectrometer used for capturing the FID, 32 chars max
             timestamp (datetime.datetime, optional): Time of the experiment in UTC. Defaults to
             datetime.datetime.now(tz=datetime.UTC)
@@ -75,14 +73,8 @@ class FID1D:
             msg = "The input data doesn't seem to consist of complex numbers"
             raise ValueError(msg)
 
-        try:
-            Path(pulse_file).resolve()
-        except (OSError, RuntimeError):
-            msg = f"Pulse file name '{pulse_file}' is invalid"
-            raise ValueError(msg) from None
-
-        if len(str(pulse_file)) > NMRPIPE_MAX_COMMENT_LENGTH:
-            msg = f"Length of pulse file name '{pulse_file}' is longer than 160 characters"
+        if len(str(pulse)) > NMRPIPE_MAX_COMMENT_LENGTH:
+            msg = f"Length of pulse file name '{pulse}' is longer than 160 characters"
             raise ValueError(msg)
 
         if len(spectrometer) > NMRPIPE_MAX_OPERNAME_LENGTH:
@@ -102,7 +94,7 @@ class FID1D:
         self.observation_freq = observation_freq
         self.spectral_width = spectral_width
         self.sample = sample
-        self.pulse_file = Path(pulse_file)
+        self.pulse = pulse
         self.spectrometer = spectrometer
         self.timestamp = (
             timestamp
@@ -180,7 +172,7 @@ class FID1D:
         pipedic["FD2DPHASE"] = 0.0
 
         pipedic["FDTITLE"] = self.sample
-        pipedic["FDCOMMENT"] = str(self.pulse_file)
+        pipedic["FDCOMMENT"] = str(self.pulse)
         pipedic["FDOPERNAME"] = self.spectrometer
 
         pipedic["FDYEAR"] = self.timestamp.year
@@ -244,7 +236,7 @@ class FID1D:
             label=universal_dict[0]["label"],
             observation_freq=universal_dict[0]["obs"] * 1e6,
             sample="",
-            pulse_file="",
+            pulse="",
             spectrometer="",
         )
 
@@ -291,7 +283,7 @@ class FID1D:
             label=pipe_dict[f"{axis_prefix}LABEL"],
             observation_freq=pipe_dict[f"{axis_prefix}OBS"] * 1e6,
             sample=pipe_dict["FDTITLE"],
-            pulse_file=pipe_dict["FDCOMMENT"],
+            pulse=pipe_dict["FDCOMMENT"],
             spectrometer=pipe_dict["FDOPERNAME"],
             timestamp=dt.datetime(
                 year=int(pipe_dict["FDYEAR"]),
@@ -464,7 +456,7 @@ class FID1D:
                 and self.observation_freq == other.observation_freq
                 and self.spectral_width == other.spectral_width
                 and self.sample == other.sample
-                and self.pulse_file == other.pulse_file
+                and self.pulse == other.pulse
                 and self.spectrometer == other.spectrometer
                 and self.timestamp == other.timestamp
                 and np.allclose(self.data, other.data)
