@@ -1,7 +1,6 @@
 import numpy as np
 import numpy.typing as npt
 import scipy.optimize as spo
-
 from nmrglue.process.proc_base import ps
 
 
