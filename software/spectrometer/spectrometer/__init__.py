@@ -6,8 +6,8 @@ from spectrometer.pulse import (
     NMRSequence,
     Pulse,
     Record,
-    Spectrometer,
     Server,
+    Spectrometer,
 )
 
 __all__ = [

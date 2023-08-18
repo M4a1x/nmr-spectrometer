@@ -592,10 +592,10 @@ class Spectrometer:
 
     def __del__(self) -> None:
         self.disconnect()
-        self.stop_server()
+
 
 class Server:
-    def __init__(self, ip_address: IPv4Address | IPv6Address | None = None, port: int | None = None) -> None:
+    def __init__(self, ip_address: IPv4Address | IPv6Address | None = None) -> None:
         """Create new connection the the RedPitaya for managing the server
 
         Args:
@@ -609,14 +609,15 @@ class Server:
             if ip_address
             else ipaddress.ip_address(config["server"]["ip_address"])
         )
-        self.port = port if port else int(config["server"]["port"])
 
     def flash_fpga(self, red_pitaya_model: str = "rp-122") -> None:
         if self.is_running():
             logger.warning("MaRCoS server is already running! Stopping server...")
             self.stop()
 
-        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
+        with Connection(
+            host=str(self.ip_address), user="root", connect_timeout=5
+        ) as conn:
             if _file_exists(conn, "/opt/redpitaya/version.txt"):
                 # Standard RedPitaya Image
                 _transfer_file(
@@ -652,7 +653,9 @@ class Server:
             logger.warning("MaRCoS server is already running! Stopping server...")
             self.stop()
 
-        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
+        with Connection(
+            host=str(self.ip_address), user="root", connect_timeout=5
+        ) as conn:
             now = datetime.now(tz=UTC).strftime("%Y-%m-%dT%H:%M:%S,%f000%z")
             now = f"{now[:-2]}:{now[-2:]}"
             conn.run(f"date -Ins -s '{now}'", hide=True)
@@ -675,21 +678,26 @@ class Server:
             logger.warning("MaRCoS server is already running! Restarting...")
             self.stop()
 
-        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
+        with Connection(
+            host=str(self.ip_address), user="root", connect_timeout=5
+        ) as conn:
             conn.run("nohup ./marcos_server &>./marcos_server.log </dev/null &")
 
     def stop(self) -> None:
         if self.is_running():
-            with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
+            with Connection(
+                host=str(self.ip_address), user="root", connect_timeout=5
+            ) as conn:
                 conn.run("pkill marcos_server")
             logger.info("Server stopped")
         else:
             logger.warning("Server is not running! Skipping...")
 
     def is_running(self) -> bool:
-        with Connection(host=str(self.ip_address), user="root", connect_timeout=5) as conn:
+        with Connection(
+            host=str(self.ip_address), user="root", connect_timeout=5
+        ) as conn:
             return bool(conn.run("pgrep marcos", warn=True, hide=True).stdout.strip())
-
 
 
 def _merge_overlapping_ranges(starts: list, ends: list) -> npt.NDArray:

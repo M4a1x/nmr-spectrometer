@@ -3,14 +3,16 @@ import logging
 from pathlib import Path
 
 from marcos.local_config import reload_config
+
 from spectrometer import Server
 from spectrometer.__about__ import __version__
 
 logger = logging.getLogger(__name__)
 
+
 def main():
     args = _parse_args()
-    
+
     # Verbosity
     if args.verbose:
         logging.basicConfig(
@@ -45,10 +47,11 @@ def main():
             Server(ip_address=args.ip, port=args.port).is_running()
 
 
-
 def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="CLI Client Interface for the magnETHical spectrometer")
-    
+    parser = argparse.ArgumentParser(
+        description="CLI Client Interface for the magnETHical spectrometer"
+    )
+
     # some default stuff
     parser.add_argument(
         "--version",
@@ -82,5 +85,5 @@ def _parse_args() -> argparse.Namespace:
         help="Command to send to the server",
         choices=["flash_fpga", "setup", "start", "stop", "is_running"],
     )
-    
+
     return parser.parse_args()
