@@ -1,5 +1,5 @@
+from spectrometer import plot, process
 from spectrometer.data import FID1D
-from spectrometer.plot import style_axes, subplots
 from spectrometer.pulse import (
     ConnectionSettings,
     Delay,
@@ -21,4 +21,6 @@ __all__ = [
     "Pulse",
     "Record",
     "Server",
+    "process",
+    "plot",
 ]
