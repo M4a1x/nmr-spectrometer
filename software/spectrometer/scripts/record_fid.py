@@ -44,7 +44,7 @@ def main() -> None:
     time = fid.timestamp.strftime("%Y%m%d-%H%M%S")
     file = Path(f"data/{time}-{fid.sample}-{fid.label}-{fid.pulse}.fid")
     fid.to_file(file)
-    logger.info("Saved sequence to %s", file)
+    logger.info("Saved FID to %s", file)
 
 
 if __name__ == "__main__":
