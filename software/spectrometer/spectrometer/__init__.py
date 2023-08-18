@@ -1,5 +1,5 @@
 from spectrometer.data import FID1D
-from spectrometer.plot import make_axes, style_axes
+from spectrometer.plot import style_axes, subplots
 from spectrometer.pulse import (
     ConnectionSettings,
     Delay,
@@ -12,7 +12,7 @@ from spectrometer.pulse import (
 
 __all__ = [
     "FID1D",
-    "make_axes",
+    "subplots",
     "style_axes",
     "Spectrometer",
     "NMRSequence",

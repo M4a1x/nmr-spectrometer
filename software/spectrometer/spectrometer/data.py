@@ -10,7 +10,7 @@ import numpy as np
 import numpy.typing as npt
 from matplotlib.figure import Figure
 
-from spectrometer.plot import make_axes, style_axes
+from spectrometer.plot import style_axes, subplots
 
 logger = logging.getLogger(__name__)
 NMRPIPE_MAX_LABEL_LENGTH = 8
@@ -348,7 +348,7 @@ class FID1D:
         fig.savefig(file)
 
     def _plot(self, *, us_scale: bool = False, serif: bool = False) -> Figure:
-        fig, axes = make_axes(rows=1, columns=1)
+        fig, axes = subplots(rows=1, columns=1)
         uc = ng.pipe.make_uc(self._get_pipedic(), self.data)
         axes.plot(uc.us_scale() if us_scale else uc.ms_scale(), self.data)
         axes.set_title(f"FID of {self.label}")
@@ -439,7 +439,7 @@ class FID1D:
             return scale, data
 
     def _plot_simple_fft(self, *, hz_scale: bool = True, serif: bool = False) -> Figure:
-        fig, axes = make_axes(rows=1, columns=1)
+        fig, axes = subplots(rows=1, columns=1)
         axes.plot(*self.simple_fft(hz_scale=hz_scale))
         axes.set_title(f"Spectrum of {self.label}")
         axes.set_xlabel("Frequency")

@@ -8,7 +8,7 @@ import numpy as np
 import numpy.typing as npt
 import scipy.optimize as spo
 
-from spectrometer import FID1D, NMRSequence, Spectrometer, make_axes, style_axes
+from spectrometer import FID1D, NMRSequence, Spectrometer, style_axes, subplots
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ def main() -> None:
         signal_strengths[i] = integral
 
     # Plot raw data
-    fig, ax = make_axes()
+    fig, ax = subplots()
     ax.plot(delays_us, signal_strengths, linestyle="", marker=".")
     ax.set_title("Signal strength over delay")
     ax.set_xlabel("Delay")
