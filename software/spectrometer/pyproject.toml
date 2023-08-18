@@ -106,6 +106,7 @@ select = [
   "W",
   "YTT",
 ]
+include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
 ignore = [
   # Allow non-abstract empty methods in abstract base classes
   "B027",
