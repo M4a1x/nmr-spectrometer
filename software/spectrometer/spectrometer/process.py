@@ -38,7 +38,7 @@ def decaying_sinusoid_squared(
     offset: float,
 ) -> npt.NDArray:
     return (
-        amplitude * np.exp(-lambda_ * t) * np.pow(np.sin(2 * np.pi * freq * t + phase), 2)
+        amplitude * np.exp(-lambda_ * t) * np.square(np.sin(2 * np.pi * freq * t + phase))
         + offset
     )
 

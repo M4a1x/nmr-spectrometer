@@ -405,7 +405,7 @@ class FID1D:
         if fourier_transform_kwargs:
             dic, data = ng.pipe_proc.ft(dic, data, **fourier_transform_kwargs)
         elif fourier_transform_kwargs is None:
-            dic, data = ng.pipe_proc.ft(dic, data, auto=True)
+            dic, data = ng.pipe_proc.ft(dic, data)
         else:
             pass  # Don't fourier transform if passed 'False'
 

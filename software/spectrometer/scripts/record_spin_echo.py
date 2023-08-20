@@ -2,6 +2,7 @@
 """Simple script that sends a single classic pulse echo sequence"""
 
 import logging
+from pathlib import Path
 
 from spectrometer import FID1D, NMRSequence, Server, Spectrometer
 
@@ -29,7 +30,7 @@ def main() -> None:
     server.start()
 
     logger.info("Connecting to server and sending sequence...")
-    spec = Spectrometer(tx_freq=25_090_230)
+    spec = Spectrometer(tx_freq=25_090_000)
     spec.connect()
     data = spec.send_sequence(seq)
     spec.disconnect()
@@ -46,7 +47,7 @@ def main() -> None:
         spectrometer="magnETHical v0.1",
     )
     timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
-    file = f"data/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid"
+    file = Path(__file__).parent.parent / f"data/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid"
     fid.to_file(file)
     logger.info("Saved FID to %s", file)
 

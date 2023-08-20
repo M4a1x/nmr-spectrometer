@@ -2,6 +2,7 @@
 """Small script to record multiple FIDs after single pulses with increasing length"""
 
 import logging
+from pathlib import Path
 
 import numpy as np
 
@@ -15,7 +16,7 @@ def main() -> None:
     """Send series of pulses with increasing length"""
 
     logger.info("Creating pulse sequences...")
-    pulse_lengths_us = np.linspace(1, 100, 200)
+    pulse_lengths_us = np.linspace(1, 200, 600)
     delay_us = 30
     repetition_time_s = 5
     sequences = [
@@ -32,10 +33,12 @@ def main() -> None:
     server.start()
 
     logger.info("Connecting to spectrometer server and sending pulse sequences...")
-    spec = Spectrometer(tx_freq=25_090_230)
+    spec = Spectrometer(tx_freq=25_090_000)
+    spec.connect()
     datas = spec.send_sequences(
         sequences=sequences, repetition_time_s=repetition_time_s
     )
+    spec.disconnect()
 
     logger.info("Saving FIDs...")
     for i, data in enumerate(datas):
@@ -50,7 +53,7 @@ def main() -> None:
             spectrometer="magnETHical v0.1",
         )
         timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
-        file = f"data/{timestr}-{fid.sample}-{fid.label}-rabi-nutation/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid"
+        file = Path(__file__).parent.parent / f"data/{timestr}-{fid.sample}-{fid.label}-rabi-nutation/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid"
         fid.to_file(file)
         logger.info("Saved FID %s/%s", i + 1, len(datas))
         logger.info("Filename: %s", file)

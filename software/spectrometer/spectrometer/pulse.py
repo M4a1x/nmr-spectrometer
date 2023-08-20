@@ -587,8 +587,11 @@ class Spectrometer:
         have an open handle to it.
         """
         # https://docs.python.org/3/howto/sockets.html#disconnecting
-        self.socket.shutdown(socket.SHUT_RDWR)
-        self.socket.close()
+        try:
+            self.socket.shutdown(socket.SHUT_RDWR)
+            self.socket.close()
+        except OSError:
+            logger.info("Error closing the socket. Maybe it is already closed?")
 
     def __del__(self) -> None:
         self.disconnect()
