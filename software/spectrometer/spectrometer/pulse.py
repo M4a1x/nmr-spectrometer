@@ -518,7 +518,7 @@ class Spectrometer:
                 ),
                 "rx_gate": (
                     rx_gate_sequence,
-                    np.array([1, 0], len(rx_gate_sequence)),
+                    np.resize([1, 0], len(rx_gate_sequence)),
                 ),
             }
         )

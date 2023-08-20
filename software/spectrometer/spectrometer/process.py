@@ -17,6 +17,17 @@ def lorentzian(
         np.power(gamma, 2) / (np.power((x - position), 2) + np.power(gamma, 2))
     )
 
+def decaying_sinusoid(
+    t: npt.NDArray,
+    amplitude: float,
+    lambda_: float,
+    freq: float,
+    phase: float,
+    offset: float,
+) -> npt.NDArray:
+    return (
+        amplitude * np.exp(-lambda_ * t) * np.sin(2 * np.pi * freq * t + phase)+ offset
+    )
 
 def decaying_sinusoid_squared(
     t: npt.NDArray,
@@ -27,7 +38,7 @@ def decaying_sinusoid_squared(
     offset: float,
 ) -> npt.NDArray:
     return (
-        amplitude * np.exp(-lambda_ * t) * np.sin(2 * np.pi * freq * t + phase) ** 2
+        amplitude * np.exp(-lambda_ * t) * np.pow(np.sin(2 * np.pi * freq * t + phase), 2)
         + offset
     )
 
@@ -109,11 +120,44 @@ def fit_lorentz(x: npt.NDArray, y: npt.NDArray) -> dict:
     )
     return {
         "position": popt[0],
-        "gamma": popt[1],
+        "gamma": np.abs(popt[1]),
         "amplitude": popt[2],
         "function": lambda t: lorentzian(t, *popt),
     }
 
+def fit_decaying_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
+    """Fit a decaying squared sine wave to the input sequence
+
+    f(x) = a * e^-lt * sin(w * t + p) + c
+
+    Returns:
+        Fitting parameters "amplitude", "lambda", "frequency", "phase", "offset", and "function"
+    """
+    x = np.asarray(x, dtype=np.float64)
+    y = np.asarray(y, dtype=np.float64)
+
+    # Guess initial fitting parameters
+    frequencies = np.fft.fftfreq(len(x), (x[1] - x[0]))  # assume uniform spacing
+    fft = abs(np.fft.fft(y))
+    # excluding the zero frequency "peak", which is related to offset
+    guess_frequency = np.abs(frequencies[np.argmax(fft[1:]) + 1])
+    guess_amplitude = np.std(y) * 2.0**0.5
+    guess_offset = np.mean(y)
+    guess_phase = 0
+    guess_lambda = 0
+    guess = (guess_amplitude, guess_lambda, guess_frequency, guess_phase, guess_offset)
+
+    popt, _pcov = spo.curve_fit(  # pylint: disable=unbalanced-tuple-unpacking
+        decaying_sinusoid, x, y, p0=guess
+    )
+    return {
+        "amplitude": popt[0],
+        "lambda": popt[1],
+        "frequency": popt[2],
+        "phase": popt[3],
+        "offset": popt[4],
+        "function": lambda t: decaying_sinusoid(t, *popt),
+    }
 
 def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
     """Fit a decaying squared sine wave to the input sequence
@@ -121,7 +165,7 @@ def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
     f(x) = a * e^-lt * sin^2 (w * t + p) + c
 
     Returns:
-        Fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"
+        Fitting parameters "amplitude", "lambda", "frequency", "phase", "offset", and "function"
     """
     x = np.asarray(x, dtype=np.float64)
     y = np.asarray(y, dtype=np.float64)

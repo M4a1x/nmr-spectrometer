@@ -9,6 +9,7 @@ import nmrglue as ng
 import numpy as np
 import numpy.typing as npt
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 
 from spectrometer.process import auto_find_phase_shift
 from spectrometer import plot
@@ -55,7 +56,7 @@ class FID1D:
             label (str): Usually "1H", "13C", "N", ... (8 chars max)
             sample (str): Sample description (Water, Acteone, Methanol, Benzene,
             Trifluortoluol, ...) (60 chars max)
-            pulse_file (str | Path): Name of the file describing the used pulse sequence for this
+            pulse (str | Path): Name of the file describing the used pulse sequence for this
             FID, or a description of the pulse sequence (160 chars max)
             spectrometer (str): Name of the spectrometer used for capturing the FID, 32 chars max
             timestamp (datetime.datetime, optional): Time of the experiment in UTC. Defaults to
@@ -341,11 +342,11 @@ class FID1D:
         ng.pipe.write(str(file.resolve()), self._get_pipedic(), self.data)
 
     def plot(self, *, us_scale: bool = False) -> Figure:
-        fig, axes = plot.subplots()
+        fig, axes = plot.subplots(figsize=(10,5))
         uc = ng.pipe.make_uc(self._get_pipedic(), self.data)
         axes.plot(
             uc.us_scale() if us_scale else uc.ms_scale(),
-            self.data,
+            self.data.real,
             linestyle="",
             marker="o",
             markersize=0.8,
@@ -425,11 +426,11 @@ class FID1D:
             return scale, data
 
     def plot_simple_fft(self, *, hz_scale: bool = True, **kwargs) -> Figure:
-        fig, axes = plot.subplots()
+        fig, axes = plot.subplots(figsize=(10,5))
         scale, data, _ = self.simple_fft(**kwargs, hz_scale=hz_scale)
         axes.plot(
             scale,
-            data,
+            data.real,
             linestyle="",
             marker="o",
             markersize=0.8,

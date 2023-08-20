@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def format_axes(axes: Axes, font="Tex Gyre Pagella") -> None:
+def format_axes(axes: Axes, font="TeX Gyre Pagella") -> None:
     """Adjust the style of the axes for a thesis
 
     Note: The axes should have been created with the `make_subplots(...)` function in this module
