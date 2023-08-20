@@ -1,6 +1,6 @@
 <div align="center">
   <a href="" rel="noopener">
- <img width="25%" height="auto" src="logo.svg" alt="BioNMR Group Logo"></a>
+ <img width="25%" height="auto" src="logo.svg" alt="magnETHical logo depicting the magnet"></a>
 </div>
 
 <div align="center"><h3>Spectrometer</h3></div>

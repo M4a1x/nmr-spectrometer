@@ -10,8 +10,8 @@ import numpy as np
 import numpy.typing as npt
 from matplotlib.figure import Figure
 
-from spectrometer.plot import style_axes, subplots
 from spectrometer.process import auto_find_phase_shift
+from spectrometer import plot
 
 logger = logging.getLogger(__name__)
 NMRPIPE_MAX_LABEL_LENGTH = 8
@@ -340,37 +340,21 @@ class FID1D:
             file = file_candidate
         ng.pipe.write(str(file.resolve()), self._get_pipedic(), self.data)
 
-    def show_plot(self) -> None:
-        fig = self._plot()
-        fig.show()
-
-    def save_plot(self, file: Path | str | io.BytesIO) -> None:
-        fig = self._plot()
-        fig.savefig(file)
-
-    def _plot(self, *, us_scale: bool = False, serif: bool = False) -> Figure:
-        fig, axes = subplots(rows=1, columns=1)
+    def plot(self, *, us_scale: bool = False) -> Figure:
+        fig, axes = plot.subplots()
         uc = ng.pipe.make_uc(self._get_pipedic(), self.data)
-        axes.plot(uc.us_scale() if us_scale else uc.ms_scale(), self.data)
-        axes.set_title(f"FID of {self.label}")
-        axes.set_ylabel("Amplitude")
-        axes.set_xlabel("Time")
-        style_axes(
-            axes,
-            nticks=4,
-            xunit="μs" if us_scale else "ms",
-            yunit="au",
-            serif=serif,
+        axes.plot(
+            uc.us_scale() if us_scale else uc.ms_scale(),
+            self.data,
+            linestyle="",
+            marker="o",
+            markersize=0.8,
         )
+        axes.set_title(f"FID of {self.label}")
+        axes.set_ylabel("Amplitude [a.u.]")
+        axes.set_xlabel(f"Time [{'μs' if us_scale else 'ms'}]")
+        plot.format_axes(axes, font="Merriweather Sans")
         return fig
-
-    def show_simple_fft(self) -> None:
-        fig = self._plot_simple_fft()
-        fig.show()
-
-    def save_simple_fft(self, file: Path | str | io.BytesIO) -> None:
-        fig = self._plot_simple_fft()
-        fig.savefig(file)
 
     def simple_fft(
         self,
@@ -440,19 +424,20 @@ class FID1D:
         else:
             return scale, data
 
-    def _plot_simple_fft(self, *, hz_scale: bool = True, serif: bool = False) -> Figure:
-        fig, axes = subplots(rows=1, columns=1)
-        axes.plot(*self.simple_fft(hz_scale=hz_scale))
-        axes.set_title(f"Spectrum of {self.label}")
-        axes.set_xlabel("Frequency")
-        axes.set_ylabel("Amplitude")
-        style_axes(
-            axes,
-            nticks=4,
-            xunit="Hz" if hz_scale else "ppm",
-            yunit="au",
-            serif=serif,
+    def plot_simple_fft(self, *, hz_scale: bool = True, **kwargs) -> Figure:
+        fig, axes = plot.subplots()
+        scale, data, _ = self.simple_fft(**kwargs, hz_scale=hz_scale)
+        axes.plot(
+            scale,
+            data,
+            linestyle="",
+            marker="o",
+            markersize=0.8,
         )
+        axes.set_title(f"Spectrum of {self.label}")
+        axes.set_xlabel("Frequency [Hz]")
+        axes.set_ylabel("Amplitude [a.u.]")
+        plot.format_axes(axes, font="Merriweather Sans")
         return fig
 
     def __eq__(self, other: object) -> bool:

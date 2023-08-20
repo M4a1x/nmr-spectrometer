@@ -52,8 +52,10 @@ dependencies = [
   "mypy",
   "ruff",
   "pylint",
-  "jupyter",
-  "ipympl",
+  "jupyter",         # notebooks
+  "ipympl",          # interactive widgets in notebooks
+  "RISE>=5.7.2dev",  # notebook presentations
+  "jupyterlab_rise", # jupyter jab plugin for presentations
 ]
 
 [tool.hatch.envs.default.scripts]
@@ -69,6 +71,7 @@ style = [
 ]
 fmt = ["black {args:.}", "ruff --fix {args:.}", "style"]
 all = ["style", "typing"]
+demo = ["jupyter notebook docs/demo/full_demo.ipynb"]
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.10", "3.11"]

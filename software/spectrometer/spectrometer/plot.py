@@ -3,16 +3,17 @@ from matplotlib import pyplot as plt
 from matplotlib import ticker
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def format_for_thesis(axes: Axes) -> None:
+def format_axes(axes: Axes, font="Tex Gyre Pagella") -> None:
     """Adjust the style of the axes for a thesis
 
     Note: The axes should have been created with the `make_subplots(...)` function in this module
     for optimal layout
 
-    Note: This function has side effects (it sets global matplotlib options!). This might lead to
-    confusingly formatted graphs later on if you change the style.
 
     Args:
         axes (Axes): Axes to style
@@ -41,40 +42,45 @@ def format_for_thesis(axes: Axes) -> None:
     axes.xaxis.label.set_color(color)
     axes.yaxis.label.set_color(color)
 
-    # Change font
-    plt.setp(
-        [
-            axes.title,
-            axes.xaxis.label,
-            axes.yaxis.label,
-            *axes.get_xticklabels(),
-            *axes.get_yticklabels(),
-            *(axes.get_legend().get_texts() if axes.get_legend() else ()),
-        ],
-        family=["Tex Gyre Pagella"],
-    )
+    # Change font if available
+    available_fonts = mpl.font_manager.get_font_names()
+    if font in available_fonts:
+        plt.setp(
+            [
+                axes.title,
+                axes.xaxis.label,
+                axes.yaxis.label,
+                *axes.get_xticklabels(),
+                *axes.get_yticklabels(),
+                *(axes.get_legend().get_texts() if axes.get_legend() else ()),
+            ],
+            family=[font],
+        )
+    else:
+        logger.warning("Requested font %s doesn't exist! Using defaults.", font)
 
     # Adjust ticks
     axes.tick_params(axis="both", direction="in")
 
 
-def subplots(
-    rows: int = 1, columns: int = 1, **kwargs
-) -> tuple[Figure, Axes | list[Axes]]:
-    if rows < 1:
-        msg = "Number of rows must be positive"
-        raise ValueError(msg)
-    if columns < 1:
-        msg = "Number of columns must be positive"
-        raise ValueError(msg)
+def subplots(**kwargs) -> tuple[Figure, Axes | list[Axes]]:
+    """Call matplotlib.pyplot.subplots with layout="constrained and set some global configuration"
 
+    Forwards all arguments directly into matplotlib and thus accepts the same arguments.
+    See `matplotlib.pyplot.subplots(...)` documentation for details.
+
+    Note: This function has side effects (it sets global matplotlib options!). This might lead to
+    confusingly formatted graphs later on if you change the style.
+
+    Returns:
+        tuple[Figure, Axes | list[Axes]]: See `matplotlib.pyplot.subplots(...)` documentation for
+        details
+    """
     plt.rcParams["axes.autolimit_mode"] = "round_numbers"
     plt.rcParams["axes.xmargin"] = 0
     plt.rcParams["axes.ymargin"] = 0
 
     fig, axes = plt.subplots(
-        nrows=rows,
-        ncols=columns,
         layout="constrained",  # Alternative: tight_layout=True
         **kwargs,
     )
