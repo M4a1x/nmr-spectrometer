@@ -16,9 +16,9 @@ def main() -> None:
     """Send series of pulses with increasing length"""
 
     logger.info("Creating pulse sequences...")
-    pulse_lengths_us = np.linspace(1, 200, 600)
+    pulse_lengths_us = np.linspace(1, 180, 90)
     delay_us = 30
-    repetition_time_s = 5
+    repetition_time_s = 1
     sequences = [
         NMRSequence.simple(
             pulse_length_us=pulse_length_us, delay_us=delay_us, record_length_us=10e3
