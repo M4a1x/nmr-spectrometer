@@ -14,7 +14,7 @@ def lorentzian(
     x: npt.NDArray, position: float, gamma: float, amplitude: float
 ) -> npt.NDArray:
     return amplitude * (
-        np.power(gamma, 2) / (np.power((x - position), 2) + np.power(gamma, 2))
+        np.square(gamma) / (np.square((x - position)) + np.square(gamma))
     )
 
 def decaying_sinusoid(
