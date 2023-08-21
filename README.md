@@ -107,5 +107,5 @@ Add notes about how to use the system.
 
 <div align="center">
   <a href="" rel="noopener">
- <img width="25%" height="auto" src="./logo_bionmr.png" alt="BioNMR Group Logo"></a>
+ <img width="50%" height="auto" src="./logo_bionmr.png" alt="BioNMR Group Logo"></a>
 </div>
