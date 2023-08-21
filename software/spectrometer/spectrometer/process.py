@@ -17,6 +17,7 @@ def lorentzian(
         np.square(gamma) / (np.square((x - position)) + np.square(gamma))
     )
 
+
 def decaying_sinusoid(
     t: npt.NDArray,
     amplitude: float,
@@ -26,8 +27,9 @@ def decaying_sinusoid(
     offset: float,
 ) -> npt.NDArray:
     return (
-        amplitude * np.exp(-lambda_ * t) * np.sin(2 * np.pi * freq * t + phase)+ offset
+        amplitude * np.exp(-lambda_ * t) * np.sin(2 * np.pi * freq * t + phase) + offset
     )
+
 
 def decaying_sinusoid_squared(
     t: npt.NDArray,
@@ -38,7 +40,9 @@ def decaying_sinusoid_squared(
     offset: float,
 ) -> npt.NDArray:
     return (
-        amplitude * np.exp(-lambda_ * t) * np.square(np.sin(2 * np.pi * freq * t + phase))
+        amplitude
+        * np.exp(-lambda_ * t)
+        * np.square(np.sin(2 * np.pi * freq * t + phase))
         + offset
     )
 
@@ -125,6 +129,7 @@ def fit_lorentz(x: npt.NDArray, y: npt.NDArray) -> dict:
         "function": lambda t: lorentzian(t, *popt),
     }
 
+
 def fit_decaying_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
     """Fit a decaying squared sine wave to the input sequence
 
@@ -159,6 +164,7 @@ def fit_decaying_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
         "function": lambda t: decaying_sinusoid(t, *popt),
     }
 
+
 def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
     """Fit a decaying squared sine wave to the input sequence
 
@@ -175,8 +181,8 @@ def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
     fft = abs(np.fft.fft(y))
     # excluding the zero frequency "peak", which is related to offset
     guess_frequency = np.abs(frequencies[np.argmax(fft[1:]) + 1])
-    guess_amplitude = np.std(y) * 2.0**0.5
-    guess_offset = np.mean(y)
+    guess_amplitude = np.std(y) * np.sqrt(2.0)
+    guess_offset = np.min(y)
     guess_phase = 0
     guess_lambda = 0
     guess = (guess_amplitude, guess_lambda, guess_frequency, guess_phase, guess_offset)
