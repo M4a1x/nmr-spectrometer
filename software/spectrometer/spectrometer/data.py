@@ -342,7 +342,7 @@ class FID1D:
         ng.pipe.write(str(file.resolve()), self._get_pipedic(), self.data)
 
     def plot(self, *, us_scale: bool = False) -> Figure:
-        fig, axes = plot.subplots(figsize=(10,5))
+        fig, axes = plot.subplots(figsize=(10, 5))
         uc = ng.pipe.make_uc(self._get_pipedic(), self.data)
         axes.plot(
             uc.us_scale() if us_scale else uc.ms_scale(),
@@ -426,11 +426,11 @@ class FID1D:
             return scale, data
 
     def plot_simple_fft(self, *, hz_scale: bool = True, **kwargs) -> Figure:
-        fig, axes = plot.subplots(figsize=(10,5))
-        scale, data, _ = self.simple_fft(**kwargs, hz_scale=hz_scale)
+        fig, axes = plot.subplots(figsize=(10, 5))
+        res = self.simple_fft(**kwargs, hz_scale=hz_scale)
         axes.plot(
-            scale,
-            data.real,
+            res[0],
+            res[1].real,
             linestyle="",
             marker="o",
             markersize=0.8,
