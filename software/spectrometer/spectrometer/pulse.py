@@ -234,7 +234,7 @@ class NMRSequence:
         )
         if overlap:
             msg = (
-                "Can't receive and transmit simultaneously! There needs to be a delay of at least"
+                "Can't receive and transmit simultaneously! There needs to be a delay of at least "
                 "1us between transmit and receive and 1us between receive and transmit"
             )
             raise ValueError(msg)
@@ -437,7 +437,7 @@ class Spectrometer:
                 f"cycles of the FPGA! The chosen RX frequency of {rx_freq}Hz results in "
                 f"a sample time of {1/rx_freq}s. The FPGA frequency of "
                 f"{server_cfg.fpga_clock_freq}Hz results in a FPGA cycle time of "
-                f"{1/server_cfg.fpga_clock_freq}s. Thus the next closest multiple would be"
+                f"{1/server_cfg.fpga_clock_freq}s. Thus the next closest multiple would be "
                 f"{server_cfg.fpga_clock_freq/np.round(server_cfg.fpga_clock_freq/sample_rate)}Hz."
             )
             raise ValueError(msg)
