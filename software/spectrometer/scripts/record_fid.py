@@ -12,10 +12,10 @@ logger = logging.getLogger(__name__)
 
 def main() -> None:
     logger.info("Creating pulse sequence...")
-    pulse_length_us = 9
-    delay_us = 25  # Wait 25us for coil to ring down
+    pulse_length_us = 15
+    delay_us = 20  # Wait for coil to ring down
     seq = NMRSequence.simple(
-        pulse_length_us=pulse_length_us, delay_us=delay_us, record_length_us=10e3
+        pulse_length_us=pulse_length_us, delay_us=delay_us, record_length_us=20e3
     )
 
     logger.info("Setting up spectrometer server...")
@@ -25,7 +25,7 @@ def main() -> None:
     server.start()
 
     logger.info("Connecting to server and sending sequence...")
-    spec = Spectrometer(tx_freq=25_090_000)
+    spec = Spectrometer(tx_freq=25_090_000, sample_rate=30_720) # minimum, maximum ~122.88e6/27 before FIFOs fill
     spec.connect()
     data = spec.send_sequence(seq)
     spec.disconnect()
