@@ -5,14 +5,14 @@ import logging
 from pathlib import Path
 from typing import Self
 
+import matplotlib.pyplot as plt
 import nmrglue as ng
 import numpy as np
 import numpy.typing as npt
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 
-from spectrometer.process import auto_find_phase_shift
 from spectrometer import plot
+from spectrometer.process import auto_find_phase_shift
 
 logger = logging.getLogger(__name__)
 NMRPIPE_MAX_LABEL_LENGTH = 8

@@ -14,7 +14,7 @@ def lorentzian(
     x: npt.NDArray, position: float, gamma: float, amplitude: float
 ) -> npt.NDArray:
     return amplitude * (
-        np.square(gamma) / (np.square((x - position)) + np.square(gamma))
+        np.square(gamma) / (np.square(x - position) + np.square(gamma))
     )
 
 

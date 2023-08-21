@@ -56,7 +56,10 @@ def main() -> None:
             spectrometer="magnETHical v0.1",
         )
         timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
-        file = Path(__file__).parent.parent / f"data/{timestr}-{fid.sample}-{fid.label}-t2-decay/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid"
+        file = (
+            Path(__file__).parent.parent
+            / f"data/{timestr}-{fid.sample}-{fid.label}-t2-decay/{timestr}-{fid.sample}-{fid.label}-{fid.pulse}.fid"
+        )
         fid.to_file(file)
         logger.info("Saved FID %s/%s", i + 1, len(datas))
         logger.info("Filename: %s", file)

@@ -1,9 +1,10 @@
+import logging
+
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 from matplotlib import ticker
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-import logging
 
 logger = logging.getLogger(__name__)
 
