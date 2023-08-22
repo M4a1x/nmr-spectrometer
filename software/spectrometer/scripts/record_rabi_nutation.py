@@ -20,9 +20,10 @@ def main() -> None:
     pulse_lengths_us = np.linspace(1, 300, 900)
     delay_us = 25
     repetition_time_s = 5
+    record_length=10e3
     sequences = [
         NMRSequence.simple(
-            pulse_length_us=pulse_length_us, delay_us=delay_us, record_length_us=10e3
+            pulse_length_us=pulse_length_us, delay_us=delay_us, record_length_us=record_length
         )
         for pulse_length_us in pulse_lengths_us
     ]
@@ -52,7 +53,7 @@ def main() -> None:
             observation_freq=spec.rx_freq,
             label="1H",
             sample="Water",
-            pulse=f"one_of_repeated_90_degree_pulses,length={pulse_lengths_us[i]}us,delay={delay_us}us,repetition_time={repetition_time_s}s",
+            pulse=f"one_of_repeated_90_degree_pulses,length={pulse_lengths_us[i]}us,delay={delay_us}us,repetition_time={repetition_time_s}s,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
             spectrometer="magnETHical v0.1",
             timestamp=timestamp,
         )

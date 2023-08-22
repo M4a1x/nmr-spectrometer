@@ -39,7 +39,7 @@ def main() -> None:
         observation_freq=spec.rx_freq,
         label="1H",
         sample="Water",
-        pulse=f"single_90_degree_pulse,length={int(pulse_length_us)}us,delay={int(delay_us)}us,record_length={int(record_length)},sample_rate={int(spec.sample_rate)},probe=andrew",
+        pulse=f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
         spectrometer="magnETHical v0.1",
     )
     time = fid.timestamp.strftime("%Y%m%d-%H%M%S")
