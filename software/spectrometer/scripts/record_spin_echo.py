@@ -14,13 +14,14 @@ def main() -> None:
     """Prepare the spectrometer and send a pulse echo sequence"""
 
     logger.info("Creating pulse echo sequence...")
-    pulse_length_us = 9
-    delay_us = 4_000
+    pulse_length_us = 8  # From rabi nutation experiment
+    delay_us = 100_000
+    record_length = 20e3
     seq = NMRSequence.spin_echo(
         pulse_length_us=pulse_length_us,
         delay_tau_us=delay_us,
-        delay_after_p2_us=delay_us / 2,
-        record_length_us=10e3,
+        delay_after_p2_us=delay_us - record_length/2,
+        record_length_us=record_length,
     )
 
     logger.info("Setting up spectrometer server...")
@@ -43,7 +44,7 @@ def main() -> None:
         observation_freq=spec.rx_freq,
         label="1H",
         sample="Water",
-        pulse=f"spin_echo,length={pulse_length_us}us,delay_tau={delay_us}us",
+        pulse=f"spin_echo,length={pulse_length_us}us,delay_tau={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
         spectrometer="magnETHical v0.1",
     )
     timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
