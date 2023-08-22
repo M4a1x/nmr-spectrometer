@@ -133,7 +133,7 @@ def fit_lorentz(x: npt.NDArray, y: npt.NDArray) -> dict:
 def fit_decaying_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
     """Fit a decaying squared sine wave to the input sequence
 
-    f(x) = a * e^-lt * sin(w * t + p) + c
+    f(t) = a * e^-lt * sin(w * t + p) + c
 
     Returns:
         Fitting parameters "amplitude", "lambda", "frequency", "phase", "offset", and "function"
