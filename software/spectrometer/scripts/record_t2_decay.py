@@ -3,6 +3,7 @@
 
 import logging
 from pathlib import Path
+from datetime import UTC, datetime as dt
 
 import numpy as np
 
@@ -16,15 +17,16 @@ def main() -> None:
     """Send multiple separate classic spin echos with increasing delay"""
 
     logger.info("Creating pulse sequences...")
-    delays_us = np.linspace(100, 300, 100)
-    pulse_length_us = 9
+    delays_us = np.linspace(10_000, 300_000, 30)
+    pulse_length_us = 8  # From rabi nutation experiment 
     repetition_time_s = 5
+    record_length=10_000
     sequences = [
         NMRSequence.spin_echo(
             pulse_length_us=pulse_length_us,
             delay_tau_us=delay_us,
-            delay_after_p2_us=delay_us / 2,
-            record_length_us=10_000,
+            delay_after_p2_us=delay_us,
+            record_length_us=record_length,
         )
         for delay_us in delays_us
     ]
@@ -44,6 +46,7 @@ def main() -> None:
     spec.disconnect()
 
     logger.info("Saving FIDs...")
+    timestamp = dt.now(tz=UTC).replace(microsecond=0)
     for i, data in enumerate(datas):
         fid = FID1D(
             data=data,
@@ -52,8 +55,9 @@ def main() -> None:
             observation_freq=spec.rx_freq,
             label="1H",
             sample="Water",
-            pulse=f"one_of_repeated_spin_echoes,length={pulse_length_us}us,delay_tau={delays_us[i]}us,repetition_time={repetition_time_s}s",
+            pulse=f"one_of_repeated_spin_echoes,length={pulse_length_us}us,delay_tau={delays_us[i]}us,repetition_time={repetition_time_s}s,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
             spectrometer="magnETHical v0.1",
+            timestamp=timestamp,
         )
         timestr = fid.timestamp.strftime("%Y%m%d-%H%M%S")
         file = (
