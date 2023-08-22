@@ -1,5 +1,6 @@
-# Specifically include measurement data inside data folder
-!data/*
+# Exclude measurement data inside data folder
+# One can manually add specific measurements manually if desired
+data/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
