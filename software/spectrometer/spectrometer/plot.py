@@ -63,15 +63,16 @@ def format_axes(axes: Axes, font="TeX Gyre Pagella") -> None:
     # Adjust ticks
     axes.tick_params(axis="both", direction="in")
 
+
 def format_axes3d(axes: Axes) -> None:
     # Disable grid
     axes.grid(False)
-    
+
     # Make panes transparent
-    axes.xaxis.set_pane_color((1.0,1.0,1.0,0.0))
-    axes.yaxis.set_pane_color((1.0,1.0,1.0,0.0))
-    axes.zaxis.set_pane_color((1.0,1.0,1.0,0.0))
-    
+    axes.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    axes.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    axes.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+
     # Set font
     plt.setp(
         [
@@ -84,7 +85,7 @@ def format_axes3d(axes: Axes) -> None:
             *axes.get_zticklabels(),
             *(axes.get_legend().get_texts() if axes.get_legend() else ()),
         ],
-        family=["TeX Gyre Pagella"]
+        family=["TeX Gyre Pagella"],
     )
 
     # change axis color
@@ -94,6 +95,7 @@ def format_axes3d(axes: Axes) -> None:
     axes.xaxis.label.set_color(color)
     axes.yaxis.label.set_color(color)
     axes.zaxis.label.set_color(color)
+
 
 def subplots3d(**kwargs) -> tuple[Figure, Axes | list[Axes]]:
     plt.rcParams["axes.autolimit_mode"] = "round_numbers"

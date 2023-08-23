@@ -15,9 +15,7 @@ def exp_decay(
 def lorentzian(
     x: npt.NDArray, position: float, gamma: float, amplitude: float
 ) -> npt.NDArray:
-    return amplitude * (
-        np.square(gamma) / (np.square(x - position) + np.square(gamma))
-    )
+    return amplitude * (np.square(gamma) / (np.square(x - position) + np.square(gamma)))
 
 
 def decaying_sinusoid(
@@ -93,17 +91,18 @@ def fit_exp_decay(x: npt.NDArray, y: npt.NDArray) -> dict:
         "function": lambda t: exp_decay(t, *popt),
     }
 
+
 class lorentz:
     def __init__(self, amplitude: float, gamma: float, position: float) -> None:
         self.amplitude = amplitude
         self.gamma = gamma
         self.position = position
-        
+
     def __call__(self, x: npt.NDArray) -> Any:
         return lorentzian(x, self.position, self.gamma, self.amplitude)
-    
+
     @classmethod
-    def fit(cls, x:npt.NDArray, y:npt.NDArray) -> Self:
+    def fit(cls, x: npt.NDArray, y: npt.NDArray) -> Self:
         """Fit a lorentzian function to the input sequence
 
         f(x) = amplitude * (gamma**2 / ((x - position)**2 + gamma**2))
