@@ -1,7 +1,9 @@
+from typing import Any
 import numpy as np
 import numpy.typing as npt
 import scipy.optimize as spo
 from nmrglue.process.proc_base import ps
+from typing import Self
 
 
 def exp_decay(
@@ -91,43 +93,47 @@ def fit_exp_decay(x: npt.NDArray, y: npt.NDArray) -> dict:
         "function": lambda t: exp_decay(t, *popt),
     }
 
+class lorentz:
+    def __init__(self, amplitude: float, gamma: float, position: float) -> None:
+        self.amplitude = amplitude
+        self.gamma = gamma
+        self.position = position
+        
+    def __call__(self, x: npt.NDArray) -> Any:
+        return lorentzian(x, self.position, self.gamma, self.amplitude)
+    
+    @classmethod
+    def fit(cls, x:npt.NDArray, y:npt.NDArray) -> Self:
+        """Fit a lorentzian function to the input sequence
 
-def fit_lorentz(x: npt.NDArray, y: npt.NDArray) -> dict:
-    """Fit a lorentzian function to the input sequence
+        f(x) = amplitude * (gamma**2 / ((x - position)**2 + gamma**2))
 
-    f(x) = amplitude * (gamma**2 / ((x - position)**2 + gamma**2))
+        Returns:
+            Fitting parameters "amplitude", "gamma", "position" and the resulting "function"
+        """
+        x = np.asarray(x, dtype=np.float64)
+        y = np.asarray(y, dtype=np.float64)
 
-    Returns:
-        Fitting parameters "amplitude", "gamma", "position" and the resulting "function"
-    """
-    x = np.asarray(x, dtype=np.float64)
-    y = np.asarray(y, dtype=np.float64)
+        # Guess initial fitting parameters
+        guess_amplitude = np.max(y) - np.min(y)
+        guess_position = x[np.argmax(y)]
 
-    # Guess initial fitting parameters
-    guess_amplitude = np.max(y) - np.min(y)
-    guess_position = x[np.argmax(y)]
+        def find_nearest_idx(array: npt.NDArray, value: float) -> float:
+            return np.abs(array - value).argmin()
 
-    def find_nearest_idx(array: npt.NDArray, value: float) -> float:
-        return np.abs(array - value).argmin()
+        guess_gamma = (
+            x[
+                len(y[np.argmax(y) :])
+                + find_nearest_idx(y[np.argmax(y) :], guess_amplitude / 2)
+            ]
+            - x[find_nearest_idx(y[: np.argmax(y)], guess_amplitude / 2)]
+        )
+        guess = (guess_position, guess_gamma, guess_amplitude)
 
-    guess_gamma = (
-        x[
-            len(y[np.argmax(y) :])
-            + find_nearest_idx(y[np.argmax(y) :], guess_amplitude / 2)
-        ]
-        - x[find_nearest_idx(y[: np.argmax(y)], guess_amplitude / 2)]
-    )
-    guess = (guess_position, guess_gamma, guess_amplitude)
-
-    popt, _pcov = spo.curve_fit(  # pylint: disable=unbalanced-tuple-unpacking
-        lorentzian, x, y, p0=guess
-    )
-    return {
-        "position": popt[0],
-        "gamma": np.abs(popt[1]),
-        "amplitude": popt[2],
-        "function": lambda t: lorentzian(t, *popt),
-    }
+        popt, _pcov = spo.curve_fit(  # pylint: disable=unbalanced-tuple-unpacking
+            lorentzian, x, y, p0=guess
+        )
+        return cls(position=popt[0], gamma=np.abs(popt[1]), amplitude=popt[2])
 
 
 def fit_decaying_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
