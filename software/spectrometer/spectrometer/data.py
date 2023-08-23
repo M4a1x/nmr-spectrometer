@@ -7,12 +7,13 @@ from typing import Self
 
 import matplotlib.pyplot as plt
 import nmrglue as ng
+from nmrglue.fileio import fileiobase as ngfile
 import numpy as np
 import numpy.typing as npt
 from matplotlib.figure import Figure
 
 from spectrometer import plot
-from spectrometer.process import auto_find_phase_shift
+from spectrometer.process import auto_find_phase_shift, lorentz
 
 logger = logging.getLogger(__name__)
 NMRPIPE_MAX_LABEL_LENGTH = 8
@@ -413,7 +414,8 @@ class FID1D:
         if phase_shift_kwargs:
             dic, data = ng.pipe_proc.ps(dic, data, **phase_shift_kwargs)
         elif phase_shift_kwargs is None:
-            p0 = auto_find_phase_shift(data)
+            p0_start = 180 if np.abs(np.min(data.real)) > np.abs(np.max(data.real)) else 0
+            p0 = auto_find_phase_shift(data, p0_start=p0_start)
             dic, data = ng.pipe_proc.ps(dic, data, p0=p0)
         else:
             pass  # Don't shift if passed 'False'
@@ -456,3 +458,107 @@ class FID1D:
             )
         else:
             return NotImplemented
+        
+    def __getitem__(self, key):
+        return self.data[key]
+
+    def __setitem__(self, key, value):
+        self.data[key] = value
+        
+
+class Spectrum1D:
+    """Complex 1D spectrum"""
+    def __init__(self, fft: npt.NDArray, spectral_width: float, observation_frequency: float, carrier_frequency:float) -> None:
+        self._fft = fft
+        self.spectral_width = spectral_width
+        self.observation_frequency = observation_frequency
+        self.carrier_frequency = carrier_frequency
+        self._uc = ngfile.unit_conversion(len(fft), True, spectral_width, observation_frequency, carrier_frequency)
+        
+    def integrate(self, frm: int, to: int) -> float:
+        """Calculate a simple Riemann sum in the given range"""
+        sum_slice = np.sum(self[frm:to])
+        scale = self._uc.ppm_scale()
+        dx = np.abs(scale[1]-scale[0])
+        return sum_slice * dx
+    
+    def integrate_around(self, position: int, width: int) -> float:
+        return self.integrate(position-width//2, position+width//2)
+    
+    def fit_lorentz(self, position: int, width: int) -> lorentz:
+        return lorentz.fit(self.scale, self[position-width//2:position+width//2])
+
+    def noise(self, frm: int, to: int) -> float:
+        return np.std(self[slice(frm, to)].real)
+    
+    @property
+    def max_peak(self) -> int:
+        return np.argmax(np.abs(self[:]))
+
+    @property
+    def hz(self) -> "_Spectrum1DHz":
+        return _Spectrum1DHz(self)
+    
+    @property
+    def ppm(self) -> "_Spectrum1Dppm":
+        return _Spectrum1Dppm(self)       
+
+    @property
+    def scale(self) -> npt.NDArray:
+        return np.linspace(*self.limits, len(self._fft))
+    
+    @property
+    def limits(self) -> tuple[int, int]:
+        return 0, len(self._fft) - 1
+    
+    def __getitem__(self, key):
+        return self._fft[key]
+        
+    def __setitem__(self, key, value):
+        self._fft[key] = value
+        
+    
+class _Spectrum1Dppm(Spectrum1D):
+    def __init__(self, spectrum: Spectrum1D) -> None:
+        super().__init__(spectrum._fft, spectrum.spectral_width, spectrum.observation_frequency, spectrum.carrier_frequency)
+
+    @property
+    def max_peak(self) -> int:
+        return self._uc.ppm(super().max_peak)
+
+    @property
+    def scale(self) -> npt.NDArray:
+        return self._uc.ppm_scale()
+    
+    @property
+    def limits(self) -> tuple[int, int]:
+        return self._uc.ppm_limits()
+
+    def __getitem__(self, key):
+        return self._fft[self._uc(key, "ppm")]
+        
+    def __setitem__(self, key, value):
+        self._fft[self._uc(key, "ppm")] = value
+
+
+class _Spectrum1DHz(Spectrum1D):
+    def __init__(self, spectrum: Spectrum1D) -> None:
+        super().__init__(spectrum.fft, spectrum.spectral_width, spectrum.observation_frequency, spectrum.carrier_frequency)
+
+    @property
+    def max_peak(self) -> int:
+        return self._uc.hz(super().max_peak)
+
+    @property
+    def scale(self) -> npt.NDArray:
+        return self._uc.hz_scale()
+    
+    @property
+    def limits(self) -> tuple[int, int]:
+        return self._uc.hz_limits()
+
+    def __getitem__(self, key):
+        return self._fft[self._uc(key, "Hz")]
+        
+    def __setitem__(self, key, value):
+        self._fft[self._uc(key, "Hz")] = value
