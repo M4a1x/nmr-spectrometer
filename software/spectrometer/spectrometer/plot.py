@@ -63,6 +63,47 @@ def format_axes(axes: Axes, font="TeX Gyre Pagella") -> None:
     # Adjust ticks
     axes.tick_params(axis="both", direction="in")
 
+def format_axes3d(axes: Axes) -> None:
+    # Disable grid
+    axes.grid(False)
+    
+    # Make panes transparent
+    axes.xaxis.set_pane_color((1.0,1.0,1.0,0.0))
+    axes.yaxis.set_pane_color((1.0,1.0,1.0,0.0))
+    axes.zaxis.set_pane_color((1.0,1.0,1.0,0.0))
+    
+    # Set font
+    plt.setp(
+        [
+            axes.title,
+            axes.xaxis.label,
+            axes.yaxis.label,
+            axes.zaxis.label,
+            *axes.get_xticklabels(),
+            *axes.get_yticklabels(),
+            *axes.get_zticklabels(),
+            *(axes.get_legend().get_texts() if axes.get_legend() else ()),
+        ],
+        family=["TeX Gyre Pagella"]
+    )
+
+    # change axis color
+    color = "#575757"  # normal grey: "#6F6F6F", dark grey: "#575757"
+    axes.tick_params(colors=color)
+    axes.spines[["left", "bottom", "top", "right"]].set_color(color)
+    axes.xaxis.label.set_color(color)
+    axes.yaxis.label.set_color(color)
+    axes.zaxis.label.set_color(color)
+
+def subplots3d(**kwargs) -> tuple[Figure, Axes | list[Axes]]:
+    plt.rcParams["axes.autolimit_mode"] = "round_numbers"
+    plt.rcParams["axes.xmargin"] = 0
+    plt.rcParams["axes.ymargin"] = 0
+    plt.rcParams["axes.zmargin"] = 0
+    fig = plt.figure(**kwargs)
+    axes = fig.add_subplot(projection="3d")
+    return fig, axes
+
 
 def subplots(**kwargs) -> tuple[Figure, Axes | list[Axes]]:
     """Call matplotlib.pyplot.subplots with layout="constrained and set some global configuration"
