@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import datetime as dt
 import io
@@ -7,13 +9,13 @@ from typing import Self
 
 import matplotlib.pyplot as plt
 import nmrglue as ng
-from nmrglue.fileio import fileiobase as ngfile
 import numpy as np
 import numpy.typing as npt
 from matplotlib.figure import Figure
+from nmrglue.fileio import fileiobase as ngfile
 
 from spectrometer import plot
-from spectrometer.process import auto_find_phase_shift, lorentz
+from spectrometer.process import find_phase_shift, lorentz
 
 logger = logging.getLogger(__name__)
 NMRPIPE_MAX_LABEL_LENGTH = 8
@@ -342,34 +344,45 @@ class FID1D:
             file = file_candidate
         ng.pipe.write(str(file.resolve()), self._get_pipedic(), self.data)
 
-    def plot(self, *, us_scale: bool = False) -> Figure:
-        fig, axes = plot.subplots(figsize=(10, 5))
+    def plot(
+        self,
+        *,
+        title: str | None = None,
+        figsize: tuple[float, float] = (10, 5),
+        us_scale: bool = False,
+        linestyle: str = "",
+        marker: str = "o",
+        markersize: float = 2,
+        **kwargs,
+    ) -> Figure:
+        fig, axes = plot.subplots(figsize=figsize)
         uc = ng.pipe.make_uc(self._get_pipedic(), self.data)
         axes.plot(
             uc.us_scale() if us_scale else uc.ms_scale(),
-            self.data.real,
-            linestyle="",
-            marker="o",
-            markersize=0.8,
+            self.real,
+            linestyle=linestyle,
+            marker=marker,
+            markersize=markersize,
+            **kwargs,
         )
-        axes.set_title(f"FID of {self.label}")
+        if title:
+            axes.set_title("title")
         axes.set_ylabel("Amplitude [a.u.]")
         axes.set_xlabel(f"Time [{'μs' if us_scale else 'ms'}]")
-        plot.format_axes(axes, font="Merriweather Sans")
+        plot.format_axes(axes)
         return fig
 
-    def simple_fft(
+    def spectrum(
         self,
         zero_fill_kwargs: dict | bool | None = None,
         fourier_transform_kwargs: dict | bool | None = None,
         phase_shift_kwargs: dict | bool | None = None,
-        *,
-        hz_scale: bool = True,
-    ) -> tuple[npt.NDArray, npt.NDArray]:
+    ) -> tuple[Spectrum1D, float]:
         """Very simple processing of the time domain data to obtain a frequency spectrum
 
         Without arguments this function will do an automatic zero fill, an automatic complex fourier
-        transform and an automated phase correction (using 'ACME' algorithm by Chen Li et al. (JMR 2002)).
+        transform and an automated phase correction (using a simple minima-minimization algorithm
+        around the highest peak). See `process.find_phase_shift(...)` for more information.
 
         Instead of relying on the automation algorithms, arguments to the individual functions can be
         passed in as dictionaries containing the keyword arguments for the functions. For a detailed
@@ -413,37 +426,22 @@ class FID1D:
         # Phase Shift
         if phase_shift_kwargs:
             dic, data = ng.pipe_proc.ps(dic, data, **phase_shift_kwargs)
+            p0 = phase_shift_kwargs.get("p0", 0)
         elif phase_shift_kwargs is None:
             p0_start = (
                 180 if np.abs(np.min(data.real)) > np.abs(np.max(data.real)) else 0
             )
-            p0 = auto_find_phase_shift(data, p0_start=p0_start)
+            p0 = find_phase_shift(data, p0_start=p0_start)
             dic, data = ng.pipe_proc.ps(dic, data, p0=p0)
         else:
-            pass  # Don't shift if passed 'False'
+            p0 = 0  # Don't shift if passed 'False'
 
-        unit_converter = ng.pipe.make_uc(dic, data)
-        scale = unit_converter.hz_scale() if hz_scale else unit_converter.ppm_scale()
-        if phase_shift_kwargs is None:
-            return scale, data, p0
-        else:
-            return scale, data
-
-    def plot_simple_fft(self, *, hz_scale: bool = True, **kwargs) -> Figure:
-        fig, axes = plot.subplots(figsize=(10, 5))
-        res = self.simple_fft(**kwargs, hz_scale=hz_scale)
-        axes.plot(
-            res[0],
-            res[1].real,
-            linestyle="",
-            marker="o",
-            markersize=0.8,
+        return (
+            Spectrum1D(
+                data, self.spectral_width, self.observation_freq, self.carrier_freq
+            ),
+            p0,
         )
-        axes.set_title(f"Spectrum of {self.label}")
-        axes.set_xlabel("Frequency [Hz]")
-        axes.set_ylabel("Amplitude [a.u.]")
-        plot.format_axes(axes, font="Merriweather Sans")
-        return fig
 
     @property
     def real(self) -> npt.NDArray:
@@ -495,8 +493,38 @@ class Spectrum1D:
         self.observation_frequency = observation_frequency
         self.carrier_frequency = carrier_frequency
         self._uc = ngfile.unit_conversion(
-            len(fft), True, spectral_width, observation_frequency, carrier_frequency
+            len(fft),
+            True,
+            spectral_width,
+            observation_frequency / 1e6,
+            carrier_frequency,
         )
+
+    def plot(
+        self,
+        *,
+        title: str | None = None,
+        figsize: tuple[float, float] = (10, 5),
+        linestyle: str = "",
+        marker: str = "o",
+        markersize: float = 2,
+        **kwargs,
+    ) -> Figure:
+        fig, axes = plot.subplots(figsize=figsize)
+        axes.plot(
+            self.scale,
+            self.real,
+            linestyle=linestyle,
+            marker=marker,
+            markersize=markersize,
+            **kwargs,
+        )
+        if title:
+            axes.set_title(title)
+        axes.set_xlabel("Index")
+        axes.set_ylabel("Amplitude [a.u.]")
+        plot.format_axes(axes)
+        return fig
 
     def integrate(self, frm: int, to: int) -> float:
         """Calculate a simple Riemann sum in the given range"""
@@ -506,12 +534,25 @@ class Spectrum1D:
         return sum_slice * dx
 
     def integrate_around(self, position: int, width: int) -> float:
-        return self.integrate(position - width // 2, position + width // 2)
+        return self.integrate(int(position - width // 2), int(position + width // 2))
 
-    def fit_lorentz(self, position: int, width: int) -> lorentz:
-        return lorentz.fit(
-            self.scale, self[position - width // 2 : position + width // 2]
+    def fit_lorentz(self) -> lorentz:
+        return lorentz.fit(self.scale, self._fft.real)
+
+    def crop(self, frm: int, to: int) -> Self:
+        scale = self.hz.scale[frm:to]
+        uc = ng.fileio.fileiobase.uc_from_freqscale(
+            scale, self.observation_frequency / 1e6, "hz"
         )
+        return self.__class__(
+            fft=self._fft[frm:to],
+            spectral_width=uc._sw,
+            observation_frequency=uc._obs * 1e6,
+            carrier_frequency=uc._car,
+        )
+
+    def crop_around(self, position: int, width: int) -> Self:
+        return self.crop(int(position - width // 2), int(position + width // 2))
 
     def noise(self, frm: int, to: int) -> float:
         return np.std(self[slice(frm, to)].real)
@@ -521,12 +562,22 @@ class Spectrum1D:
         return np.argmax(np.abs(self[:]))
 
     @property
-    def hz(self) -> "_Spectrum1DHz":
-        return _Spectrum1DHz(self)
+    def hz(self) -> _Spectrum1DHz:
+        return _Spectrum1DHz(
+            self._fft,
+            self.spectral_width,
+            self.observation_frequency,
+            self.carrier_frequency,
+        )
 
     @property
-    def ppm(self) -> "_Spectrum1Dppm":
-        return _Spectrum1Dppm(self)
+    def ppm(self) -> _Spectrum1Dppm:
+        return _Spectrum1Dppm(
+            self._fft,
+            self.spectral_width,
+            self.observation_frequency,
+            self.carrier_frequency,
+        )
 
     @property
     def scale(self) -> npt.NDArray:
@@ -536,6 +587,22 @@ class Spectrum1D:
     def limits(self) -> tuple[int, int]:
         return 0, len(self._fft) - 1
 
+    @property
+    def real(self) -> npt.NDArray:
+        return self._fft.real
+
+    @property
+    def imag(self) -> npt.NDArray:
+        return self._fft.imag
+
+    @property
+    def absolute(self) -> npt.NDArray:
+        return np.absolute(self._fft)
+
+    @property
+    def size(self) -> int:
+        return self._fft.size
+
     def __getitem__(self, key):
         return self._fft[key]
 
@@ -544,13 +611,29 @@ class Spectrum1D:
 
 
 class _Spectrum1Dppm(Spectrum1D):
-    def __init__(self, spectrum: Spectrum1D) -> None:
-        super().__init__(
-            spectrum._fft,
-            spectrum.spectral_width,
-            spectrum.observation_frequency,
-            spectrum.carrier_frequency,
+    def plot(
+        self,
+        *,
+        title: str | None = None,
+        figsize: tuple[float, float] = (10, 5),
+        linestyle: str = "",
+        marker: str = "o",
+        markersize: float = 2,
+        **kwargs,
+    ) -> Figure:
+        fig = super().plot(
+            title=title,
+            figsize=figsize,
+            linestyle=linestyle,
+            marker=marker,
+            markersize=markersize,
+            **kwargs,
         )
+        fig.axes[0].set_xlabel("Chemical Shift [ppm]")
+        return fig
+
+    def crop(self, frm: int, to: int) -> Self:
+        return super().crop(self._uc(to, "ppm"), self._uc(frm, "ppm"))
 
     @property
     def max_peak(self) -> int:
@@ -572,13 +655,29 @@ class _Spectrum1Dppm(Spectrum1D):
 
 
 class _Spectrum1DHz(Spectrum1D):
-    def __init__(self, spectrum: Spectrum1D) -> None:
-        super().__init__(
-            spectrum.fft,
-            spectrum.spectral_width,
-            spectrum.observation_frequency,
-            spectrum.carrier_frequency,
+    def plot(
+        self,
+        *,
+        title: str | None = None,
+        figsize: tuple[float, float] = (10, 5),
+        linestyle: str = "",
+        marker: str = "o",
+        markersize: float = 2,
+        **kwargs,
+    ) -> Figure:
+        fig = super().plot(
+            title=title,
+            figsize=figsize,
+            linestyle=linestyle,
+            marker=marker,
+            markersize=markersize,
+            **kwargs,
         )
+        fig.axes[0].set_xlabel("Frequency [Hz]")
+        return fig
+
+    def crop(self, frm: int, to: int) -> Self:
+        return super().crop(self._uc(to, "hz"), self._uc(frm, "hz"))
 
     @property
     def max_peak(self) -> int:

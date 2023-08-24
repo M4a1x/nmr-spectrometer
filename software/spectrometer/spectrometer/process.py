@@ -1,34 +1,15 @@
-from typing import Any
+from typing import Any, Self
+
 import numpy as np
 import numpy.typing as npt
 import scipy.optimize as spo
 from nmrglue.process.proc_base import ps
-from typing import Self
 
 
 def exp_decay(
     t: npt.NDArray, amplitude: float, lambda_: float, offset: float
 ) -> npt.NDArray:
     return amplitude * np.exp(-lambda_ * t) + offset
-
-
-def lorentzian(
-    x: npt.NDArray, position: float, gamma: float, amplitude: float
-) -> npt.NDArray:
-    return amplitude * (np.square(gamma) / (np.square(x - position) + np.square(gamma)))
-
-
-def decaying_sinusoid(
-    t: npt.NDArray,
-    amplitude: float,
-    lambda_: float,
-    freq: float,
-    phase: float,
-    offset: float,
-) -> npt.NDArray:
-    return (
-        amplitude * np.exp(-lambda_ * t) * np.sin(2 * np.pi * freq * t + phase) + offset
-    )
 
 
 def decaying_sinusoid_squared(
@@ -92,14 +73,100 @@ def fit_exp_decay(x: npt.NDArray, y: npt.NDArray) -> dict:
     }
 
 
+class decaying_sinus:
+    def __init__(
+        self, amplitude: float, lambda_: float, freq: float, phase: float, offset: float
+    ) -> None:
+        self.amplitude = amplitude
+        self.lambda_ = lambda_
+        self.freq = freq
+        self.phase = phase
+        self.offset = offset
+
+    @staticmethod
+    def function(
+        t: npt.NDArray,
+        amplitude: float,
+        lambda_: float,
+        freq: float,
+        phase: float,
+        offset: float,
+    ) -> npt.NDArray:
+        return (
+            amplitude * np.exp(-lambda_ * t) * np.sin(2 * np.pi * freq * t + phase)
+            + offset
+        )
+
+    def __call__(self, t: float) -> Any:
+        return self.function(
+            t, self.amplitude, self.lambda_, self.freq, self.phase, self.offset
+        )
+
+    @classmethod
+    def fit(cls, x: npt.NDArray, y: npt.NDArray) -> Self:
+        """Fit a decaying squared sine wave to the input sequence
+
+        f(t) = a * e^-lt * sin(2 * pi * f * t + p) + c
+
+        Returns:
+            Fitting parameters "amplitude", "lambda", "frequency", "phase", "offset", and "function"
+        """
+        x = np.asarray(x, dtype=np.float64)
+        y = np.asarray(y, dtype=np.float64)
+
+        # Guess initial fitting parameters
+        frequencies = np.fft.fftfreq(len(x), (x[1] - x[0]))  # assume uniform spacing
+        fft = abs(np.fft.fft(y))
+        # excluding the zero frequency "peak", which is related to offset
+        guess_frequency = np.abs(frequencies[np.argmax(fft[1:]) + 1])
+        guess_amplitude = np.std(y) * np.sqrt(2.0)
+        guess_offset = np.mean(y)
+        guess_phase = 0
+        guess_lambda = 0
+        guess = (
+            guess_amplitude,
+            guess_lambda,
+            guess_frequency,
+            guess_phase,
+            guess_offset,
+        )
+
+        popt, _pcov = spo.curve_fit(  # pylint: disable=unbalanced-tuple-unpacking
+            cls.function, x, y, p0=guess
+        )
+        return cls(
+            amplitude=popt[0],
+            lambda_=popt[1],
+            freq=popt[2],
+            phase=popt[3],
+            offset=popt[4],
+        )
+
+    def __str__(self) -> str:
+        return (
+            f"Amplitude: {self.amplitude}\n"
+            f"Frequency: {self.freq}\n"
+            f"Phase: {self.phase}\n"
+            f"Offset: {self.offset}"
+        )
+
+
 class lorentz:
     def __init__(self, amplitude: float, gamma: float, position: float) -> None:
         self.amplitude = amplitude
         self.gamma = gamma
         self.position = position
 
+    @staticmethod
+    def function(
+        x: npt.NDArray, position: float, gamma: float, amplitude: float
+    ) -> npt.NDArray:
+        return amplitude * (
+            np.square(gamma) / (np.square(x - position) + np.square(gamma))
+        )
+
     def __call__(self, x: npt.NDArray) -> Any:
-        return lorentzian(x, self.position, self.gamma, self.amplitude)
+        return self.function(x, self.position, self.gamma, self.amplitude)
 
     @classmethod
     def fit(cls, x: npt.NDArray, y: npt.NDArray) -> Self:
@@ -130,44 +197,21 @@ class lorentz:
         guess = (guess_position, guess_gamma, guess_amplitude)
 
         popt, _pcov = spo.curve_fit(  # pylint: disable=unbalanced-tuple-unpacking
-            lorentzian, x, y, p0=guess
+            cls.function, x, y, p0=guess
         )
         return cls(position=popt[0], gamma=np.abs(popt[1]), amplitude=popt[2])
 
+    @property
+    def fwhm(self) -> float:
+        return self.gamma * 2
 
-def fit_decaying_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
-    """Fit a decaying squared sine wave to the input sequence
-
-    f(t) = a * e^-lt * sin(w * t + p) + c
-
-    Returns:
-        Fitting parameters "amplitude", "lambda", "frequency", "phase", "offset", and "function"
-    """
-    x = np.asarray(x, dtype=np.float64)
-    y = np.asarray(y, dtype=np.float64)
-
-    # Guess initial fitting parameters
-    frequencies = np.fft.fftfreq(len(x), (x[1] - x[0]))  # assume uniform spacing
-    fft = abs(np.fft.fft(y))
-    # excluding the zero frequency "peak", which is related to offset
-    guess_frequency = np.abs(frequencies[np.argmax(fft[1:]) + 1])
-    guess_amplitude = np.std(y) * 2.0**0.5
-    guess_offset = np.mean(y)
-    guess_phase = 0
-    guess_lambda = 0
-    guess = (guess_amplitude, guess_lambda, guess_frequency, guess_phase, guess_offset)
-
-    popt, _pcov = spo.curve_fit(  # pylint: disable=unbalanced-tuple-unpacking
-        decaying_sinusoid, x, y, p0=guess
-    )
-    return {
-        "amplitude": popt[0],
-        "lambda": popt[1],
-        "frequency": popt[2],
-        "phase": popt[3],
-        "offset": popt[4],
-        "function": lambda t: decaying_sinusoid(t, *popt),
-    }
+    def __str__(self) -> str:
+        return (
+            f"Amplitude: {self.amplitude}\n"
+            f"Gamma: {self.gamma}\n"
+            f"Full Width at Half Maximum: {self.fwhm}\n"
+            f"Position: {self.position}"
+        )
 
 
 def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
@@ -205,7 +249,7 @@ def fit_decaying_squared_sinusoid(x: npt.NDArray, y: npt.NDArray) -> dict:
     }
 
 
-def auto_find_phase_shift(
+def find_phase_shift(
     data: npt.NDArray, p0_start: float = 0, peak_width: float = 100
 ) -> float:
     """Find a zero order phase shift that minimizes the minima around the peak
