@@ -2,8 +2,9 @@
 #!/usr/bin/env python3
 
 import logging
+from datetime import UTC
+from datetime import datetime as dt
 from pathlib import Path
-from datetime import UTC, datetime as dt
 
 import numpy as np
 
@@ -18,9 +19,9 @@ def main() -> None:
 
     logger.info("Creating pulse sequences...")
     delays_us = np.linspace(10_000, 300_000, 30)
-    pulse_length_us = 8  # From rabi nutation experiment 
+    pulse_length_us = 8  # From rabi nutation experiment
     repetition_time_s = 5
-    record_length=10_000
+    record_length = 10_000
     sequences = [
         NMRSequence.spin_echo(
             pulse_length_us=pulse_length_us,

@@ -20,7 +20,7 @@ def main() -> None:
     seq = NMRSequence.spin_echo(
         pulse_length_us=pulse_length_us,
         delay_tau_us=delay_us,
-        delay_after_p2_us=delay_us - record_length/2,
+        delay_after_p2_us=delay_us - record_length / 2,
         record_length_us=record_length,
     )
 

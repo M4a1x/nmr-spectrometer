@@ -2,12 +2,13 @@
 """Small script to record multiple FIDs after single pulses with increasing length"""
 
 import logging
+from datetime import UTC
+from datetime import datetime as dt
 from pathlib import Path
-from datetime import UTC, datetime as dt
 
 import numpy as np
 
-from spectrometer import FID1D, NMRSequence, Server, Spectrometer, ConnectionSettings
+from spectrometer import FID1D, ConnectionSettings, NMRSequence, Server, Spectrometer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,10 +21,12 @@ def main() -> None:
     pulse_lengths_us = np.linspace(1, 300, 900)
     delay_us = 25
     repetition_time_s = 5
-    record_length=10e3
+    record_length = 10e3
     sequences = [
         NMRSequence.simple(
-            pulse_length_us=pulse_length_us, delay_us=delay_us, record_length_us=record_length
+            pulse_length_us=pulse_length_us,
+            delay_us=delay_us,
+            record_length_us=record_length,
         )
         for pulse_length_us in pulse_lengths_us
     ]
