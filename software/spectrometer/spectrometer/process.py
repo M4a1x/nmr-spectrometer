@@ -6,12 +6,6 @@ import scipy.optimize as spo
 from nmrglue.process.proc_base import ps
 
 
-def exp_decay(
-    t: npt.NDArray, amplitude: float, lambda_: float, offset: float
-) -> npt.NDArray:
-    return amplitude * np.exp(-lambda_ * t) + offset
-
-
 def decaying_sinusoid_squared(
     t: npt.NDArray,
     amplitude: float,
@@ -73,6 +67,45 @@ def fit_exp_decay(x: npt.NDArray, y: npt.NDArray) -> dict:
     }
 
 
+class exp_decay:
+    def __init__(self, amplitude: float, lambda_: float, offset: float) -> None:
+        self.amplitude = amplitude
+        self.lambda_ = lambda_
+        self.offset = offset
+
+    @staticmethod
+    def function(
+        t: npt.NDArray, amplitude: float, lambda_: float, offset: float
+    ) -> npt.NDArray:
+        return amplitude * np.exp(-lambda_ * t) + offset
+
+    def __call__(self, t: float | npt.NDArray) -> float | npt.NDArray:
+        return self.function(t, self.amplitude, self.lambda_, self.offset)
+
+    @classmethod
+    def fit(cls, x: npt.NDArray, y: npt.NDArray) -> Self:
+        """Fit a decay exponential to the input sequence
+
+        f(x) = amplitude * e^(-lambda*t) + offset
+
+        Returns:
+            Self
+        """
+        x = np.asarray(x, dtype=np.float64)
+        y = np.asarray(y, dtype=np.float64)
+
+        # Guess initial fitting parameters
+        guess_amplitude = np.max(y) - np.min(y)
+        guess_offset = np.min(y)
+        guess_lambda = 0
+        guess = (guess_amplitude, guess_lambda, guess_offset)
+
+        popt, _pcov = spo.curve_fit(  # pylint: disable=unbalanced-tuple-unpacking
+            cls.function, x, y, p0=guess
+        )
+        return cls(amplitude=popt[0], lambda_=popt[1], offset=popt[2])
+
+
 class decaying_sinus:
     def __init__(
         self, amplitude: float, lambda_: float, freq: float, phase: float, offset: float
@@ -97,7 +130,11 @@ class decaying_sinus:
             + offset
         )
 
-    def __call__(self, t: float) -> Any:
+    @property
+    def period(self) -> float:
+        return 1 / self.freq
+
+    def __call__(self, t: float | npt.NDArray) -> float | npt.NDArray:
         return self.function(
             t, self.amplitude, self.lambda_, self.freq, self.phase, self.offset
         )
