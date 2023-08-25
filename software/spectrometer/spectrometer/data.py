@@ -1,11 +1,12 @@
 from __future__ import annotations
+from types import EllipsisType
 
 import copy
 import datetime as dt
 import io
 import logging
 from pathlib import Path
-from typing import Self
+from typing import Any, Self
 
 import matplotlib.pyplot as plt
 import nmrglue as ng
@@ -352,7 +353,7 @@ class FID1D:
         us_scale: bool = False,
         linestyle: str = "",
         marker: str = "o",
-        markersize: float = 2,
+        markersize: float = 1,
         **kwargs,
     ) -> Figure:
         fig, axes = plot.subplots(figsize=figsize)
@@ -507,7 +508,7 @@ class Spectrum1D:
         figsize: tuple[float, float] = (10, 5),
         linestyle: str = "",
         marker: str = "o",
-        markersize: float = 2,
+        markersize: float = 1,
         **kwargs,
     ) -> Figure:
         fig, axes = plot.subplots(figsize=figsize)
@@ -529,18 +530,18 @@ class Spectrum1D:
     def integrate(self, frm: int, to: int) -> float:
         """Calculate a simple Riemann sum in the given range"""
         sum_slice = np.sum(self[frm:to])
-        scale = self._uc.ppm_scale()
+        scale = self.scale
         dx = np.abs(scale[1] - scale[0])
         return sum_slice * dx
 
     def integrate_around(self, position: int, width: int) -> float:
-        return self.integrate(int(position - width // 2), int(position + width // 2))
+        return self.integrate(position - width / 2, position + width / 2)
 
     def fit_lorentz(self) -> lorentz:
         return lorentz.fit(self.scale, self._fft.real)
 
     def crop(self, frm: int, to: int) -> Self:
-        scale = self.hz.scale[frm:to]
+        scale = self._uc.hz_scale()[frm:to]
         uc = ng.fileio.fileiobase.uc_from_freqscale(
             scale, self.observation_frequency / 1e6, "hz"
         )
@@ -552,14 +553,14 @@ class Spectrum1D:
         )
 
     def crop_around(self, position: int, width: int) -> Self:
-        return self.crop(int(position - width // 2), int(position + width // 2))
+        return self.crop(position - width / 2, position + width / 2)
 
     def noise(self, frm: int, to: int) -> float:
         return np.std(self[slice(frm, to)].real)
 
     @property
     def max_peak(self) -> int:
-        return np.argmax(np.abs(self[:]))
+        return np.argmax(np.abs(self._fft))
 
     @property
     def hz(self) -> _Spectrum1DHz:
@@ -603,10 +604,56 @@ class Spectrum1D:
     def size(self) -> int:
         return self._fft.size
 
-    def __getitem__(self, key):
+    def _to_index(self, key: float) -> int:
+        return key
+
+    def _any_to_index(self, key: Any) -> int:
+        # don't edit ellipsis or none
+        if isinstance(key, EllipsisType) or key is None:
+            return key
+
+        try:
+            # try plain conversion first
+            return self._to_index(key)
+        except TypeError:
+            pass
+
+        try:
+            # Slice-like
+            return key.__class__(
+                self._to_index(key.start) if key.start else None,
+                self._to_index(key.stop) if key.stop else None,
+                self._to_index(key.step) if key.step else None,
+            )
+        except TypeError:
+            pass
+
+        raise TypeError(f"Couln't convert index! Are you sure {key} is a valid index?")
+
+    def __getitem__(self, key: Any):
+        try:
+            key = self._any_to_index(key)
+        except TypeError:
+            pass  # not scalar, slice, ellipsis, None
+
+        try:
+            key = key.__class__([self._any_to_index(k) for k in key])
+        except TypeError:
+            pass  # not iterable
+
         return self._fft[key]
 
     def __setitem__(self, key, value):
+        try:
+            key = self._any_to_index(key)
+        except TypeError:
+            pass  # not scalar, slice, ellipsis, None
+
+        try:
+            key = key.__class__([self._any_to_index(k) for k in key])
+        except TypeError:
+            pass  # not iterable
+
         self._fft[key] = value
 
 
@@ -647,11 +694,15 @@ class _Spectrum1Dppm(Spectrum1D):
     def limits(self) -> tuple[int, int]:
         return self._uc.ppm_limits()
 
-    def __getitem__(self, key):
-        return self._fft[self._uc(key, "ppm")]
+    def _to_index(self, key: float) -> int:
+        return self._uc(key, "ppm")
 
-    def __setitem__(self, key, value):
-        self._fft[self._uc(key, "ppm")] = value
+    def _any_to_index(self, key: Any) -> int:
+        idx = super()._any_to_index(key)
+        if isinstance(idx, slice):
+            return slice(idx.stop, idx.start, idx.step)
+        else:
+            return idx
 
 
 class _Spectrum1DHz(Spectrum1D):
@@ -691,8 +742,12 @@ class _Spectrum1DHz(Spectrum1D):
     def limits(self) -> tuple[int, int]:
         return self._uc.hz_limits()
 
-    def __getitem__(self, key):
-        return self._fft[self._uc(key, "Hz")]
+    def _to_index(self, key: float) -> int:
+        return self._uc(key, "Hz")
 
-    def __setitem__(self, key, value):
-        self._fft[self._uc(key, "Hz")] = value
+    def _any_to_index(self, key: Any) -> int:
+        idx = super()._any_to_index(key)
+        if isinstance(idx, slice):
+            return slice(idx.stop, idx.start, idx.step)
+        else:
+            return idx
