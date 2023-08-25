@@ -553,7 +553,7 @@ class Spectrum1D:
         )
 
     def crop_around(self, position: int, width: int) -> Self:
-        return self.crop(position - width / 2, position + width / 2)
+        return self.crop(position - width // 2, position + width // 2)
 
     def noise(self, frm: int, to: int) -> float:
         return np.std(self[slice(frm, to)].real)

@@ -18,8 +18,8 @@ def main() -> None:
     """Send multiple separate classic spin echos with increasing delay"""
 
     logger.info("Creating pulse sequences...")
-    delays_us = np.linspace(10_000, 300_000, 30)
-    pulse_length_us = 8  # From rabi nutation experiment
+    delays_us = np.linspace(1_000, 400_000, 400)
+    pulse_length_us = 8  # From rabi nutation experiment 
     repetition_time_s = 5
     record_length = 10_000
     sequences = [
@@ -39,7 +39,7 @@ def main() -> None:
     server.start()
 
     logger.info("Connecting to spectrometer server and sending pulse sequences...")
-    spec = Spectrometer(tx_freq=25_090_000)
+    spec = Spectrometer(tx_freq=25_089_500)
     spec.connect()
     datas = spec.send_sequences(
         sequences=sequences, repetition_time_s=repetition_time_s

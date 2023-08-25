@@ -14,13 +14,13 @@ def main() -> None:
     """Prepare the spectrometer and send a pulse echo sequence"""
 
     logger.info("Creating pulse echo sequence...")
-    pulse_length_us = 8  # From rabi nutation experiment
+    pulse_length_us = 9  # From rabi nutation experiment
     delay_us = 100_000
-    record_length = 20e3
+    record_length = 130e3
     seq = NMRSequence.spin_echo(
         pulse_length_us=pulse_length_us,
         delay_tau_us=delay_us,
-        delay_after_p2_us=delay_us - record_length / 2,
+        delay_after_p2_us=30,
         record_length_us=record_length,
     )
 
@@ -31,7 +31,7 @@ def main() -> None:
     server.start()
 
     logger.info("Connecting to server and sending sequence...")
-    spec = Spectrometer(tx_freq=25_090_000)
+    spec = Spectrometer(tx_freq=25_089_700)
     spec.connect()
     data = spec.send_sequence(seq)
     spec.disconnect()
