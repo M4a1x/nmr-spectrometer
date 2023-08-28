@@ -184,7 +184,8 @@ class decaying_sinus:
             f"Amplitude: {self.amplitude}\n"
             f"Frequency: {self.freq}\n"
             f"Phase: {self.phase}\n"
-            f"Offset: {self.offset}"
+            f"Offset: {self.offset}\n"
+            f"Lambda: {self.lambda_}"
         )
 
 
