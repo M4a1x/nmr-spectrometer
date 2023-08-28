@@ -35,6 +35,14 @@
 	name=RedPitaya,
 	description={is a company producing credit card sized computers including an \acrshort{fpga} which run open-source software (the hardware itself is \emph{not} open-source). In the context of the thesis, this refers to the specific board used -- a RedPitaya \href{https://redpitaya.com/sdrlab-122-16/}{SDRlab 122-16} based on a Xilinx \acrshort{soc} (Zynq 7020 with Dual ARM Cortex A9, \qty{122.88}{\mega\hertz} clock and \qty{50}{\ohm} terminated \acrshort{rf} inputs)}
 }
+\newglossaryentry{GNUlbl}{
+	name=GNU,
+	description={is an extensive collection of \gls{fs} developed within the GNU Project which can be used to form a complete operating system -- the most famous one known as Linux. Its goal is to give computer users freedom and control in their use of computers by developing software under the copyleft \acrshort{gpl}, that guarantees access to the source code of the software}
+}
+\newglossaryentry{fs}{
+	name=Free Software,
+	description={is software available with a license that allows everyone to not only run but also look at, change and redistribute it freely -- i.e. it is distributed with the source code. It is thus different from freeware and especially proprietary software}. The FSF puts it as: \enquote{Think of \enquote{free} as in \enquote{free speech} not as in \enquote{free beer}.}
+}
 
 % Glossary entries (used in text with e.g. \acrfull{fpsLabel} or \acrshort{fpsLabel})
 \newacronym[longplural={Frames per Second}]{fpsLabel}{FPS}{Frame per Second}
@@ -55,3 +63,7 @@
 \newacronym{soc}{SoC}{System on a chip}
 \newacronym{pa}{PA}{power amplifier}
 \newacronym{fid}{FID}{Free Induction Decay}
+\newacronym{linux}{Linux}{\gls{GNUlbl}/Linux}
+\newacronym{gnu}{GNU}{\gls{GNUlbl}'s Not Unix!}
+\newacronym{gpl}{GPL}{\gls{GNUlbl} General Public License}
+\newacronym{ip}{IP}{Internet Protocol}

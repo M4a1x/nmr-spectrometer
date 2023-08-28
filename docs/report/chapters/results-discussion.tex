@@ -2,7 +2,7 @@
 \chapter{Results}
 \labch{results}
 
-The following sections look at the built spectrometer from a user's point of view. The first \refsec{user-perspective} describes the assembly and operation of the spectrometer. The following \refsec{water-signal} discusses how to measure a signal with water as a simple and approachable example.
+The following sections look at the built spectrometer from a user's point of view. The first \refsec{user-perspective} describes the assembly and operation of the spectrometer built above. The following \refsec{water-signal} discusses how to measure a signal with water as a simple and approachable example.
 
 \section{The spectrometer from a user's perspective}
 \labsec{user-perspective}
@@ -24,7 +24,7 @@ There are five main parts to the spectrometer as explained in \nrefch{concepts}:
     \item[The probe] consisting of the probe holder and the probe coil, responsible for emitting and receiving the \acrshort{rf} signal
     \item[The \acrlong{lna}s] responsible for amplifying the weak signal received by the probe before feeding it to the console for processing
 \end{description}
-The short conceptual overview is reproduced in figure \reffig{overview} for the reader's convenience.
+The short conceptual overview is reproduced in figure \reffig{overview} for the reader's convenience. Each output needs to be connected to the input of the next device. The power connections are not shown in favour of clarity, but each part is labelled with the possible input voltages, in a range of \qtyrange{7}{15}{\volt}. For a more detailed description of the individual parts and their connections see the \enquote{magnETHical} project page (compare \reffig{logo-magnethical}) or the descriptions above.
 
 \begin{figure*}[!htb]
     \centering
@@ -64,6 +64,19 @@ The short conceptual overview is reproduced in figure \reffig{overview} for the 
     \caption{\captiontitle{Component overview.} The schematic contains all physical parts of the \acrshort{nmr} spectrometer that need to be connected through \acrshort{sma} cables.}
     \labfig{overview}
 \end{figure*}
+
+Having ordered or built the parts, connected them using \acrshort{sma} cables and powered them through a lab power supply, the console needs to be configured. The configuration of the console is relatively simple as most of the complexity has been programmed into the \gls{python} control library. The user thus only needs to ensure that a working \acrshort{linux} distribution is running on the \acrshort{rp} and that the \acrshort{ip} address is known. The official distribution that is pre-installed on the micro SD card that ships with the \acrshort{rp} is completely sufficient.
+
+If the user needs to create a new microSD card, the \url{setup of the microSD card is described in the \acrshort{rp} docs}{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html} and is summarized here for simplicity on a Linux based system.
+
+\begin{enumerate}
+    \item \url{Download the newest release}{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}
+    \item Insert the microSD card into your computer.
+    \item Figure out its name using \lstinline{lsblk} or \lstinline{df -h}, e.g. \lstinline{/dev/mmcblk0} or \lstinline{/dev/sdc}.
+    \item
+    \item
+\end{enumerate}
+
 
 \todo{Wassersignal Spannung (aus vergleich mit Funktionsgeneratorsignal)}
 
