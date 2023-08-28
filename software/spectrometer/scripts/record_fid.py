@@ -14,7 +14,7 @@ def main() -> None:
     logger.info("Creating pulse sequence...")
     pulse_length_us = 9
     delay_us = 25  # Wait for coil to ring down
-    record_length = 10e3
+    record_length = 20e3
     seq = NMRSequence.simple(
         pulse_length_us=pulse_length_us,
         delay_us=delay_us,
@@ -29,7 +29,7 @@ def main() -> None:
 
     logger.info("Connecting to server and sending sequence...")
     spec = Spectrometer(
-        tx_freq=25_089_900, sample_rate=320e3
+        tx_freq=25_090_400, sample_rate=320e3
     )  # minimum 30_720, maximum ~122.88e6/27 before FIFOs fill
     spec.connect()
     data = spec.send_sequence(seq)
@@ -42,7 +42,7 @@ def main() -> None:
         carrier_freq=0.0,  # Offset between rx_freq and magnet resonance freq. Needs to be calibrated
         observation_freq=spec.rx_freq,
         label="1H",
-        sample="Water",
+        sample="Toluene",
         pulse=f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
         spectrometer="magnETHical v0.1",
     )
