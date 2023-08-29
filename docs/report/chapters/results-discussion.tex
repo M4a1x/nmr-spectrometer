@@ -67,16 +67,28 @@ The short conceptual overview is reproduced in figure \reffig{overview} for the 
 
 Having ordered or built the parts, connected them using \acrshort{sma} cables and powered them through a lab power supply, the console needs to be configured. The configuration of the console is relatively simple as most of the complexity has been programmed into the \gls{python} control library. The user thus only needs to ensure that a working \acrshort{linux} distribution is running on the \acrshort{rp} and that the \acrshort{ip} address is known. The official distribution that is pre-installed on the micro SD card that ships with the \acrshort{rp} is completely sufficient.
 
-If the user needs to create a new microSD card, the \url{setup of the microSD card is described in the \acrshort{rp} docs}{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html} and is summarized here for simplicity on a Linux based system.
+If the user needs to create a new microSD card, the \href{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}{setup of the microSD card is described in the \acrshort{rp} docs} and is summarized here for simplicity on a Linux based system.
 
 \begin{enumerate}
-    \item \url{Download the newest release}{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}
+    \item \href{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}{Download the newest microSD card image}
     \item Insert the microSD card into your computer.
     \item Figure out its name using \lstinline{lsblk} or \lstinline{df -h}, e.g. \lstinline{/dev/mmcblk0} or \lstinline{/dev/sdc}.
-    \item
-    \item
+    \item Copy the image on the microSD card using\\ \lstinline{dd bs=1M if=red_pitaya_image_file.img of=/dev/mmcblk0 status=progress}
+    \item Done!
 \end{enumerate}
 
+The \acrshort{rp} needs to be reachable through Ethernet from the computer running the control software. The easiest way is to connect them both to a \acrshort{dhcp} server\sidenote{An example for a \acrshort{dhcp} server would be any router or WiFi access point that automatically provides you internet access.} in the same network and lookup the IP address it got assigned by entering the name printed on it into a web browser. For a manual setup method for a direct connection in an isolated lab environment, see the \lstinline{README.md} in the control software repository or the \href{https://redpitaya.readthedocs.io/en/latest/quickStart/connect/connect.html#static-ip-configuration}{Static IP configuration guide in the RedPitaya documentation}.
+
+On the computer, you need \href{https://git-scm.com/}{\lstinline{git}} and \href{https://www.python.org/}{\lstinline{python3}} to run the software. On Linux, this can usually be done with one of the commands in \ref{lst:install-prerequisits}
+\begin{listing}
+    \begin{minted}{shell-session}
+        $ dnf install python3 git
+        $ apt install python3 git
+        $ pacman -S python git
+    \end{minted}
+    \caption{Installing prerequisits}
+    \label{lst:install-prerequisits}
+\end{listing}
 
 \todo{Wassersignal Spannung (aus vergleich mit Funktionsgeneratorsignal)}
 
@@ -92,7 +104,7 @@ If the user needs to create a new microSD card, the \url{setup of the microSD ca
 \begin{figure}[h!bt]
     \centering
     \includegraphics{fid_raw.pdf}
-    \caption{\captiontitle{\acrfull{fid} of water.} The signal was recorded after a \qty{9}{\micro\second} impulse of a strength of \qty{1}{\watt} and a delay of \qty{25}{\micro\second}, waiting for the coil to ring down. \enquote{Andrew's probe} was used in this measurement}
+    \caption{\captiontitle{\acrfull{fid} of water.} The signal was recorded after a \qty{9}{\micro\second} impulse of a strength of \qty{1}{\watt} and a delay of \qty{25}{\micro\second}, waiting for the coil to ring down. \enquote{Andrew's probe} was used in this measurement with a transmit frequency of \qty{25.09}{\mega\hertz}}
     \labfig{fid-raw}
 \end{figure}
 
@@ -176,6 +188,26 @@ If the user needs to create a new microSD card, the \url{setup of the microSD ca
     \labfig{t2-decay-fit}
 \end{figure}
 
-\section{Measuring a Toluol signal}
+\section{Measuring a Toluene signal}
 \labsec{toluol-signal}
-\todo{Try and measure a Toluol (?) signal}
+
+\begin{marginfigure}
+    \centering
+    \includesvg[width=0.3\textwidth]{toluene.svg}
+    \caption{\captiontitle{Chemical structure of Toluene.} Notice the two main components: The \ch{CH_3} methyl group on one side and the phenyl ring on the other. The hydrogen atoms in both have very distinct \acrshort{nmr} resonance frequencies and differ by about \qty{5}{\partspermillion}.}
+    \labfig{pulse-echo-sequence}
+\end{marginfigure}
+
+\begin{figure}[h!bt]
+    \centering
+    \includegraphics{fid_toluene.pdf}
+    \caption{\captiontitle{\acrshort{fid} of Toluene}. It was recorded under similar conditions as the water above. A simple \(\frac{\pi}{2}\)-pulse of \qty{9}{\micro\second} with \qty{1}{\watt} power at \qty{25.0904}{\mega\hertz} was sent. After a delay of \qty{25}{\micro\second} the signal was recorded for \qty{20}{\milli\second}.}
+    \labfig{fid-toluene}
+\end{figure}
+
+\begin{figure}[h!bt]
+    \centering
+    \includegraphics{fft_toluene.pdf}
+    \caption{\captiontitle{\acrshort{fft} of Toluene measurement and simulation over a ppm scale}. The blue data line was obtained through a Fourier transform of the signal in \reffig{fid-toluene}. It was manually shifted by \qty{170}{\hertz} as there is no locking yet. The orange signal was created using MestReNova 14.3.3 simulating a spectra of Toluene at a $B_0$ field of \qty{25}{\mega\hertz}, a peak width of \qty{50}{\hertz} and scaled to match the measurement scale.}
+    \labfig{fft-toluene}
+\end{figure}
