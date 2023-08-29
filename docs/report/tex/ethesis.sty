@@ -56,17 +56,33 @@
 % Typography and Misc.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\RequirePackage{scrhack}	% Fix packages incompatible with KOMA features
 \RequirePackage{etoolbox}  	% Programming facilities
 \RequirePackage{xpatch}     % Enhanced version of etoolbox
 \RequirePackage{import}		% Relative path imports
 \RequirePackage{pdflscape} 	% Pages in landscape format
 \RequirePackage{xspace}
+\RequirePackage[listings=false]{scrhack}
+% \AddToHook{begindocument/before}{\usepackage[listings=false]{scrhack}}  % Load at end, for minted compatibility
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Scientifics Typesetting
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{chemmacros}% \ch{}, \chcpd[]{compound} etc.
+\chemsetup{%
+    formula=chemformula,%
+    chemformula/font-family=tgpl,% Use math font family
+}
+
+% Some new custom environments. Very simple definitions that behave just like the
+% widely known AMSMath math environment as specified in the last argument.
+\NewChemReaction{reactionsgather}{gather}% Like AMSmath's `gather`
+\NewChemReaction{reactionsgather*}{gather*}
+
+% Sort reaction counter underneath chapter, see
+% https://tex.stackexchange.com/questions/530210/how-to-cross-reference-reactions-in-chemmacros-chapter#comment1340793_530210
+\renewcommand*{\thereaction}{\thechapter.\arabic{reaction}}
 
 \RequirePackage{siunitx}% Typesetting physical units correctly
 \sisetup{%
@@ -490,6 +506,97 @@
 }%
 
 \NewDocumentCommand{\captiontitle}{m}{\textbf{#1}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Typeset code snippets
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage[%
+    outputdir=out,  % must match build dir in .latexmkrc!
+]{minted}
+
+\setminted{% Global `minted` aka code syntax highlighting options
+    % If code is indented in the LaTeX source, this is reflected in the print.
+    % This option automatically removes as much whitespace as the first line of a listing
+    % is indented by (note: requires `python` to be available, not only `pygmentize`)
+    autogobble=true,
+    %
+    % Assuming the code to be displayed is written at 80-90 characters per line,
+    % \footnotesize makes sure it fits onto one line (roughly).
+    fontsize=\footnotesize,
+    %
+    breaklines=true,
+    breakanywhere=false, % default "false"; could be ugly, only use if required
+    breakbytokenanywhere=true, % Breaks tokens on non-spaces too
+    %
+    % Regular LaTeX can occur in these (on UK Keyboard: SHIFT+`).
+    % Otherwise, you'll have to copy-paste this whenever needed.
+    % The problem is that the escapechar has to be quite exotic so it never occurs
+    % in source code.
+    escapeinside=¬¬,
+    %
+    frame=leftline, % leftline pulls it together visually quite nicely
+    framerule=1pt, % default is 0.4pt
+    rulecolor=\color{grey4},
+    %
+    numbers=left,
+    numberfirstline=true, % Always color the first line despite `stepnumber` setting
+    stepnumber=5, % Interval of line numbering
+    numbersep=2pt, % Horizontal distance between line number and line
+    %
+    % Used highlighting style, see https://pygments.org/demo/#try or `python -m pygments -L`
+    % For colorful output, I like:
+    % `paraiso-light` (prob. too light for print), `manni`, `tango`, `lovelace`
+    % For grayscale:
+    % `algol`
+    style=manni,  %xcode?
+}
+
+\setmintedinline{% Overwrite `\setminted` settings
+    fontsize=auto,% Reset to surrounding font size so its fits into the text flow
+}
+
+% Set up the floating environment, e.g. what is says in the caption of floats:
+% \SetupFloatingEnvironment{listing}{% Requires `newfloat` usage, kaobook already defines style for old "float" package
+%     name=\TransListing{},
+%     listname=\TransListOfListings{},
+% }
+% Create a new environment for breaking code listings across pages.
+% see: https://github.com/gpoore/minted/issues/189
+\newenvironment{longlisting}{\captionsetup{type=listing}}{}
+% Setup for referencing the floats correctly is done in `cleveref` settings!
+
+% In code environments, to be able to copy from the PDF (despite that not being a good
+% idea usually), we want the line numbers to not be part of the selection.
+% This command prints them, but renders the actual copied content empty,
+% on supported readers like Adobe Acrobat.
+\RequirePackage{accsupp}% https://tex.stackexchange.com/a/57160/120853
+
+\newcommand*{\emptyaccsupp}[1]{%
+    \BeginAccSupp{ActualText={}}#1\EndAccSupp{}%
+}%
+
+\renewcommand*{\theFancyVerbLine}{ % Redefine how line numbers are printed
+    \textcolor{grey}{\ttfamily\tiny\emptyaccsupp{\arabic{FancyVerbLine}}}
+}
+
+% Colors for escaped, normal LaTeX in code environments
+\newcommand*{\phstring}[1]{%
+    \textcolor{red}{#1}%
+}%
+\newcommand*{\phnum}[1]{%
+    \textcolor{blue}{#1}%
+}%
+\newcommand*{\phother}[1]{%
+    \textcolor{green}{#1}%
+}%
+\newcommand*{\phnote}[1]{%
+    {%
+            \hypersetup{allcolors=bronze}% If references occur in here
+            \textbf{\textcolor{bronze}{#1}}%
+        }%
+}%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
