@@ -7,39 +7,52 @@
 
 \begin{document}
 \maketitle
-% \section{First Section}
-\begin{frame}{Since last time}
+
+\section{Why?}
+
+\begin{frame}{Accessing NMR in the South is hard}
+  \centering
+  \includegraphics[height=0.8\textheight]{images/nmr-affiliations-per-million-people_naturalbreaks.pdf}
+
+  \(\frac{\text{NMR affiliations}}{\text{million people}}\)
+\end{frame}
+
+
+\section{What already works}
+
+\begin{frame}{We can already see water}
+  \centering
+  \includegraphics<1>[width=0.9\textwidth]{images/fid_sine_fit.pdf}
+  \includegraphics<2>[width=0.9\textwidth]{images/fft_fit.pdf}
+\end{frame}
+
+\begin{frame}{We can even see Toluene peaks!}
+  \centering
+  \includegraphics<1>[width=0.9\textwidth]{images/fid_toluene.pdf}
+  \includegraphics<2>[width=0.9\textwidth]{images/fft_toluene.pdf}
+\end{frame}
+
+\begin{frame}{Thank you!}
   \begin{columns}
-    \begin{column}{0.45\textwidth}
-      \begin{itemize}
-        \item Meeting with Christian Vogt
-        \item Finished building probe
-        \item Tune \& Match probe
-        \item Explored measurement setup
-        \item Thought about power supply
-      \end{itemize}
+    \begin{column}{0.5\textwidth}
+      \centering
+      \includesvg[width=0.5\textwidth]{./images/logo_magnETHical.svg}
     \end{column}
-    \begin{column}{0.45\textwidth}
-      Test
-      % \includegraphics[width=\textwidth]{./img/230418-finished_probe_only.JPG}
+    \begin{column}{0.5\textwidth}
+      \centering
+      Find everything on \\ \vspace*{\baselineskip}
+
+      \includesvg[width=0.5\textwidth]{./images/gitlab_qrcode.svg}
+
+      \url{https://gitlab.ethz.ch/mstabel/nmr-spectrometer}
     \end{column}
   \end{columns}
 \end{frame}
-\begin{frame}{Upcoming}
-  \begin{itemize}
-    \item Setup/Assemble spectrometer
-    \item Measure water with probe v1
-    \item Come up with single channel design for current source
-    \item Simulate single channel
-  \end{itemize}
+
+\appendix
+
+\begin{frame}[standout]
+  A backup graph for explaining things.
 \end{frame}
 
-% \begin{frame}[standout]
-%   Thank you!
-% \end{frame}
-
-% \appendix
-% \begin{frame}[standout]
-%   A backup graph for explaining things.
-% \end{frame}
 \end{document}

@@ -110,13 +110,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Load metropolis theme
-\usetheme[titleformat title=smallcaps]{metropolis}
+\usetheme[
+  titleformat title=smallcaps,
+  titleformat subtitle=smallcaps,
+  titleformat section=smallcaps,
+]{metropolis}
 
 % Disable separate dark color for frame titles
 \setbeamercolor{frametitle}{fg=normal text.fg, bg=normal text.bg}
 
 % Change default colours to ETH colours
-\setbeamercolor{normal text}{fg=greyd, bg=black!2}
+\setbeamercolor{normal text}{fg=greyd, bg=white}
 \setbeamercolor{alerted text}{fg=red}
 \setbeamercolor{example text}{fg=purple}
 
@@ -169,6 +173,7 @@
 \newfontfamily{\unitnumberfont}[Numbers=Uppercase]{TeX Gyre Pagella}  % Upright numbers for units in siunitx
 % \setbeamerfont to define fonts used e.g. in heading, block , footer, ...
 % \usefonttheme{serif}
+
 
 % Additional packages
 \RequirePackage{fontawesome5}
