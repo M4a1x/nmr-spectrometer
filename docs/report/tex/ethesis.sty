@@ -10,19 +10,19 @@
 
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{
-    family=ETH,
-    prefix=ETH@
+  family=ETH,
+  prefix=ETH@
 } % user shorter prefix ETH (instead of ethesis)
 %\DeclareStringOption[initial (always set)]{keyname}[default (aka. default value if key is provided)]
 \DeclareBoolOption{debug}
 \DeclareStringOption[english]{language}  % Passed to polyglossia, e.g. english or german
 \DeclareDefaultOption{%
-    \ifx\CurrentOptionValue\relax
-    \PackageWarningNoLine{\@currname}{
-        Unknown option '\CurrentOption'\MessageBreak
-    }
-    % Pass through any option (overwriting defaults) and load it
-    \expandafter\PassOptionsToClass{\expandafter\CurrentOption}{\@baseclass}
+  \ifx\CurrentOptionValue\relax
+  \PackageWarningNoLine{\@currname}{
+    Unknown option '\CurrentOption'\MessageBreak
+  }
+  % Pass through any option (overwriting defaults) and load it
+  \expandafter\PassOptionsToClass{\expandafter\CurrentOption}{\@baseclass}
 }
 \ProcessKeyvalOptions*
 
@@ -36,9 +36,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \ifETH@debug
-    \RequirePackage{showframe} 	% Shows boxes around the text area, margin, header and footer
-    \RequirePackage{showlabels} % Output the content of \label commands to the document where they are used
-    \KOMAoptions{draft=true}		% Print markers for overfull boxes/lines
+  \RequirePackage{showframe} 	% Shows boxes around the text area, margin, header and footer
+  \RequirePackage{showlabels} % Output the content of \label commands to the document where they are used
+  \KOMAoptions{draft=true}		% Print markers for overfull boxes/lines
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,7 +62,6 @@
 \RequirePackage{pdflscape} 	% Pages in landscape format
 \RequirePackage{xspace}
 \RequirePackage[listings=false]{scrhack}
-% \AddToHook{begindocument/before}{\usepackage[listings=false]{scrhack}}  % Load at end, for minted compatibility
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -71,8 +70,8 @@
 
 \RequirePackage{chemmacros}% \ch{}, \chcpd[]{compound} etc.
 \chemsetup{%
-    formula=chemformula,%
-    chemformula/font-family=tgpl,% Use math font family
+  formula=chemformula,%
+  chemformula/font-family=tgpl,% Use math font family
 }
 
 % Some new custom environments. Very simple definitions that behave just like the
@@ -86,37 +85,37 @@
 
 \RequirePackage{siunitx}% Typesetting physical units correctly
 \sisetup{%
-    % For siunitx v3, the following block replaces what used to be
-    % `detect-all` (removed in that release, see
-    % https://github.com/josephwright/siunitx/blob/main/CHANGELOG.md#v300 ).
-    % It allows the `siunitx` output to match surrounding text/math (italics/bold/...,
-    % roman/sans/... etc. as much as possible)
-    mode=match,
-    propagate-math-font=true,
-    reset-math-version=false,
-    reset-text-family=false,
-    reset-text-series=false,
-    reset-text-shape=false,% Not part of official fix, but still added (see https://collaborating.tuhh.de/alex/latex-cookbook/-/issues/8)
-    text-family-to-math=true,
-    text-series-to-math=true,
-    %
-    % Requires siunitx v3+, see also https://tex.stackexchange.com/a/468031/120853,
-    % https://github.com/josephwright/siunitx/issues/532 :
-    text-font-command=\unitnumberfont,
-    %
-    % Alternative range-phrase:
-    % en-dash via '--', but inside \text{}, so it's not 'two minus signs'
-    % range-phrase={\,\text{--}\,},
-    range-units=single,% single: Print unit only once, at end
-    per-mode=symbol,
+  % For siunitx v3, the following block replaces what used to be
+  % `detect-all` (removed in that release, see
+  % https://github.com/josephwright/siunitx/blob/main/CHANGELOG.md#v300 ).
+  % It allows the `siunitx` output to match surrounding text/math (italics/bold/...,
+  % roman/sans/... etc. as much as possible)
+  mode=match,
+  propagate-math-font=true,
+  reset-math-version=false,
+  reset-text-family=false,
+  reset-text-series=false,
+  reset-text-shape=false,% Not part of official fix, but still added (see https://collaborating.tuhh.de/alex/latex-cookbook/-/issues/8)
+  text-family-to-math=true,
+  text-series-to-math=true,
+  %
+  % Requires siunitx v3+, see also https://tex.stackexchange.com/a/468031/120853,
+  % https://github.com/josephwright/siunitx/issues/532 :
+  text-font-command=\unitnumberfont,
+  %
+  % Alternative range-phrase:
+  % en-dash via '--', but inside \text{}, so it's not 'two minus signs'
+  % range-phrase={\,\text{--}\,},
+  range-units=single,% single: Print unit only once, at end
+  per-mode=symbol,
 }%
 % Second setup step, with locales. See also
 % https://tex.stackexchange.com/a/46979/120853
 \gappto{\blockextras@german}{%
-    \sisetup{locale=DE}
+  \sisetup{locale=DE}
 }
 \gappto{\blockextras@english}{%
-    \sisetup{locale=US}
+  \sisetup{locale=US}
 }
 
 % Declare units ourselves:
@@ -141,27 +140,27 @@
 
 % Only use libraries as needed to keep compilation times low
 \usetikzlibrary{
-    positioning,	% Relative positioning etc.
-    calc,			% Calculate distances, coordinates etc.
-    shapes, 		% For cross out
-    backgrounds,	% Draw on background layer
-    fit,			% Fit new node around existing coordinates
-    decorations,
-    arrows,
-    arrows.spaced,
-    intersections,
-    trees,
-    circuits.ee.IEC,% Electrical engineering circuits lib
-    patterns,
-    3d,
-    tikzmark,		% Marks/coordinates at arbitrary positions
+  positioning,	% Relative positioning etc.
+  calc,			% Calculate distances, coordinates etc.
+  shapes, 		% For cross out
+  backgrounds,	% Draw on background layer
+  fit,			% Fit new node around existing coordinates
+  decorations,
+  arrows,
+  arrows.spaced,
+  intersections,
+  trees,
+  circuits.ee.IEC,% Electrical engineering circuits lib
+  patterns,
+  3d,
+  tikzmark,		% Marks/coordinates at arbitrary positions
 }
 \usepgfplotslibrary{
-    colorbrewer,
-    units,
-    dateplot,
-    fillbetween,
-    groupplots,
+  colorbrewer,
+  units,
+  dateplot,
+  fillbetween,
+  groupplots,
 }
 
 % Print a contour around letters, e.g. black text with a white border on some noisy
@@ -171,13 +170,13 @@
 \contourlength{0.12em}
 
 \newcommand*{\ctrw}[1]{% Black text, white contour
-    \hypersetup{hidelinks}% Hide links, which might be colored
-    \contour{white}{\textcolor{black}{#1}}%
+  \hypersetup{hidelinks}% Hide links, which might be colored
+  \contour{white}{\textcolor{black}{#1}}%
 }%
 
 \newcommand*{\ctrb}[1]{% White text, black contour
-    \hypersetup{hidelinks}% Hide links, which might be colored
-    \contour{black}{\textcolor{white}{#1}}%
+  \hypersetup{hidelinks}% Hide links, which might be colored
+  \contour{black}{\textcolor{white}{#1}}%
 }
 
 
@@ -276,66 +275,66 @@
 
 % Logo
 \newcommand*{\logo}[1]{%
-    \renewcommand*{\@logo}{#1}%
+  \renewcommand*{\@logo}{#1}%
 }
 \newcommand*{\@logo}{%
-    \ClassWarning{ethesis}{No \noexpand\logo given}
+  \ClassWarning{ethesis}{No \noexpand\logo given}
 }
 
 % Born
 \newcommand*{\born}[1]{%
-    \renewcommand*{\@born}{#1}%
+  \renewcommand*{\@born}{#1}%
 }
 \newcommand*{\@born}{%
-    \ClassWarning{ethesis}{No \noexpand\born given}
+  \ClassWarning{ethesis}{No \noexpand\born given}
 }
 
 % Citizen
 \newcommand*{\citizen}[1]{%
-    \renewcommand*{\@citizen}{#1}%
+  \renewcommand*{\@citizen}{#1}%
 }
 \newcommand*{\@citizen}{%
-    \ClassWarning{ethesis}{No \noexpand\citizen given}
+  \ClassWarning{ethesis}{No \noexpand\citizen given}
 }
 
 % Examiner
 \newcommand*{\examiner}[1]{%
-    \renewcommand*{\@examiner}{#1}%
+  \renewcommand*{\@examiner}{#1}%
 }
 \newcommand*{\@examiner}{%
-    \ClassWarning{ethesis}{No \noexpand\examiner given}
+  \ClassWarning{ethesis}{No \noexpand\examiner given}
 }
 
 % Supervisor
 \newcommand*{\supervisor}[1]{%
-    \renewcommand*{\@supervisor}{#1}%
+  \renewcommand*{\@supervisor}{#1}%
 }
 \newcommand*{\@supervisor}{%
-    \ClassWarning{ethesis}{No \noexpand\supervisor given}
+  \ClassWarning{ethesis}{No \noexpand\supervisor given}
 }
 
 % Degree
 \newcommand*{\degree}[1]{%
-    \renewcommand*{\@degree}{#1}%
+  \renewcommand*{\@degree}{#1}%
 }
 \newcommand*{\@degree}{%
-    \ClassWarning{ethesis}{No \noexpand\degree given}
+  \ClassWarning{ethesis}{No \noexpand\degree given}
 }
 
 % Degree Shorthand / Abbreviation
 \newcommand*{\shortdegree}[1]{%
-    \renewcommand*{\@shortdegree}{#1}%
+  \renewcommand*{\@shortdegree}{#1}%
 }
 \newcommand*{\@shortdegree}{%
-    \ClassWarning{ethesis}{No \noexpand\shortdegree given}
+  \ClassWarning{ethesis}{No \noexpand\shortdegree given}
 }
 
 % Student ID number
 \newcommand*{\idnumber}[1]{%
-    \renewcommand*{\@idnumber}{#1}%
+  \renewcommand*{\@idnumber}{#1}%
 }
 \newcommand*{\@idnumber}{%
-    \ClassWarning{ethesis}{No \noexpand\idnumber given}%{\@ehc}%
+  \ClassWarning{ethesis}{No \noexpand\idnumber given}%{\@ehc}%
 }
 
 
@@ -365,36 +364,36 @@
 
 % Redefine modern kaofonts
 \RenewDocumentCommand{\kao@fontmethodModern}{}{%
-    \RequirePackage{amssymb}         % Must be loaded before unicode-math
-    \RequirePackage[force]{filehook} % Fixes an error
-    \RequirePackage{unicode-math}    % Math fonts in xetexorluatex
-    \setromanfont[
-        Numbers=Lowercase,
-        Scale=1.04,
-    ]{TeX Gyre Pagella}
-    \setsansfont[
-        Scale=1,
-    ]{Merriweather Sans}
-    \setmonofont[
-        Scale=0.89,
-        AutoFakeSlant,
-    ]{inconsolata}
-    \setmathfont[
-        mathrm=sym,
-        mathit=sym,
-        mathsf=sym,
-        mathbf=sym,
-        mathtt=sym,
-        NFSSFamily=tgpl,
-    ]{TeX Gyre Pagella Math}
-    \newfontfamily{\unitnumberfont}[
-        % New font family for typesetting units.
-        % Required since otherwise, numbers typeset with \qty/\num etc. from siunitx
-        % might be hanging if that feature is turned on in the main font (OldStyle numbers).
-        % To ensure these physical numbers are always upright, set Numbers:
-        Numbers=Uppercase,
-        % Color=LightCyan4,% Toggle color for debugging (should be xcolor name)
-    ]{TeX Gyre Pagella}% Load existing fond, see also https://tex.stackexchange.com/a/351100/120853
+  \RequirePackage{amssymb}         % Must be loaded before unicode-math
+  \RequirePackage[force]{filehook} % Fixes an error
+  \RequirePackage{unicode-math}    % Math fonts in xetexorluatex
+  \setromanfont[
+    Numbers=Lowercase,
+    Scale=1.04,
+  ]{TeX Gyre Pagella}
+  \setsansfont[
+    Scale=1,
+  ]{Merriweather Sans}
+  \setmonofont[
+    Scale=0.89,
+    AutoFakeSlant,
+  ]{inconsolata}
+  \setmathfont[
+    mathrm=sym,
+    mathit=sym,
+    mathsf=sym,
+    mathbf=sym,
+    mathtt=sym,
+    NFSSFamily=tgpl,
+  ]{TeX Gyre Pagella Math}
+  \newfontfamily{\unitnumberfont}[
+    % New font family for typesetting units.
+    % Required since otherwise, numbers typeset with \qty/\num etc. from siunitx
+    % might be hanging if that feature is turned on in the main font (OldStyle numbers).
+    % To ensure these physical numbers are always upright, set Numbers:
+    Numbers=Uppercase,
+    % Color=LightCyan4,% Toggle color for debugging (should be xcolor name)
+  ]{TeX Gyre Pagella}% Load existing fond, see also https://tex.stackexchange.com/a/351100/120853
 }
 \kao@fontmethodModern
 
@@ -403,12 +402,12 @@
 \ExplSyntaxOn
 \cs_generate_variant:Nn \regex_extract_once:nnN { nx }  % Generate nxN variant from nnN variant
 \NewDocumentCommand{\matchfirstword}{m}{
-    \regex_extract_once:nxN { \A \W*([A-Za-z\-\_]*).* \Z } { #1 } \l_tmpa_seq  % Match regex and store first match
-    \seq_item:Nn \l_tmpa_seq {2}  % Print the first group (first element is the whole match, i.e. everything)
+  \regex_extract_once:nxN { \A \W*([A-Za-z\-\_]*).* \Z } { #1 } \l_tmpa_seq  % Match regex and store first match
+  \seq_item:Nn \l_tmpa_seq {2}  % Print the first group (first element is the whole match, i.e. everything)
 }
 \NewDocumentCommand{\matchlastnumber}{m}{
-    \regex_extract_once:nxN { \d+(\.\d*)?pt } { #1 } \l_tmpb_seq  % Match regex and store first match in \l_tmpb_seq
-    \seq_if_empty:NTF \l_tmpb_seq { \f@size{}pt } { \seq_item:Nn \l_tmpb_seq{1} }  % Print the first group, if the sequence is not empty. if it is, print \f@size
+  \regex_extract_once:nxN { \d+(\.\d*)?pt } { #1 } \l_tmpb_seq  % Match regex and store first match in \l_tmpb_seq
+  \seq_if_empty:NTF \l_tmpb_seq { \f@size{}pt } { \seq_item:Nn \l_tmpb_seq{1} }  % Print the first group, if the sequence is not empty. if it is, print \f@size
 }
 
 % Place in group '{}' to "contain" the effects of the '\normalsize' font switch
@@ -468,41 +467,41 @@
 % However, after the auxiliary images have been created, they only need to be input;
 % shell-escape will no longer be required.
 \svgsetup{%
-    inkscapepath=svgsubdir,% Put into subdirectory of where original SVG was found
-    % In most cases, we include SVGs that contain no text, then add it in a
-    % tikzpicture overlay. Therefore, don't generate *.pdf_tex file.
-    % Toggle this back to true wherever needed, on a per-file basis
-    inkscapelatex=false,
+  inkscapepath=svgsubdir,% Put into subdirectory of where original SVG was found
+  % In most cases, we include SVGs that contain no text, then add it in a
+  % tikzpicture overlay. Therefore, don't generate *.pdf_tex file.
+  % Toggle this back to true wherever needed, on a per-file basis
+  inkscapelatex=false,
 }
 
 % When placing nodes over included SVGs using Tikz,
 % we require some help to debug the positions:
 \newcommand*{\debugtikzsvg}{%
-    % This has to be evoked within a TikZ scope of:
-    % `\begin{scope}[x={(image.south east)},y={(image.north west)}]`
-    % The image we invoke the grid "on top of" needs to be labelled "image":
-    \draw[help lines, xstep=0.02,ystep=0.02, opacity=0.5]
-    (image.south west) grid (image.north east);
-    \draw[gray, thick, xstep=0.1,ystep=0.1, opacity=0.8]
-    (image.south west) grid (image.north east);
-    %
-    \foreach \posfraction in {%
-            0, 0.1, ...,1%
-        }{%
-            \foreach \startpoint/\endpoint/\nodeorientation in {% 2D-grid
-                    south west/south east/below,%
-                    north west/north east/above,%
-                    south east/north east/right,%
-                    south west/north west/left%
-                }{
-                    \node[\nodeorientation, opacity=0.5]
-                    at ($(image.\startpoint)!\posfraction!(image.\endpoint)$)
-                    {%
-                        \pgfmathparse{int(\posfraction*10)}% Round result
-                        \num{\pgfmathresult}%
-                    };
-                }%
+  % This has to be evoked within a TikZ scope of:
+  % `\begin{scope}[x={(image.south east)},y={(image.north west)}]`
+  % The image we invoke the grid "on top of" needs to be labelled "image":
+  \draw[help lines, xstep=0.02,ystep=0.02, opacity=0.5]
+  (image.south west) grid (image.north east);
+  \draw[gray, thick, xstep=0.1,ystep=0.1, opacity=0.8]
+  (image.south west) grid (image.north east);
+  %
+  \foreach \posfraction in {%
+      0, 0.1, ...,1%
+    }{%
+      \foreach \startpoint/\endpoint/\nodeorientation in {% 2D-grid
+          south west/south east/below,%
+          north west/north east/above,%
+          south east/north east/right,%
+          south west/north west/left%
+        }{
+          \node[\nodeorientation, opacity=0.5]
+          at ($(image.\startpoint)!\posfraction!(image.\endpoint)$)
+          {%
+            \pgfmathparse{int(\posfraction*10)}% Round result
+            \num{\pgfmathresult}%
+          };
         }%
+    }%
 }%
 
 \NewDocumentCommand{\captiontitle}{m}{\textbf{#1}}
@@ -513,48 +512,48 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \RequirePackage[%
-    outputdir=out,  % must match build dir in .latexmkrc!
+  outputdir=out,  % must match build dir in .latexmkrc!
 ]{minted}
 
 \setminted{% Global `minted` aka code syntax highlighting options
-    % If code is indented in the LaTeX source, this is reflected in the print.
-    % This option automatically removes as much whitespace as the first line of a listing
-    % is indented by (note: requires `python` to be available, not only `pygmentize`)
-    autogobble=true,
-    %
-    % Assuming the code to be displayed is written at 80-90 characters per line,
-    % \footnotesize makes sure it fits onto one line (roughly).
-    fontsize=\footnotesize,
-    %
-    breaklines=true,
-    breakanywhere=false, % default "false"; could be ugly, only use if required
-    breakbytokenanywhere=true, % Breaks tokens on non-spaces too
-    %
-    % Regular LaTeX can occur in these (on UK Keyboard: SHIFT+`).
-    % Otherwise, you'll have to copy-paste this whenever needed.
-    % The problem is that the escapechar has to be quite exotic so it never occurs
-    % in source code.
-    escapeinside=¬¬,
-    %
-    frame=leftline, % leftline pulls it together visually quite nicely
-    framerule=1pt, % default is 0.4pt
-    rulecolor=\color{grey4},
-    %
-    numbers=left,
-    numberfirstline=true, % Always color the first line despite `stepnumber` setting
-    % stepnumber=5, % Interval of line numbering
-    numbersep=2pt, % Horizontal distance between line number and line
-    %
-    % Used highlighting style, see https://pygments.org/demo/#try or `python -m pygments -L`
-    % For colorful output, I like:
-    % `paraiso-light` (prob. too light for print), `manni`, `tango`, `lovelace`
-    % For grayscale:
-    % `algol`
-    style=manni,  %xcode?
+  % If code is indented in the LaTeX source, this is reflected in the print.
+  % This option automatically removes as much whitespace as the first line of a listing
+  % is indented by (note: requires `python` to be available, not only `pygmentize`)
+  autogobble=true,
+  %
+  % Assuming the code to be displayed is written at 80-90 characters per line,
+  % \footnotesize makes sure it fits onto one line (roughly).
+  fontsize=\footnotesize,
+  %
+  breaklines=true,
+  breakanywhere=false, % default "false"; could be ugly, only use if required
+  breakbytokenanywhere=true, % Breaks tokens on non-spaces too
+  %
+  % Regular LaTeX can occur in these (on UK Keyboard: SHIFT+`).
+  % Otherwise, you'll have to copy-paste this whenever needed.
+  % The problem is that the escapechar has to be quite exotic so it never occurs
+  % in source code.
+  escapeinside=¬¬,
+  %
+  frame=leftline, % leftline pulls it together visually quite nicely
+  framerule=1pt, % default is 0.4pt
+  rulecolor=\color{grey4},
+  %
+  numbers=left,
+  numberfirstline=true, % Always color the first line despite `stepnumber` setting
+  % stepnumber=5, % Interval of line numbering
+  numbersep=2pt, % Horizontal distance between line number and line
+  %
+  % Used highlighting style, see https://pygments.org/demo/#try or `python -m pygments -L`
+  % For colorful output, I like:
+  % `paraiso-light` (prob. too light for print), `manni`, `tango`, `lovelace`
+  % For grayscale:
+  % `algol`
+  style=manni,  %xcode?
 }
 
 \setmintedinline{% Overwrite `\setminted` settings
-    fontsize=auto,% Reset to surrounding font size so its fits into the text flow
+  fontsize=auto,% Reset to surrounding font size so its fits into the text flow
 }
 
 % Set up the floating environment, e.g. what is says in the caption of floats:
@@ -574,28 +573,28 @@
 \RequirePackage{accsupp}% https://tex.stackexchange.com/a/57160/120853
 
 \newcommand*{\emptyaccsupp}[1]{%
-    \BeginAccSupp{ActualText={}}#1\EndAccSupp{}%
+  \BeginAccSupp{ActualText={}}#1\EndAccSupp{}%
 }%
 
 \renewcommand*{\theFancyVerbLine}{ % Redefine how line numbers are printed
-    \textcolor{grey}{\ttfamily\tiny\emptyaccsupp{\arabic{FancyVerbLine}}}
+  \textcolor{grey}{\ttfamily\tiny\emptyaccsupp{\arabic{FancyVerbLine}}}
 }
 
 % Colors for escaped, normal LaTeX in code environments
 \newcommand*{\phstring}[1]{%
-    \textcolor{red}{#1}%
+  \textcolor{red}{#1}%
 }%
 \newcommand*{\phnum}[1]{%
-    \textcolor{blue}{#1}%
+  \textcolor{blue}{#1}%
 }%
 \newcommand*{\phother}[1]{%
-    \textcolor{green}{#1}%
+  \textcolor{green}{#1}%
 }%
 \newcommand*{\phnote}[1]{%
-    {%
-            \hypersetup{allcolors=bronze}% If references occur in here
-            \textbf{\textcolor{bronze}{#1}}%
-        }%
+  {%
+      \hypersetup{allcolors=bronze}% If references occur in here
+      \textbf{\textcolor{bronze}{#1}}%
+    }%
 }%
 
 
@@ -616,20 +615,20 @@
 
 % https://tex.stackexchange.com/a/205536/120853
 \renewcommand*{\blankpage}{
-    \par\vspace*{\fill}
-    \begin{center}
-        \textcolor{blankcolor}{
-            This page intentionally left blank.%
-            % https://web.archive.org/web/20041119090707/https://www3.epa.gov/ttn/oarpg/t1/memoranda/eipfin.pdf
-        }
-    \end{center}
-    \vspace{\fill}
+  \par\vspace*{\fill}
+  \begin{center}
+    \textcolor{blankcolor}{
+      This page intentionally left blank.%
+      % https://web.archive.org/web/20041119090707/https://www3.epa.gov/ttn/oarpg/t1/memoranda/eipfin.pdf
+    }
+  \end{center}
+  \vspace{\fill}
 }
 
 \DeclareNewLayer[%
-    foreground,%
-    textarea,%
-    contents=\blankpage,%
+  foreground,%
+  textarea,%
+  contents=\blankpage,%
 ]{blankpage.fg}
 \DeclarePageStyleByLayers{blank}{blankpage.fg}
 \KOMAoptions{cleardoublepage=blank}
@@ -680,13 +679,13 @@ end
 % -- Otherwise, e.g. when developing locally, use commands as a fallback.
 local macro_content_sources = {
 GitRefName = {
-        env = "CI_COMMIT_REF_NAME",
-        cmd = "git rev-parse --abbrev-ref HEAD",
-    },
+    env = "CI_COMMIT_REF_NAME",
+    cmd = "git rev-parse --abbrev-ref HEAD",
+  },
 GitShortSHA = {
-        env = "CI_COMMIT_SHORT_SHA",
-        cmd = "git rev-parse --short HEAD",
-    },
+    env = "CI_COMMIT_SHORT_SHA",
+    cmd = "git rev-parse --short HEAD",
+  },
 }
 %
 for macro_name, content_sources in pairs(macro_content_sources) do
@@ -747,11 +746,11 @@ end
 
 % A command to have a cell with vertical text as a multirow:
 \newcommand*{\multirotatecell}[2]{%
-    \multirow{#1}{*}{%
-        \begin{tabular}{@{}c@{}}%
-            \rotatebox[origin=c]{90}{#2}%
-        \end{tabular}%
-    }%
+  \multirow{#1}{*}{%
+    \begin{tabular}{@{}c@{}}%
+      \rotatebox[origin=c]{90}{#2}%
+    \end{tabular}%
+  }%
 }%
 
 \RequirePackage{tabularray} % Powerful, up and coming package
@@ -791,50 +790,50 @@ end
 % If copying elsewhere, remember that spaces and newlines are handled different inside *.cls files!
 \renewcommand{\maketitle}{
 \begin{titlepage}
-    \begin{center}
+  \begin{center}
 
-        \vspace*{\fill} % starred version to not discard space at beginning/end of page
+    \vspace*{\fill} % starred version to not discard space at beginning/end of page
 
-        {\color{titlecolor}\usekomafont{title}\@title}\par
-        \bigskip
+    {\color{titlecolor}\usekomafont{title}\@title}\par
+    \bigskip
 
-        {\usekomafont{author}\@author}\par
-        \bigskip
+    {\usekomafont{author}\@author}\par
+    \bigskip
 
-        {
-            \usekomafont{born}
-            born on \@born\\
-            citizen of \@citizen
-            \par % Line spacing is only updated after paragraph ends
-        }
-        \vfill
-
-
-        {\usekomafont{titlepagetext}{A thesis submitted to attain the degree of}\par}
-        {
-            \usekomafont{degree}
-            \@degree\\
-            (\@shortdegree)\par
-        }
+    {
+      \usekomafont{born}
+      born on \@born\\
+      citizen of \@citizen
+      \par % Line spacing is only updated after paragraph ends
+    }
+    \vfill
 
 
-        \vfill
+    {\usekomafont{titlepagetext}{A thesis submitted to attain the degree of}\par}
+    {
+      \usekomafont{degree}
+      \@degree\\
+      (\@shortdegree)\par
+    }
 
-        \@logo\par
-        {\usekomafont{titlepagetext}{examined by}\par}
-        \smallskip
-        {\usekomafont{examiner}\@examiner\par}
 
-        \bigskip
+    \vfill
 
-        {\usekomafont{titlepagetext}{supervised by\par}}
-        \smallskip
-        {\usekomafont{supervisor}\@supervisor\par}
+    \@logo\par
+    {\usekomafont{titlepagetext}{examined by}\par}
+    \smallskip
+    {\usekomafont{examiner}\@examiner\par}
 
-        \bigskip
+    \bigskip
 
-        {\usekomafont{date}\@date}
-    \end{center}
+    {\usekomafont{titlepagetext}{supervised by\par}}
+    \smallskip
+    {\usekomafont{supervisor}\@supervisor\par}
+
+    \bigskip
+
+    {\usekomafont{date}\@date}
+  \end{center}
 \end{titlepage}
 
 {
@@ -847,9 +846,9 @@ end
 \cleardoubleoddpage
 \thispagestyle{empty}
 \begin{center}
-    \vspace*{\fill}
-    \@dedication
-    \vspace*{\fill}
+  \vspace*{\fill}
+  \@dedication
+  \vspace*{\fill}
 \end{center}
 }
 }
@@ -860,69 +859,69 @@ end
 
 
 \RenewDocumentCommand{\margintoc}{O{\mtocshift}}{ % The first parameter is the vertical offset; by default it is \mtocshift
-    \begingroup%
-    % Move regular section and subsection to level 6 so that they won't be included and instead set let the mtoc versions take their place.
-    % Adapted from https://tex.stackexchange.com/a/133559/226693
-    \etocsetlevel{section}{6}
-    \etocsetlevel{subsection}{6}
-    \etocsetlevel{mtocsection}{1}
-    \etocsetlevel{mtocsubsection}{2}
+  \begingroup%
+  % Move regular section and subsection to level 6 so that they won't be included and instead set let the mtoc versions take their place.
+  % Adapted from https://tex.stackexchange.com/a/133559/226693
+  \etocsetlevel{section}{6}
+  \etocsetlevel{subsection}{6}
+  \etocsetlevel{mtocsection}{1}
+  \etocsetlevel{mtocsubsection}{2}
 
-    % Define default widths
-    \def\margintocnumwidth{8mm}% was -.8mm before  <--- CHANGE HERE
-    \def\margintocpagenumwidth{8pt}%
-    \setlength{\RaggedRightParfillskip}{0pt}
+  % Define default widths
+  \def\margintocnumwidth{8mm}% was -.8mm before  <--- CHANGE HERE
+  \def\margintocpagenumwidth{8pt}%
+  \setlength{\RaggedRightParfillskip}{0pt}
 
-    % Dry run to get the needed widths
-    \etocsetstyle{mtocsection}%
-    {}%
-    {\setbox0\hbox{{\usekomafont{section}\small\etocthenumber\kern.8mm}}%%
-        \setbox1\hbox{{\usekomafont{section}\small\etocthepage}}}%
-    {\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%%
-        \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
-    {}%
-    \etocsetstyle{mtocsubsection}%
-    {}%
-    {\setbox0\hbox{{\usekomafont{section}\small\mdseries\etocthenumber\kern.8mm}}%
-        \setbox1\hbox{{\usekomafont{section}\small\mdseries\etocthepage}}}%
-    {\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%
-        \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
-    {}%
-    \etocsetstyle{subsubsection}%
-    {}%
-    {}%
-    {}%
-    {}%
-    \etocsetstyle{paragraph}%
-    {}%
-    {}%
-    {}%
-    {}%
-    \etocsettocstyle{}{%
-        \global\let\margintocnumwidth\margintocnumwidth%
-        \global\let\margintocpagenumwidth\margintocpagenumwidth%
-    }%
-    \localtableofcontents%
+  % Dry run to get the needed widths
+  \etocsetstyle{mtocsection}%
+  {}%
+  {\setbox0\hbox{{\usekomafont{section}\small\etocthenumber\kern.8mm}}%%
+    \setbox1\hbox{{\usekomafont{section}\small\etocthepage}}}%
+  {\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%%
+    \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
+  {}%
+  \etocsetstyle{mtocsubsection}%
+  {}%
+  {\setbox0\hbox{{\usekomafont{section}\small\mdseries\etocthenumber\kern.8mm}}%
+    \setbox1\hbox{{\usekomafont{section}\small\mdseries\etocthepage}}}%
+  {\ifdim\wd0>\margintocnumwidth \edef\margintocnumwidth{\the\wd0} \fi%
+    \ifdim\wd1>\margintocpagenumwidth \edef\margintocpagenumwidth{\the\wd1} \fi}%
+  {}%
+  \etocsetstyle{subsubsection}%
+  {}%
+  {}%
+  {}%
+  {}%
+  \etocsetstyle{paragraph}%
+  {}%
+  {}%
+  {}%
+  {}%
+  \etocsettocstyle{}{%
+    \global\let\margintocnumwidth\margintocnumwidth%
+    \global\let\margintocpagenumwidth\margintocpagenumwidth%
+  }%
+  \localtableofcontents%
 
-    % Set the style for section entries
-    \etocsetstyle{mtocsection}%
-    {\parindent 0pt \parskip 2.5pt \parfillskip 0pt \RaggedRight}%
-    {\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
-    {\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\etocnumber}}\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\etocpage}}\par}%
-    {}%
-    % Set the style for subsection entries
-    \etocsetstyle{mtocsubsection}%
-    {\parindent 0pt \parskip 0pt \parfillskip 0pt \RaggedRight}%
-    {\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
-    {\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\mdseries\etocnumber}}{\mdseries\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\mdseries\etocpage}}}\par}%
-    {\parskip 2.5pt}%
-    % Set the global style of the toc
-    \etocsettocstyle{\usekomafont{section}\small}{}%
-    \etocsetnexttocdepth{\themargintocdepth}%
-    % Print the table of contents in the margin
-    \marginnote[#1]{\localtableofcontents}%
-    \FloatBarrier%
-    \endgroup%
+  % Set the style for section entries
+  \etocsetstyle{mtocsection}%
+  {\parindent 0pt \parskip 2.5pt \parfillskip 0pt \RaggedRight}%
+  {\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
+  {\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\etocnumber}}\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\etocpage}}\par}%
+  {}%
+  % Set the style for subsection entries
+  \etocsetstyle{mtocsubsection}%
+  {\parindent 0pt \parskip 0pt \parfillskip 0pt \RaggedRight}%
+  {\leftskip \margintocnumwidth \rightskip \margintocpagenumwidth}%
+  {\makebox[0pt][r]{\makebox[\margintocnumwidth][l]{\mdseries\etocnumber}}{\mdseries\etocname\nobreak\leaders\hbox{\hbox to 1.5ex {\hss.\hss}}\hfill\rlap{\makebox[\margintocpagenumwidth][r]{\mdseries\etocpage}}}\par}%
+  {\parskip 2.5pt}%
+  % Set the global style of the toc
+  \etocsettocstyle{\usekomafont{section}\small}{}%
+  \etocsetnexttocdepth{\themargintocdepth}%
+  % Print the table of contents in the margin
+  \marginnote[#1]{\localtableofcontents}%
+  \FloatBarrier%
+  \endgroup%
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -942,14 +941,14 @@ urlcolor=externallink,  % Color for linked URLs
 % hidelinks,			% Toggle here!
 plainpages=false,%
 pdfsubject={%
-        \@subtitle
-    },
+    \@subtitle
+  },
 pdfkeywords={%
-        latex,%
-        lualatex,%
-        modern,%
-        thesis,%
-    },
+    latex,%
+    lualatex,%
+    modern,%
+    thesis,%
+  },
 pdfcreator={%
 LuaLaTeX with hyperref,
 glossaries-extra/bib2gls
@@ -965,13 +964,13 @@ pdfdisplaydoctitle,% https://tex.stackexchange.com/a/435434/120853
 % Appearance of the bookmarks popup in viewers that support it
 \RequirePackage{bookmark}% Control bookmark appearance in PDF
 \bookmarksetup{%
-    open,% Open bookmark pane in PDF viewer
-    openlevel=1,% Open first two levels, hide all subsections etc. (0-indexed)
-    addtohook={%
-            \ifnum\bookmarkget{level}=0% Only print top-level (0) bookmarks bold
-                \bookmarksetup{bold}%
-            \fi%
-        },%
+  open,% Open bookmark pane in PDF viewer
+  openlevel=1,% Open first two levels, hide all subsections etc. (0-indexed)
+  addtohook={%
+      \ifnum\bookmarkget{level}=0% Only print top-level (0) bookmarks bold
+        \bookmarksetup{bold}%
+      \fi%
+    },%
 }
 
 
@@ -980,20 +979,20 @@ pdfdisplaydoctitle,% https://tex.stackexchange.com/a/435434/120853
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\signaturefield}[1][\@author]{%
-    % This should only occur on pages with a lot of other pages behind it, to support
-    % writing on it here.
-    % If is occurs at the beginning of the document, put it recto. At the end, verso.
-    % Else, writing and stamping on here won't have much support.
-    \vspace*{1.5cm}% Leave room for signature
-    \begin{center}
-        \begin{tabular}{%
-                % Columns widths control signature line length
-                M{12em}
-                M{4em}% Empty middle
-                M{12em}
-            }
-            \cmidrule{1-1}            \cmidrule{3-3}
-            Place, date &  & #1 \\
-        \end{tabular}
-    \end{center}
+  % This should only occur on pages with a lot of other pages behind it, to support
+  % writing on it here.
+  % If is occurs at the beginning of the document, put it recto. At the end, verso.
+  % Else, writing and stamping on here won't have much support.
+  \vspace*{1.5cm}% Leave room for signature
+  \begin{center}
+    \begin{tabular}{%
+        % Columns widths control signature line length
+        M{12em}
+        M{4em}% Empty middle
+        M{12em}
+      }
+      \cmidrule{1-1}            \cmidrule{3-3}
+      Place, date &  & #1 \\
+    \end{tabular}
+  \end{center}
 }

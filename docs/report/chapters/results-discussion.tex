@@ -65,6 +65,7 @@ The short conceptual overview is reproduced in figure \reffig{overview} for the 
     \labfig{overview}
 \end{figure*}
 
+\subsection{Setting up the RedPitaya}
 Having ordered or built the parts, connected them using \acrshort{sma} cables and powered them through a lab power supply, the console needs to be configured. The configuration of the console is relatively simple as most of the complexity has been programmed into the \gls{python} control library. The user thus only needs to ensure that a working \acrshort{linux} distribution is running on the \acrshort{rp} and that the \acrshort{ip} address is known. The official distribution that is pre-installed on the micro SD card that ships with the \acrshort{rp} is completely sufficient.
 
 If the user needs to create a new microSD card, the \href{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}{setup of the microSD card is described in the \acrshort{rp} docs} and is summarized here for simplicity on a Linux based system.
@@ -77,22 +78,86 @@ If the user needs to create a new microSD card, the \href{https://redpitaya.read
     \item Done!
 \end{enumerate}
 
-The \acrshort{rp} needs to be reachable through Ethernet from the computer running the control software. The easiest way is to connect them both to a \acrshort{dhcp} server\sidenote{An example for a \acrshort{dhcp} server would be any router or WiFi access point that automatically provides you internet access.} in the same network and lookup the IP address it got assigned by entering the name printed on it into a web browser. For a manual setup method for a direct connection in an isolated lab environment, see the \lstinline{README.md} in the control software repository or the \href{https://redpitaya.readthedocs.io/en/latest/quickStart/connect/connect.html#static-ip-configuration}{Static IP configuration guide in the RedPitaya documentation}.
+The \acrshort{rp} needs to be reachable through Ethernet from the computer running the control software. The easiest way is to connect them both to a \acrshort{dhcp} server\sidenote{An example for a \acrshort{dhcp} server would be any router or WiFi access point that automatically provides you internet access.} in the same network and lookup the IP address it got assigned by entering the name printed on it into a web browser. For a manual setup method for a direct connection in an isolated lab environment, see the \lstinline{README.md} in the control software repository or the \href{https://redpitaya.readthedocs.io/en/latest/quickStart/connect/connect.html#static-ip-configuration}{Static IP configuration guide in the RedPitaya documentation}\sidenote{For this document we assume the RedPitaya is reachable on the \acrshort{ip} \lstinline{192.168.1.100}}.
 
-On the computer, you need \href{https://git-scm.com/}{\lstinline{git}} and \href{https://www.python.org/}{\lstinline{python3}} to run the software. On Linux, this can usually be done with one of the commands in \ref{lst:install-prerequisits}
-\begin{listing}
+The control software needs to be able to remotely log in to the system through \acrfull{ssh}. For this, the \lstinline{sshd} server needs to be running, which is the case for almost any image you find -- including the official RedPitaya image\sidenote{The default username is \lstinline{root} and the default password is also \lstinline{root}. Sometimes there is no password -- in that case, just press \enquote{Enter} when asked for one. Remember nothing -- not even stars -- is displayed when typing the password}.
+
+It is highly recommended to set up a passwordless login scheme from the computer to the \acrshort{rp}. Listing \ref{lst:pubkey} presents the necessary commands for creating a \lstinline{keyfile} and copying it to the \acrshort{rp} on a \acrshort{linux} machine. When asked, accept the recommended settings for the \lstinline{keyfile} -- don't set a password for it! Enter your password when prompted to do so.
+
+\begin{listing}[h!bt]
     \begin{minted}{shell-session}
-        $ dnf install python3 git
-        $ apt install python3 git
-        $ pacman -S python git
+        $ ssh-keygen -t ed25519             # create a keyfile
+        $ ssh-copy-id root@rp-xxxxxx.local  # alternatively: root@192.168.1.100
     \end{minted}
-    \caption{Installing prerequisits}
-    \label{lst:install-prerequisits}
+    \caption{Installing prerequisites}
+    \label{lst:pubkey}
 \end{listing}
 
-\todo{Wassersignal Spannung (aus vergleich mit Funktionsgeneratorsignal)}
+\subsection{Setting up the control software}
+On the computer, you need \href{https://git-scm.com/}{\lstinline{git}} and \href{https://www.python.org/}{\lstinline{python3}} to run the software. On Linux, they can usually be installed with one of the commands in Listing \ref{lst:install-prerequisites}.
+
+\begin{listing}[h!bt]
+    \begin{minted}{shell-session}
+        $ dnf install python3 git   # (Fedora/RHEL/CentOS/...)
+        $ apt install python3 git   # (Debian/Ubuntu/Mint/...)
+        $ pacman -S python git      # (Arch/Manjaro/Artix/...)
+    \end{minted}
+    \caption{Installing prerequisites}
+    \label{lst:install-prerequisites}
+\end{listing}
+
+With the prerequisites installed, the user can now install the spectrometer control software \gls{python} package. However, it is generally recommended to use \enquote{virtual environments}\sidenote{For more details see \href{https://peps.python.org/pep-0668/}{PEP 668} and \href{https://peps.python.org/pep-0405/}{PEP 405}} that create a new environment with packages and executables separate from the system and other programs. This functionality is already included in \gls{python}. Listing \ref{lst:setup} describes how to set up and activate a new \enquote{virtual environment} inside a \lstinline{~/spectrometer} folder.
+
+\begin{listing}[h!bt]
+    \begin{minted}{shell-session}
+        $ cd ~
+        $ mkdir spectrometer
+        $ cd spectrometer
+        $ python3 -m venv .venv
+        $ source .venv/bin/activate    # Linux
+        $ .venv/bin/activate.ps1       # Windows Powershell
+        $ .venv/bin/activate.bat       # Windows Cmd
+    \end{minted}
+    \caption{Set up of a \enquote{virtual environment} (often called \enquote{venv}) in \gls{python}}
+    \label{lst:setup}
+\end{listing}
+
+The user can now install the control software including all dependencies independently from the system they are working on using the commands in Listing \ref{lst:install}. The second one might take a while to run.
+
+\begin{listing}[h!bt]
+    \begin{minted}{shell-session}
+        $ git clone https://gitlab.ethz.ch/mstabel/nmr-spectrometer
+        $ python3 -m pip install ./nmr-spectrometer/software/spectrometer
+    \end{minted}
+    \caption{Installation of the python library with automated dependency resolution using \href{https://pypi.org/project/pip/}{\acrshort{pip}}. Assuming the user already installed and activated a virtual environment as described in Listing~\ref{lst:setup}.}
+    \label{lst:install}
+\end{listing}
+
+The installation process automatically adds scripts for controlling the spectrometer to the command line. These can be used to manually set up the spectrometer hardware, flash the firmware and
+
+\todo{Wassersignal Spannung (aus vergleich mit Funktionsgeneratorsignal). Vielleicht oben am Ende der Hardware?}
 
 \section{Measuring a water signal}
+With the above preparations, the system is ready to be used. The software and hardware support arbitrary pulse sequences with one transmit and one receive channel. The following presents the measurement results of different pulse sequences sent with the spectrometer and analysed with the control software.
+
+While the significance of different parameters will be mentioned later in the text, and a short introduction has been presented in \refch{concepts}, a full introduction into \acrshort{nmr} is outside the scope of this text. For a better introduction than the author will ever be capable of, please take a look at other literature, such as \enquote{spin dynamics}\sidecite{levittSpinDynamicsBasics2008a} or \enquote{Experimental Pulse NMR}\sidecite{fukushimaExperimentalPulseNMR2019}. The following is a short recap to remind us of the necessary physical properties to be able to better appreciate the results.
+
+Simply put, a nucleus of an \enquote{NMR active}\sidenote{For example \ch{^1H}, \ch{^{13}C}, \ch{^{19}F}, \ldots} atom will absorb and then later emit radio waves at a specific frequency that depends on an external magnetic field -- the stronger the field the higher the frequency:
+
+\[
+    f = \gamma{}B_0
+\]
+
+The specific frequency \(f\) is usually called the \emph{Larmor frequency}. \(\gamma\) is called the \emph{gyromagnetic ratio} and depends on the atom. Finally, \(B_0\) is the name for the external static magnetic field produced by a large magnet\sidenote{As opposed to \(B_1\) which is the magnetic component of the radio wave.}.
+
+Nature now has it, that the exact frequency that the nuclei \emph{resonante} with depends on their surroundings. Inversely, we can thus exploit this property to figure out these surroundings if we know the frequency at which the nuclei resonate. \emph{Surroundings} include for example whether an atom is located next to another atom only in space due to some folding of a long molecule or whether a chemical bond is present as well.
+
+Thus we need to send radio waves at multiple frequencies and then look at the corresponding return signals. To speed this process up, we can send all frequencies we're interested in at the same time using so-called \acrshort{ftnmr}.
+
+\subsection{A first signal}
+
+The simplest pulse sequence consist of a single excitation pulse intended to
+
 \labsec{water-signal}
 \begin{marginfigure}
     \centering
