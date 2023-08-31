@@ -7,7 +7,8 @@
 % \usepackage{pgfpages}
 % \pgfpagesuselayout{6 on 1}[a4paper,border shrink=5mm]
 
-\title{Building a 25 MHz NMR Spectrometer}
+\title{\Huge\textnormal{\textsl{\textmd{\textsl{magn\textbf{ETH}ical}}}}}
+\subtitle{Building a 25\,MHz NMR Spectrometer}
 \date{\today}
 \author{Maximilian Stabel}
 \institute{ETH Zürich}
@@ -16,23 +17,31 @@
 \maketitle % show when people are walking in
 
 % Attention Getter
-\begin{frame}{}
-  \begin{center}
-    \enquote{I have not yet lost that sense of wonder, and of delight, that this delicate motion should reside in all ordinary things around us, revealing itself only to him who looks for it.}
+\begin{frame}
+  \centering
+  \emph{\enquote{What I cannot create, I do not understand}}
 
-    \enquote{There the snow lay around my doorstep -- great heaps of protons quietly precessing in the Earth's magnetic field.}
-  \end{center}
+  \vspace{\baselineskip}
 
-  \hfill{}--- E.M. Purcell
-  \note[item]{I wouldn't have thought I would get a glimpse of this wonder Purcell describes when starting my thesis here, but I'm glad I did.}
-  \note[item]{And I hope none of you have lost it yet}
-  %\enquote{Most new insights come only after a superabundant accumulation of facts have removed the blindness which prevented us from seeing what later comes to be regarded as obvious. --- Isidor Isaac Rabi}
+  \hfill{}---Richard Feynman
+  \note[item]{In the spirit of Richard Feynman we will together build an NMR machine and make sure we truly understand.}
+  \note[item]{This presentation should hopefully be understood by everyone here, but please interrupt me if something isn't clear.}
+  \note[item]{I hope everyone learns something new today}
+  \note[item]{Even if it is only a newfound or reawoken appreciation for the wonders of magnetic resonance}
 \end{frame}
 
-
-
-
+% Need / Motivation
 \section{Why?}
+
+\begin{frame}{Why NMR?}
+  \note[item]{Some of you already know, but here are some reasons why NMR is useful}
+  \begin{itemize}[<+->]
+    \item Education (Quantum Mechanics, Quantum Computing, \ldots)
+    \item Research (Structure Analysis, Drug Discovery, \ldots)
+    \item Medicine (Imaging, Diagnosis, \ldots)
+    \item Industry (Process Control, Drug screening, \dots)
+  \end{itemize}
+\end{frame}
 
 \begin{frame}{Accessing NMR in the South is hard}
   \centering
@@ -41,8 +50,12 @@
   \(\frac{\text{NMR affiliations}}{\text{million people}}\)
 \end{frame}
 
+\begin{frame}{Our task is to build this machine ourselves!}
+  % Schematic of the parts needed to build
+\end{frame}
 
-\section{What does it look like?}
+
+\section{The parts}
 
 \section{What already works}
 
@@ -102,6 +115,23 @@
   \end{tikzpicture}
 \end{frame}
 
+\begin{frame}{}
+  \begin{center}
+    \note[item]{Circling back to the beginning, I would like to end with a quote by E.M. Purcell}
+    \emph{
+      \enquote{I have not yet lost that sense of wonder, and of delight, that this delicate motion should reside in all ordinary things around us, revealing itself only to him who looks for it.}
+
+      \vspace{2\baselineskip}
+
+      \enquote{There the snow lay around my doorstep -- great heaps of protons quietly precessing in the Earth's magnetic field.}
+      % In that on the first snowy, silent night this winter you'll think of the quiet precessions in the earth's magnetic field.
+    }
+  \end{center}
+  \hfill{}--- E.M.\ Purcell
+  \note[item]{I wouldn't have thought I would get a glimpse of this wonder that Purcell describes when starting my thesis here, but I'm glad I did.}
+  \note[item]{And I hope none of you have lost it yet}
+\end{frame}
+
 \begin{frame}{Thank you!}
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -118,6 +148,11 @@
     \end{column}
   \end{columns}
 \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Appendix / Backup Slides
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \appendix
 
