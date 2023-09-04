@@ -1,5 +1,6 @@
 \documentclass{ethpresentation}
-% \setbeameroption{show notes on second screen}
+\usepackage{multimedia}
+% \setbeameroption{show notes on second screen} % use e.g. pympress to view
 
 % Simple handout with just the slides
 % "article" mode is better, but this might be useful in a pinch?
@@ -7,11 +8,35 @@
 % \usepackage{pgfpages}
 % \pgfpagesuselayout{6 on 1}[a4paper,border shrink=5mm]
 
-\title{\Huge\textnormal{\textsl{\textmd{\textsl{magn\textbf{ETH}ical}}}}}
+% Footnotes for sources without number
+\let\svthefootnote\thefootnote
+\NewDocumentCommand{\freefootnote}{m}{
+  \let\thefootnote\relax%
+  \footnotetext{#1}%
+  \let\thefootnote\svthefootnote%
+}
+
+% Regular footnotes use letters
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
+
+% Logo
+\NewDocumentCommand{\magnethical}{}{\textnormal{\textsl{\textmd{\textsl{magn\textbf{ETH}ical}}}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Metadata
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\Huge\magnethical}
 \subtitle{Building a 25\,MHz NMR Spectrometer}
 \date{\today}
 \author{Maximilian Stabel}
 \institute{ETH Zürich}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Content
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 \maketitle % show when people are walking in
@@ -50,15 +75,59 @@
   \(\frac{\text{NMR affiliations}}{\text{million people}}\)
 \end{frame}
 
+% Task
 \begin{frame}{Our task is to build this machine ourselves!}
   % Schematic of the parts needed to build
 \end{frame}
 
-
-\section{The parts}
-
+% Main Body
 \section{What already works}
 
+\begin{frame}{The power amplifier}
+
+\end{frame}
+
+\begin{frame}{The switch}
+\end{frame}
+
+
+\begin{frame}{Our NMR is affordable \ldots}
+  \begin{table}
+    \begin{tabular}{@{} lS[table-format=5.2,table-align-text-pre=false] @{}}
+      \toprule
+      Part                & {Price incl. VAT [CHF]} \\
+      \midrule
+      Power Amplifier     & 36.01                   \\
+      Switch              & 20.05                   \\
+      Probe               & {\approx} 15.00         \\
+      Low-Noise Amplifier & 73.11                   \\
+      Shim Driver         & 257.08                  \\
+      Console             & 741.55                  \\
+      Magnet              & {\approx} 9000.00       \\
+      \bottomrule
+      \textbf{Sum}        & \textbf{10142.80}       \\
+    \end{tabular}
+  \end{table}
+  % \freefootnote{2023-09-04}
+\end{frame}
+
+\begin{frame}{\ldots{} and competitive}
+  \begin{table}
+    \begin{tabular}{@{} lrrrl @{}}
+      \toprule
+                 & Traditional                            & Benchtop                            & \magnethical{}                                                                         &                    \\
+      \midrule
+      Price      & \numrange[range-phrase=--]{200}{18000} & \numrange[range-phrase=--]{60}{150} & \approx\num{10}                                                                        & k\,CHF             \\
+      Frequency  & \numrange[range-phrase=--]{600}{1200}  & \numrange[range-phrase=--]{45}{125} & \num{25}                                                                               & \unit{\mega\hertz} \\
+      Resolution & \approx\num{1}                         & \numrange[range-phrase=--]{0.2}{12} & \approx \num{50}\footnote[2]{without shims --- 10x improvement expected with shimming} & \unit{\hertz}      \\
+      Weight     & \numrange[range-phrase=--]{600}{15000} & \numrange[range-phrase=--]{5}{1000} & \approx\num{5}                                                                         & \unit{\kilo\gram}  \\
+      % \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+% Results
+\section{Current measurement capabilities}
 \begin{frame}{We can already see a water FID}
   \centering
   \includegraphics[width=0.9\textwidth]{images/fid_sine_fit.pdf}
@@ -115,6 +184,24 @@
   \end{tikzpicture}
 \end{frame}
 
+% Demonstration! Measure FID of water
+% TODO: Backup slides with notebook screenshots of measurments
+\begin{frame}[standout]
+  Demo time!
+\end{frame}
+
+% Review
+% We've now seen how a measurement works
+% I hope I could convince you that the setup is working
+% Now the individual parts can be improved individually
+
+\begin{frame}{The setup is working}
+  % Now the individual parts can be improved further
+\end{frame}
+
+% Conclusion
+
+% Close
 \begin{frame}{}
   \begin{center}
     \note[item]{Circling back to the beginning, I would like to end with a quote by E.M. Purcell}
@@ -132,6 +219,7 @@
   \note[item]{And I hope none of you have lost it yet}
 \end{frame}
 
+% End: Show during questions
 \begin{frame}{Thank you!}
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -157,7 +245,43 @@
 \appendix
 
 \begin{frame}[standout]
-  A backup graph for explaining things.
+  Backup
+\end{frame}
+
+
+\begin{frame}{Simple Pulse Sequence}
+  \centering
+  \includesvg[width=0.5\textwidth]{simple_pulse_sequence.svg}
+\end{frame}
+
+\begin{frame}{Rabi nutation of water}
+  \centering
+  \includegraphics[width=0.9\textwidth]{rabi_nutation_fit.pdf}
+  \note[item]{\(T_{period} = \qty{32}{\micro\second}\)}
+  \note[item]{\(T_{\frac{\pi}{2}} = \qty{8}{\micro\second}\)}
+\end{frame}
+
+\begin{frame}{Spin Echo Animation}
+  \centering
+  \movie[width=9cm,height=6.75cm,poster]{}{./hahn_echo_cc_gwm.gif}
+  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEcho.gif}{Gavin Morley - CC BY-SA 3.0}}
+\end{frame}
+
+\begin{frame}{T2 Decay Animation}
+  \centering
+  \movie[width=9cm,height=6.75cm,poster]{}{./hahn_echo_decay_cc_gwm.gif}
+  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEchoDecay.gif}{Gavin Morley - CC BY-SA 3.0}}
+\end{frame}
+
+\begin{frame}{Spin Echo Sequence}
+  \centering
+  \includesvg[width=0.9\textwidth]{spin_echo_sequence.svg}
+\end{frame}
+
+\begin{frame}{T2 decay of water}
+  \centering
+  \includegraphics[width=0.9\textwidth]{t2_decay_fit.pdf}
+  \note[item]{\(T_2 = \qty{190}{\milli\second}\)}
 \end{frame}
 
 \end{document}

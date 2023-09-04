@@ -170,7 +170,7 @@
 \setsansfont{Merriweather Sans}
 \setmonofont[AutoFakeSlant,Scale=MatchLowercase]{inconsolata}
 \setmathfont[mathrm=sym,mathit=sym,mathsf=sym,mathbf=sym,mathtt=sym,NFSSFamily=tgpl]{TeX Gyre Pagella Math}
-\newfontfamily{\unitnumberfont}[Numbers=Uppercase]{TeX Gyre Pagella}  % Upright numbers for units in siunitx
+\newfontfamily{\unitnumberfont}[Numbers=Uppercase]{Merriweather Sans}%TeX Gyre Pagella}  % Upright numbers for units in siunitx
 % \setbeamerfont to define fonts used e.g. in heading, block , footer, ...
 % \usefonttheme{serif}
 
@@ -280,6 +280,39 @@
   % Toggle this back to true wherever needed, on a per-file basis
   inkscapelatex=false,
 }
+
+% Videos
+\RequirePackage{multimedia}
+\RequirePackage{animate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Arrays / Tables
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{tabu}  % For longtabu in the glossary
+
+\RequirePackage{array}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}  % Vert.+Hor. centered cells
+
+% A command to have a cell with vertical text as a multirow:
+\newcommand*{\multirotatecell}[2]{%
+  \multirow{#1}{*}{%
+    \begin{tabular}{@{}c@{}}%
+      \rotatebox[origin=c]{90}{#2}%
+    \end{tabular}%
+  }%
+}%
+
+\RequirePackage{tabularray} % Powerful, up and coming package
+\UseTblrLibrary{booktabs}   % Get `\toprule` etc. for tabularrays
+\UseTblrLibrary{siunitx}    % Get S column type
+
+\RequirePackage{multirow}   % Cells spanning multiple rows (like multicolumn)
+\RequirePackage{booktabs}   % Pretty tables; an absolute must
+
+% More vertical stretch for more relaxed visuals in all tables (global setting)
+\renewcommand*{\arraystretch}{1.2} % 1.3
 
 
 % TODO:
