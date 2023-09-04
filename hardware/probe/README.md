@@ -75,3 +75,4 @@ A "variable pitch coil" with changing density of windings (tighter at both edges
 - style after [this OCRA probe from Pier](https://zeugmatographix.org/ocra/2022/04/18/rf-coil-for-the-ocra-tabletop-mri-system/) (also has instructions on build, tuning and matching)
 - less turns for larger capacitance for easier tuning an matching
 - add rf shielding. Also adds as reference capacitance for a more stable tuning/matching in different surroundings.
+- The chosen capacitance range is somewhat too wide. The tune and match procedure is therefore quite inaccurate and difficult.
