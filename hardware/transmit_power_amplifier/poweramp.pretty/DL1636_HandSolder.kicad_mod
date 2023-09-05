@@ -93,4 +93,9 @@
     (zone_connect 2) (tstamp 8a9fe856-b961-456d-a299-a1b0a8878cd1))
   (pad "EP" smd rect (at 0 0) (size 3.94 4.11) (layers "F.Cu" "F.Paste" "F.Mask")
     (solder_mask_margin 0.001) (solder_paste_margin 0.001) (tstamp f228f382-8a24-45d9-90b7-dd8d95e44276))
+  (model "${KIPRJMOD}/models/PHA-202+.stp"
+    (offset (xyz 0 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
 )

@@ -203,8 +203,8 @@
       (net 1 "GND") (pinfunction "Ext") (pintype "passive") (tstamp 2890384d-73cc-41f3-909b-167405111d96))
     (pad "2" thru_hole circle (at 1.72 4.38) (size 0.97 0.97) (drill 0.46) (layers "*.Cu")
       (net 1 "GND") (pinfunction "Ext") (pintype "passive") (tstamp 8065d835-f880-4824-b2b7-27f01b673d65))
-    (model "${KICAD6_3DMODEL_DIR}/Connector_Coaxial.3dshapes/SMA_Molex_73251-1153_EdgeMount_Horizontal.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/models/73251-1153.stp"
+      (offset (xyz -13.9 0 0.375))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
@@ -2794,8 +2794,8 @@
       (net 1 "GND") (pinfunction "Ext") (pintype "passive") (tstamp 08d49751-817b-4ceb-a917-c7ff25f3ff8e))
     (pad "2" thru_hole circle (at 1.72 4.38 180) (size 0.97 0.97) (drill 0.46) (layers "*.Cu")
       (net 1 "GND") (pinfunction "Ext") (pintype "passive") (tstamp 0278eb7b-aab4-46d7-aedf-f549898516dc))
-    (model "${KICAD6_3DMODEL_DIR}/Connector_Coaxial.3dshapes/SMA_Molex_73251-1153_EdgeMount_Horizontal.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/models/73251-1153.stp"
+      (offset (xyz -13.9 0 0.375))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
@@ -3135,8 +3135,8 @@
       (net 1 "GND") (pinfunction "Ext") (pintype "passive") (tstamp c5f73b26-d02f-40a1-b2fa-b71988e7054f))
     (pad "2" thru_hole circle (at 1.72 4.38 90) (size 0.97 0.97) (drill 0.46) (layers "*.Cu")
       (net 1 "GND") (pinfunction "Ext") (pintype "passive") (tstamp 1f3962b7-789c-4992-8eaf-40cbaec9954c))
-    (model "${KICAD6_3DMODEL_DIR}/Connector_Coaxial.3dshapes/SMA_Molex_73251-1153_EdgeMount_Horizontal.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/models/73251-1153.stp"
+      (offset (xyz -13.9 0 0.375))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
     )
