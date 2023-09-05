@@ -22,6 +22,10 @@
 % Logo
 \NewDocumentCommand{\magnethical}{}{\textnormal{\textsl{\textmd{\textsl{magn\textbf{ETH}ical}}}}}
 
+% Notes:
+% - Include challenges faced and overcome, so it's mentioned
+% - Include Lesson's learned
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Metadata
@@ -53,43 +57,224 @@
   \note[item]{This presentation should hopefully be understood by everyone here, but please interrupt me if something isn't clear.}
   \note[item]{I hope everyone learns something new today}
   \note[item]{Even if it is only a newfound or reawoken appreciation for the wonders of magnetic resonance}
+  \note[item]{Transition: But before diving in --- you might ask why we care about building an NMR? Just use it?}
 \end{frame}
 
 % Need / Motivation
-\section{Why?}
+\section*{Why?}
+\note{
+  \begin{itemize}
+    \item You: Understanding for own experiments
+    \item The better we know the better we can use
+    \item Push NMR development --- better machines
+    \item Transition: if not about you personally --- more globally: applications
+  \end{itemize}
+}
 
-\begin{frame}{Why NMR?}
+
+\begin{frame}{NMR is used across various fields}
   \note[item]{Some of you already know, but here are some reasons why NMR is useful}
   \begin{itemize}[<+->]
-    \item Education (Quantum Mechanics, Quantum Computing, \ldots)
     \item Research (Structure Analysis, Drug Discovery, \ldots)
     \item Medicine (Imaging, Diagnosis, \ldots)
     \item Industry (Process Control, Drug screening, \dots)
+    \item Education (Quantum Mechanics, Quantum Computing, \ldots)
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Accessing NMR in the South is hard}
+\begin{frame}{There is not a lot of NMR research in the Global South}
   \centering
   \includegraphics[height=0.8\textheight]{images/nmr-affiliations-per-million-people_naturalbreaks.pdf}
 
   \(\frac{\text{NMR affiliations}}{\text{million people}}\)
+  \note[item]{Only publications, doesn't include use of NMR!}
 \end{frame}
 
-% Task
-\begin{frame}{Our task is to build this machine ourselves!}
-  % Schematic of the parts needed to build
+% Task / Main Message
+% One sentence to remember if they remember only one
+\begin{frame}[standout]
+  Build an accessible NMR spectrometer
 \end{frame}
+
+% Preview
+% Give short overview of main points to come
+% DONT just list ("I will talk about ..., then about ...)
+% Integrate with main message, include audience ("we")
+% Introduction to NMR
+% Will talk about the parts of the spectrometer
+% Do a short demonstration..
+% Show table of contents, without anything above (introduction, ...) and without conclusion/review/close
+\begin{frame}{Preview}
+  \tableofcontents
+\end{frame}
+
+% Short Explanation of NMR here? One slide?
 
 % Main Body
-\section{What already works}
+% Remember to do transitions!
+\section{The parts}
+\begin{frame}{Our goal is to build an accessible NMR spectrometer}
+  \centering
+  \begin{circuitikz}
+    \ctikzset{bipoles/amp/width=0.9}
+    \draw[nodes={align=center}]
+    (0,0) coordinate(mid)
 
-\begin{frame}{The power amplifier}
 
+    % RP
+    (mid) node[draw, minimum height=5.5cm, minimum width=2.5cm,label=Console](redpitaya){}
+    (redpitaya.west) coordinate(inp) node[right]{Input}
+    ($(redpitaya.east)!0.75!(redpitaya.north east)$) coordinate(rptx) node[left]{Transmit}
+    ($(redpitaya.east)!0.75!(redpitaya.south east)$) coordinate(rprx) node[left]{Receive}
+
+    % Computer
+    (-3,0) node(seq){Sequence}
+    (seq.east) -- (redpitaya.west) node[inputarrow]{} coordinate(console)
+
+    % TX
+    (rptx) to[lowpass,l=Lowpass,>] ++(3,0)
+    to[amp,l=Amplifier,>] ++(3,0) coordinate(tx)
+
+    % Circulator
+    (mid -| tx) node[circulator,label={left:Switch}](circ){}
+    (tx) -| (circ.n) node[inputarrow,rotate=270]{}
+
+    % RX
+    (rprx -| circ) coordinate(rx)
+    (circ.s) |- (rx)
+    (rx) to[amp,l=Amplifier,>] ++(-3,0)
+    to[lowpass,l=Lowpass,>] ++(-3,0) node[inputarrow,rotate=180]{}
+
+    % Probe
+    (circ.e) -- ++(1,0)
+    node[dinantenna](probe){}
+    node[below=1ex]{Coil}
+    ;
+  \end{circuitikz}
+  \note[item]{Go through the parts clockwise}
 \end{frame}
 
-\begin{frame}{The switch}
+% TODO: console/red pitaya
+\begin{frame}{The console\\is a ready-made FPGA board}
+  \centering
+  \includegraphics[height=0.8\textheight]{rp122-16.png}
+  \note[item]{FPGA == programmable hardware, very fast}
 \end{frame}
 
+\begin{frame}{The power amplifier has two stages}
+  \centering
+  \includegraphics[width=0.9\textwidth]{poweramp.png}
+\end{frame}
+
+\begin{frame}{We use a transistor-based active switch}
+  \centering
+  \includegraphics[height=0.9\textheight]{tr_switch.png}
+  \note[item]{Active}
+  \note[item]{Isolation: \qty{60}{\deci\bell}}
+  \note[item]{Silicon-on-insulator (not pHEMT GaAs) i.e. FET tech, not PIN-Diode}
+  \note[item]{PIN-Diode switch also possible, but
+    \begin{itemize}
+      \item usually higher leakage
+      \item slower switching
+      \item harder to integrate on a chip
+      \item but higher power capabilities
+    \end{itemize}
+  }
+\end{frame}
+
+\begin{frame}{A transmission line transforms impedance}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \centering
+      \only<2->{
+        \movie[width=0.8\textwidth]{%
+          \includegraphics[width=0.8\textwidth]{transmission_line/transmission_line.png}
+        }{transmission_line.gif}
+      }
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \vspace*{-0.5cm}
+
+      \begin{circuitikz}
+        \draw (0,0) to[short,o-] ++(-3,0) to[vsource,v=\(V_0\)] ++(0,2) to[R,l=\(Z_0\),-o] ++(3,0);
+      \end{circuitikz}
+
+      \vspace*{0.75cm}
+
+      \hrule{}
+
+      \vspace*{0.25cm}
+
+      \begin{circuitikz}
+        \draw (0,0) to[short,o-] ++(-3,0) to[vsource,v=\(V_0\)] ++(0,2) to[R,l=\(Z_0\),-o] ++(3,0);
+        \draw (0,0) to[short,o-] ++(1,0) -- ++(0,2) to[short,-o] ++(-1,0);
+      \end{circuitikz}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{The passive approach leaked too much power}
+  \centering
+
+  \begin{circuitikz}
+    \ctikzset{
+      diode=empty,
+      diodes/scale=0.8
+    }
+    \draw[nodes={align=center}]
+
+    % tx diodes
+    (0,0) node[left]{Transmit} to[short,o-*] ++(1,0) coordinate(tx)
+    (tx) -- ++(0, 0.5) to[D] ++(1.5,0) -- ++(0,-0.5)
+    (tx) -- ++(0,-0.5) to[D,invert] ++(1.5,0) -- ++(0, 0.5)
+    to[short,*-] ++(1,0) coordinate(mid)
+
+    % A/B
+    (mid) node[below](A){A}
+    (mid) to[short,*-o] ++(0,2) node[above]{Probe}
+    (mid) -- ++(3,0) coordinate(b)
+    (b) node[above](B){B}
+
+    % rx diodes
+    (b) to[short,-*] ++(0,-0.5) coordinate(rx)
+    (rx) -- ++(-0.5,0) to[D] ++(0,-1.5) -- ++(0.5,0)
+    (rx) -- ++(0.5,0) to[D,invert] ++(0,-1.5) -- ++(-0.5,0)
+    to[short,*-] ++(0,-0.5) node[ground]{}
+
+    (b) to[short, *-o] ++(1,0)
+    node[right]{Receive}
+    ;
+    \draw[<->] (A.east |- B.west) -- (B.west);
+    \draw ($(A.east|-B.west)!0.5!(B.west)$) node[above]{\(\frac{\lambda}{4}\)};
+  \end{circuitikz}
+
+  \note[item]{So called "video feedthrough"}
+  \note[item]{Especially noise during reception phase, leaking through turned off amplifier}
+  \note[item]{"Traditional" passive design by Lowe and Tarr}
+  \note[item]{Leads to distortion of low-power pulses}
+  \note[item]{Same design can be used with PIN-Diodes (effectively current-controlled resistor)}
+  \note[item]{But PIN Diodes often need higher frequencies (mid MHz), size of intrinsic semiconductor}
+\end{frame}
+
+
+% TODO: Add how it works
+\begin{frame}{The low-noise amplifier}
+  \centering
+  \includegraphics[width=0.9\textwidth]{preamp.png}
+  \note[item]{Low-noise }
+  \note[item]{Feedback loop --- stray capacitance}
+  \note[item]{Solution: Smaller housing, shorter loop}
+\end{frame}
+
+\begin{frame}{The probe}
+  \centering
+  \includegraphics[height=0.8\textheight]{probe.jpg}
+  \note[item]{Many turns --- high inductance --- low capacitance --- sensitive to stray capacitance}
+\end{frame}
+
+\section{The complete setup}
+
+% Add picture of complete setup
 
 \begin{frame}{Our NMR is affordable \ldots}
   \begin{table}
@@ -102,35 +287,40 @@
       Probe               & {\approx} 15.00         \\
       Low-Noise Amplifier & 73.11                   \\
       Shim Driver         & 257.08                  \\
-      Console             & 741.55                  \\
+      Console             & 662.53                  \\
       Magnet              & {\approx} 9000.00       \\
       \bottomrule
       \textbf{Sum}        & \textbf{10142.80}       \\
     \end{tabular}
   \end{table}
   % \freefootnote{2023-09-04}
+  % Add mini-circuits prices
+  % Add superconducting prices? see notes
 \end{frame}
 
 \begin{frame}{\ldots{} and competitive}
   \begin{table}
-    \begin{tabular}{@{} lrrrl @{}}
+    \begin{tabular}{@{} lrrr @{}}
       \toprule
-                 & Traditional                            & Benchtop                            & \magnethical{}                                                                         &                    \\
+                                     & Superconducting                        & Benchtop                            & \magnethical{}                                             \\
       \midrule
-      Price      & \numrange[range-phrase=--]{200}{18000} & \numrange[range-phrase=--]{60}{150} & \approx\num{10}                                                                        & k\,CHF             \\
-      Frequency  & \numrange[range-phrase=--]{600}{1200}  & \numrange[range-phrase=--]{45}{125} & \num{25}                                                                               & \unit{\mega\hertz} \\
-      Resolution & \approx\num{1}                         & \numrange[range-phrase=--]{0.2}{12} & \approx \num{50}\footnote[2]{without shims --- 10x improvement expected with shimming} & \unit{\hertz}      \\
-      Weight     & \numrange[range-phrase=--]{600}{15000} & \numrange[range-phrase=--]{5}{1000} & \approx\num{5}                                                                         & \unit{\kilo\gram}  \\
+      Price [k\,CHF]                 & \numrange[range-phrase=--]{200}{18000} & \numrange[range-phrase=--]{50}{150} & \approx\num{10}                                            \\
+      Frequency [\unit{\mega\hertz}] & \numrange[range-phrase=--]{300}{1200}  & \numrange[range-phrase=--]{40}{125} & \num{25}                                                   \\
+      Resolution [\unit{\hertz}]     & \approx\num{0.2}                       & \numrange[range-phrase=--]{0.2}{1}  & \approx \num{2.5}/\num{50}\footnote[2]{with/without shims} \\
+      Weight [\unit{\kilo\gram}]     & \numrange[range-phrase=--]{600}{15000} & \numrange[range-phrase=--]{25}{150} & \approx\num{5}                                             \\
       % \bottomrule
     \end{tabular}
   \end{table}
+  \freefootnote{For 5mm standard NMR tubes}
 \end{frame}
 
 % Results
-\section{Current measurement capabilities}
+\section{Measurement Results}
 \begin{frame}{We can already see a water FID}
   \centering
   \includegraphics[width=0.9\textwidth]{images/fid_sine_fit.pdf}
+  \note[item]{Add T2* of fit here!}
+  \note[item]{Outliers at beginning are due to CIC filters}
 \end{frame}
 
 \begin{frame}{\ldots and do a Fourier transform}
@@ -154,6 +344,7 @@
       \path[draw=grey,dashed,->] ([yshift=1mm,xshift=3mm]structure.south west) to ([xshift=0.6cm,yshift=2.5cm]fft.center);
     \end{scope}
   \end{tikzpicture}
+  \note{Ask neighbours about lineshape, why not lorentz?}
 \end{frame}
 
 \begin{frame}{Toluene also has a visible signal}
@@ -161,7 +352,7 @@
   \includegraphics[width=0.9\textwidth]{images/fid_toluene.pdf}
 \end{frame}
 
-\begin{frame}{We can even see the Toluene peaks!}
+\begin{frame}{We can even see the chemical shifts\\of the Toluene peaks!}
   \centering
   \begin{tikzpicture}
     \node (fft)
@@ -182,6 +373,7 @@
       \path[draw=grey,dashed,->] ([yshift=2mm,xshift=2mm]structure.south west) to ([yshift=2.75cm]fft.center);
     \end{scope}
   \end{tikzpicture}
+  \note{It's a full tube of toluene, not a solution}
 \end{frame}
 
 % Demonstration! Measure FID of water
@@ -191,15 +383,22 @@
 \end{frame}
 
 % Review
-% We've now seen how a measurement works
-% I hope I could convince you that the setup is working
+% We've understood why NMR is desirable
+% We've gone through the concept of what it is
+% We've step by step built the spectrometer from console, tx, rx, switch and probe
+% We've now seen how a the software works and performed a measurement
+% I hope I could convince you that the whole setup is working
 % Now the individual parts can be improved individually
 
 \begin{frame}{The setup is working}
   % Now the individual parts can be improved further
+  % Outlook!
+  % Shim driver, include same as others.. challenges etc.
 \end{frame}
 
 % Conclusion
+% Restate main message
+% complement with other interpretations 
 
 % Close
 \begin{frame}{}
@@ -210,7 +409,7 @@
 
       \vspace{2\baselineskip}
 
-      \enquote{There the snow lay around my doorstep -- great heaps of protons quietly precessing in the Earth's magnetic field.}
+      \enquote{There the snow lay around my doorstep --- great heaps of protons quietly precessing in the Earth's magnetic field.}
       % In that on the first snowy, silent night this winter you'll think of the quiet precessions in the earth's magnetic field.
     }
   \end{center}
@@ -248,29 +447,20 @@
   Backup
 \end{frame}
 
+% Add to main part
+% Add pulse echo recording as slide
 
 \begin{frame}{Simple Pulse Sequence}
   \centering
   \includesvg[width=0.5\textwidth]{simple_pulse_sequence.svg}
 \end{frame}
 
-\begin{frame}{Rabi nutation of water}
+\begin{frame}{Rabi nutation (pulse calibration) of water}
   \centering
   \includegraphics[width=0.9\textwidth]{rabi_nutation_fit.pdf}
   \note[item]{\(T_{period} = \qty{32}{\micro\second}\)}
   \note[item]{\(T_{\frac{\pi}{2}} = \qty{8}{\micro\second}\)}
-\end{frame}
-
-\begin{frame}{Spin Echo Animation}
-  \centering
-  \movie[width=9cm,height=6.75cm,poster]{}{./hahn_echo_cc_gwm.gif}
-  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEcho.gif}{Gavin Morley - CC BY-SA 3.0}}
-\end{frame}
-
-\begin{frame}{T2 Decay Animation}
-  \centering
-  \movie[width=9cm,height=6.75cm,poster]{}{./hahn_echo_decay_cc_gwm.gif}
-  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEchoDecay.gif}{Gavin Morley - CC BY-SA 3.0}}
+  % TODO: Add arrow to pi/2 pulse with pi/2 pulse length (8us?)
 \end{frame}
 
 \begin{frame}{Spin Echo Sequence}
@@ -278,10 +468,29 @@
   \includesvg[width=0.9\textwidth]{spin_echo_sequence.svg}
 \end{frame}
 
-\begin{frame}{T2 decay of water}
+\begin{frame}{Spin Echo Animation}
+  \begin{center}
+    \movie[width=8.7cm,height=6.5cm]{\includegraphics[height=6.5cm,width=8.7cm]{hahn_echo_cc_gwm.png}}{./hahn_echo_cc_gwm.gif}
+  \end{center}
+  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEcho.gif}{Gavin Morley --- CC BY-SA 3.0}}
+\end{frame}
+
+\begin{frame}{Spin Echo Measurement}
+  \centering
+  \includegraphics[width=0.9\textwidth]{spin_echo_avg.pdf}
+\end{frame}
+
+\begin{frame}{\(T_2\) Decay Animation}
+  \begin{center}
+    \movie[width=8.7cm,height=6.5cm]{\includegraphics[height=6.5cm,width=8.7cm]{hahn_echo_cc_gwm.png}}{./hahn_echo_decay_cc_gwm.gif}
+  \end{center}
+  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEchoDecay.gif}{Gavin Morley --- CC BY-SA 3.0}}
+\end{frame}
+
+\begin{frame}{\(T_2\) decay of water}
   \centering
   \includegraphics[width=0.9\textwidth]{t2_decay_fit.pdf}
-  \note[item]{\(T_2 = \qty{190}{\milli\second}\)}
+  \note[item]{\(T_2 = \qty{190}{\milli\second}\)}  % Add to slide
 \end{frame}
 
 \end{document}
