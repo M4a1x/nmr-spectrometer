@@ -161,56 +161,57 @@
   \note[item]{FPGA == programmable hardware, very fast}
 \end{frame}
 
-\begin{frame}{The power amplifier has two stages}
+\begin{frame}{An amplifier is basically just a transistor}
   \centering
-  \includegraphics[width=0.9\textwidth]{poweramp.png}
-\end{frame}
-
-\begin{frame}{We use a transistor-based active switch}
-  \centering
-  \includegraphics[height=0.9\textheight]{tr_switch.png}
-  \note[item]{Active}
-  \note[item]{Isolation: \qty{60}{\deci\bell}}
-  \note[item]{Silicon-on-insulator (not pHEMT GaAs) i.e. FET tech, not PIN-Diode}
-  \note[item]{PIN-Diode switch also possible, but
-    \begin{itemize}
-      \item usually higher leakage
-      \item slower switching
-      \item harder to integrate on a chip
-      \item but higher power capabilities
-    \end{itemize}
-  }
-\end{frame}
-
-\begin{frame}{A transmission line transforms impedance}
   \begin{columns}
-    \begin{column}{0.6\textwidth}
-      \centering
-      \only<2->{
-        \movie[width=0.8\textwidth]{%
-          \includegraphics[width=0.8\textwidth]{transmission_line/transmission_line.png}
-        }{transmission_line.gif}
-      }
+    \begin{column}{0.5\textwidth}
+      \begin{itemize}
+        \item Transistor:\\voltage-controlled current source
+        \item \(
+              \begin{aligned}[t]
+                \text{higher voltage} & \rightarrow{} \text{higher current}          \\
+                                      & \rightarrow{} \text{higher voltage } V_{R_C} \\
+                                      & \rightarrow{} \text{lower voltage } V_{CE}   \\
+                                      & \rightarrow{} \text{\ang{180} phase shift}
+              \end{aligned}
+              \)
+      \end{itemize}
+
     \end{column}
-    \begin{column}{0.4\textwidth}
-      \vspace*{-0.5cm}
+    \begin{column}{0.5\textwidth}
+
 
       \begin{circuitikz}
-        \draw (0,0) to[short,o-] ++(-3,0) to[vsource,v=\(V_0\)] ++(0,2) to[R,l=\(Z_0\),-o] ++(3,0);
-      \end{circuitikz}
-
-      \vspace*{0.75cm}
-
-      \hrule{}
-
-      \vspace*{0.25cm}
-
-      \begin{circuitikz}
-        \draw (0,0) to[short,o-] ++(-3,0) to[vsource,v=\(V_0\)] ++(0,2) to[R,l=\(Z_0\),-o] ++(3,0);
-        \draw (0,0) to[short,o-] ++(1,0) -- ++(0,2) to[short,-o] ++(-1,0);
+        \draw[nodes={align=center}]
+        (0,0) node[npn](Q){}
+        (Q.B) to[short,-o] ++(-0.5,0) node[left]{\(V_{in}\)}
+        (Q.C) to[R,l=\(R_C\),v<=\(V_{R_C}\)] ++(0,2) node[vcc]{\(V_{CC}\)}
+        (Q.C) to[short,*-o] ++(1,0) node[right]{\(V_{out}\)}
+        (Q.E) node[ground]{}
+        ([shift={(0.1,0)}]Q.E) to[open,v_<=\(V_{CE}\)] ([shift={(0.1,0)}]Q.C)
+        ;
       \end{circuitikz}
     \end{column}
   \end{columns}
+  \note[item]{We want cheap, so using a simple is the obvious first approach}
+  \note[item]{Unfortunately there's a lot to do:%
+    \begin{itemize}
+      \item Input/Output Impedance Matching
+      \item Bias Tee
+      \item DC coupling
+      \item stability calculations
+      \item feedback
+      \item temperature compensation (current feedback)
+    \end{itemize}
+  }
+  \note[item]{A complete amplifier is quite expensive}
+  \note[item]{Solution: Use monolithic (integrated) amplifier}
+  \note[item]{Take care of heat dissipation (Class-A)}
+\end{frame}
+
+\begin{frame}{The power amplifier has two stages}
+  \centering
+  \includegraphics[width=0.9\textwidth]{poweramp.png}
 \end{frame}
 
 \begin{frame}{The passive approach leaked too much power}
@@ -256,6 +257,52 @@
   \note[item]{But PIN Diodes often need higher frequencies (mid MHz), size of intrinsic semiconductor}
 \end{frame}
 
+\begin{frame}{A transmission line transforms impedance}
+  \begin{columns}
+    \begin{column}{0.6\textwidth}
+      \centering
+      \only<2->{
+        \movie[width=0.8\textwidth]{%
+          \includegraphics[width=0.8\textwidth]{transmission_line/transmission_line.png}
+        }{transmission_line.gif}
+      }
+    \end{column}
+    \begin{column}{0.4\textwidth}
+      \vspace*{-0.5cm}
+
+      \begin{circuitikz}
+        \draw (0,0) to[short,o-] ++(-3,0) to[vsource,v=\(V_0\)] ++(0,2) to[R,l=\(Z_0\),-o] ++(3,0);
+      \end{circuitikz}
+
+      \vspace*{0.75cm}
+
+      \hrule{}
+
+      \vspace*{0.25cm}
+
+      \begin{circuitikz}
+        \draw (0,0) to[short,o-] ++(-3,0) to[vsource,v=\(V_0\)] ++(0,2) to[R,l=\(Z_0\),-o] ++(3,0);
+        \draw (0,0) to[short,o-] ++(1,0) -- ++(0,2) to[short,-o] ++(-1,0);
+      \end{circuitikz}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{We use a transistor-based active switch}
+  \centering
+  \includegraphics[height=0.9\textheight]{tr_switch.png}
+  \note[item]{Active}
+  \note[item]{Isolation: \qty{60}{\deci\bell}}
+  \note[item]{Silicon-on-insulator (not pHEMT GaAs) i.e. FET tech, not PIN-Diode}
+  \note[item]{PIN-Diode switch also possible, but
+    \begin{itemize}
+      \item usually higher leakage
+      \item slower switching
+      \item harder to integrate on a chip
+      \item but higher power capabilities
+    \end{itemize}
+  }
+\end{frame}
 
 % TODO: Add how it works
 \begin{frame}{The low-noise amplifier}
@@ -278,22 +325,29 @@
 
 \begin{frame}{Our NMR is affordable \ldots}
   \begin{table}
-    \begin{tabular}{@{} lS[table-format=5.2,table-align-text-pre=false] @{}}
+    \begin{tabular}{@{}
+        l
+        S[table-format=7.0,table-align-text-pre=false]
+        S[table-format=3.2,table-align-text-pre=false]
+        S[table-format=5.2,table-align-text-pre=false]
+        @{}}
       \toprule
-      Part                & {Price incl. VAT [CHF]} \\
+                          & {\qty{600}{\mega\hertz}\footnote{estimated costs}} & {mini-circuits} & {\magnethical}    \\
       \midrule
-      Power Amplifier     & 36.01                   \\
-      Switch              & 20.05                   \\
-      Probe               & {\approx} 15.00         \\
-      Low-Noise Amplifier & 73.11                   \\
-      Shim Driver         & 257.08                  \\
-      Console             & 662.53                  \\
-      Magnet              & {\approx} 9000.00       \\
+      Power Amplifier     & 50000                                              & 323.49          & 36.01             \\
+      Switch              & {-}                                                & 82.06           & 20.05             \\
+      Probe               & 100000                                             & {-}             & {\approx} 15.00   \\
+      Low-Noise Amplifier & 50000                                              & 409.38          & 73.11             \\
+      Shim Driver         & {-}                                                & {-}             & 257.08            \\
+      Console             & 200000                                             & {-}             & 662.53            \\
+      Magnet              & 1000000                                            & {-}             & {\approx} 9000.00 \\
       \bottomrule
-      \textbf{Sum}        & \textbf{10142.80}       \\
+      \textbf{Sum}        &                                                    &                 & \textbf{10142.80} \\
     \end{tabular}
   \end{table}
-  % \freefootnote{2023-09-04}
+  % \freefootnote{Prices incl. VAT [CHF]}
+  % \textsuperscript{\ref{foot}}
+  %\footnote{Integrated in Console\label{foot}}
   % Add mini-circuits prices
   % Add superconducting prices? see notes
 \end{frame}
@@ -316,6 +370,12 @@
 
 % Results
 \section{Measurement Results}
+
+\begin{frame}{Simple Pulse Sequence}
+  \centering
+  \includesvg[width=0.5\textwidth]{simple_pulse_sequence.svg}
+\end{frame}
+
 \begin{frame}{We can already see a water FID}
   \centering
   \includegraphics[width=0.9\textwidth]{images/fid_sine_fit.pdf}
@@ -374,6 +434,45 @@
     \end{scope}
   \end{tikzpicture}
   \note{It's a full tube of toluene, not a solution}
+  \note[item]{Reasons for sidepeak: no apodization (truncation of FID), no shimming, inhomogeneities/not centred}
+\end{frame}
+
+\begin{frame}{Rabi nutation (pulse calibration) of water}
+  \centering
+  \includegraphics[width=0.9\textwidth]{rabi_nutation_fit.pdf}
+  \note[item]{\(T_{period} = \qty{32}{\micro\second}\)}
+  \note[item]{\(T_{\frac{\pi}{2}} = \qty{8}{\micro\second}\)}
+  % TODO: Add arrow to pi/2 pulse with pi/2 pulse length (8us?)
+\end{frame}
+
+\begin{frame}{Spin Echo Sequence}
+  \centering
+  \includesvg[width=0.9\textwidth]{spin_echo_sequence.svg}
+\end{frame}
+
+\begin{frame}{Spin Echo Animation}
+  \begin{center}
+    \movie[width=8.7cm,height=6.5cm]{\includegraphics[height=6.5cm,width=8.7cm]{hahn_echo_cc_gwm.png}}{./hahn_echo_cc_gwm.gif}
+  \end{center}
+  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEcho.gif}{Gavin Morley --- CC BY-SA 3.0}}
+\end{frame}
+
+\begin{frame}{Spin Echo Measurement}
+  \centering
+  \includegraphics[width=0.9\textwidth]{spin_echo_avg.pdf}
+\end{frame}
+
+\begin{frame}{\(T_2\) Decay Animation}
+  \begin{center}
+    \movie[width=8.7cm,height=6.5cm]{\includegraphics[height=6.5cm,width=8.7cm]{hahn_echo_cc_gwm.png}}{./hahn_echo_decay_cc_gwm.gif}
+  \end{center}
+  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEchoDecay.gif}{Gavin Morley --- CC BY-SA 3.0}}
+\end{frame}
+
+\begin{frame}{\(T_2\) decay of water}
+  \centering
+  \includegraphics[width=0.9\textwidth]{t2_decay_fit.pdf}
+  \note[item]{\(T_2 = \qty{190}{\milli\second}\)}  % Add to slide
 \end{frame}
 
 % Demonstration! Measure FID of water
@@ -445,52 +544,6 @@
 
 \begin{frame}[standout]
   Backup
-\end{frame}
-
-% Add to main part
-% Add pulse echo recording as slide
-
-\begin{frame}{Simple Pulse Sequence}
-  \centering
-  \includesvg[width=0.5\textwidth]{simple_pulse_sequence.svg}
-\end{frame}
-
-\begin{frame}{Rabi nutation (pulse calibration) of water}
-  \centering
-  \includegraphics[width=0.9\textwidth]{rabi_nutation_fit.pdf}
-  \note[item]{\(T_{period} = \qty{32}{\micro\second}\)}
-  \note[item]{\(T_{\frac{\pi}{2}} = \qty{8}{\micro\second}\)}
-  % TODO: Add arrow to pi/2 pulse with pi/2 pulse length (8us?)
-\end{frame}
-
-\begin{frame}{Spin Echo Sequence}
-  \centering
-  \includesvg[width=0.9\textwidth]{spin_echo_sequence.svg}
-\end{frame}
-
-\begin{frame}{Spin Echo Animation}
-  \begin{center}
-    \movie[width=8.7cm,height=6.5cm]{\includegraphics[height=6.5cm,width=8.7cm]{hahn_echo_cc_gwm.png}}{./hahn_echo_cc_gwm.gif}
-  \end{center}
-  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEcho.gif}{Gavin Morley --- CC BY-SA 3.0}}
-\end{frame}
-
-\begin{frame}{Spin Echo Measurement}
-  \centering
-  \includegraphics[width=0.9\textwidth]{spin_echo_avg.pdf}
-\end{frame}
-
-\begin{frame}{\(T_2\) Decay Animation}
-  \begin{center}
-    \movie[width=8.7cm,height=6.5cm]{\includegraphics[height=6.5cm,width=8.7cm]{hahn_echo_cc_gwm.png}}{./hahn_echo_decay_cc_gwm.gif}
-  \end{center}
-  \freefootnote{\href{https://commons.wikimedia.org/wiki/File:GWM_HahnEchoDecay.gif}{Gavin Morley --- CC BY-SA 3.0}}
-\end{frame}
-
-\begin{frame}{\(T_2\) decay of water}
-  \centering
-  \includegraphics[width=0.9\textwidth]{t2_decay_fit.pdf}
-  \note[item]{\(T_2 = \qty{190}{\milli\second}\)}  % Add to slide
 \end{frame}
 
 \end{document}
