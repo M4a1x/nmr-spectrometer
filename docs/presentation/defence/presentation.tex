@@ -24,7 +24,7 @@
 
 % Notes:
 % - Include challenges faced and overcome, so it's mentioned
-% - Include Lesson's learned
+% - Include lessons learned
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,6 +62,18 @@
 
 % Need / Motivation
 \section*{Why?}
+\note{Reminder: What is NMR spectrometer}
+
+\begin{frame}{Nuclear Magnetic Resonance}
+  \begin{itemize}
+    \item Nuclei absorb radio waves at a certain frequency when inside a magnetic field
+    \item The nuclei emit radio waves at that same frequency when excited this way
+    \item The frequency depends on the magnetic field and the surrounding electrons/atoms
+    \item NMR can be used to determine the structure and composition of a sample
+  \end{itemize}
+\end{frame}
+
+
 \note{
   \begin{itemize}
     \item You: Understanding for own experiments
@@ -70,7 +82,6 @@
     \item Transition: if not about you personally --- more globally: applications
   \end{itemize}
 }
-
 
 \begin{frame}{NMR is used across various fields}
   \note[item]{Some of you already know, but here are some reasons why NMR is useful}
@@ -86,14 +97,15 @@
   \centering
   \includegraphics[height=0.8\textheight]{images/nmr-affiliations-per-million-people_naturalbreaks.pdf}
 
-  \(\frac{\text{NMR affiliations}}{\text{million people}}\)
+  \(\frac{\text{NMR publications}}{\text{million people}}\)
   \note[item]{Only publications, doesn't include use of NMR!}
 \end{frame}
 
 % Task / Main Message
 % One sentence to remember if they remember only one
 \begin{frame}[standout]
-  Build an accessible NMR spectrometer
+  \centering
+  Build an accessible\\NMR spectrometer
 \end{frame}
 
 % Preview
@@ -107,8 +119,6 @@
 \begin{frame}{Preview}
   \tableofcontents
 \end{frame}
-
-% Short Explanation of NMR here? One slide?
 
 % Main Body
 % Remember to do transitions!
@@ -154,12 +164,15 @@
   \note[item]{Go through the parts clockwise}
 \end{frame}
 
-% TODO: console/red pitaya
-\begin{frame}{The console\\is a ready-made FPGA board}
+\begin{frame}{The console\\is a ready-made FPGA board\footnote{Red Pitaya SDRlab 122-16}}
   \centering
   \includegraphics[height=0.8\textheight]{rp122-16.png}
   \note[item]{FPGA == programmable hardware, very fast}
+  \note[item]{oversampling}
 \end{frame}
+% out
+% TODO: Oversampling, averaging cic
+% MaRCoS
 
 \begin{frame}{An amplifier is basically just a transistor}
   \centering
@@ -213,6 +226,8 @@
   \centering
   \includegraphics[width=0.9\textwidth]{poweramp.png}
 \end{frame}
+% db repetition
+% schwarzer block von mini-circuits
 
 \begin{frame}{The passive approach leaked too much power}
   \centering
@@ -305,7 +320,7 @@
 \end{frame}
 
 % TODO: Add how it works
-\begin{frame}{The low-noise amplifier}
+\begin{frame}{The low-noise amplifier had instability issues}
   \centering
   \includegraphics[width=0.9\textwidth]{preamp.png}
   \note[item]{Low-noise }
@@ -319,7 +334,7 @@
   \note[item]{Many turns --- high inductance --- low capacitance --- sensitive to stray capacitance}
 \end{frame}
 
-\begin{frame}{The probe}
+\begin{frame}{A 32-channel current supply is designed but untested}
   \centering
   \includegraphics[height=0.8\textheight]{32-channel_current_source.png}
 \end{frame}
@@ -481,7 +496,7 @@
 \end{frame}
 
 % Demonstration! Measure FID of water
-% TODO: Backup slides with notebook screenshots of measurments
+% TODO: Backup slides with notebook screenshots of measurements
 \begin{frame}[standout]
   Demo time!
 \end{frame}
