@@ -23,7 +23,7 @@ dependencies = [
   "numpy",
   "scipy",
   "matplotlib",
-  "nmrglue",
+  "nmrglue @ git+https://github.com/jjhelmus/nmrglue.git",   # need nmrglue >=0.9 for bugfixes
   "marcos @ git+https://github.com/M4a1x/marcos_client.git",
   "fabric",
 ]

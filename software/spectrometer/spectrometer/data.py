@@ -1,22 +1,24 @@
 from __future__ import annotations
-from types import EllipsisType
 
 import copy
 import datetime as dt
 import io
 import logging
+from enum import Enum
 from pathlib import Path
-from typing import Any, Self
+from types import EllipsisType
+from typing import Any, NamedTuple, Self
 
 import matplotlib.pyplot as plt
 import nmrglue as ng
 import numpy as np
 import numpy.typing as npt
 from matplotlib.figure import Figure
+from nmrglue.analysis.lineshapes1d import gauss, lorentz, pvoigt, scale, voigt
 from nmrglue.fileio import fileiobase as ngfile
 
 from spectrometer import plot
-from spectrometer.process import find_phase_shift, lorentz
+from spectrometer.process import find_phase_shift, lorentzian
 
 logger = logging.getLogger(__name__)
 NMRPIPE_MAX_LABEL_LENGTH = 8
@@ -479,6 +481,31 @@ class FID1D:
         self.data[key] = value
 
 
+class Lineshape(Enum):
+    GAUSS = gauss()
+    LORENTZ = lorentz()
+    VOIGT = voigt()
+    PSEUDO_VOIGT = pvoigt()
+    SCALED = scale()
+
+
+class Algorithm(Enum):
+    THRESHOLD = "thres"
+    THRESHOLD_FAST = "thres-fast"
+    DOWNWARD = "downward"
+    CONNECTED = "connected"
+
+
+class Peak(NamedTuple):
+    location: float
+    amplitude: float
+    fwhm: float
+    """Full width at half maximum"""
+
+    signal_strength: float
+    other_parameters: tuple[float, ...] = ()
+
+
 class Spectrum1D:
     """Complex 1D spectrum"""
 
@@ -511,6 +538,8 @@ class Spectrum1D:
         markersize: float = 1,
         **kwargs,
     ) -> Figure:
+        """Simple convenience function to plot the real part
+        of the spectrum with matplotlib in a new figure"""
         fig, axes = plot.subplots(figsize=figsize)
         axes.plot(
             self.scale,
@@ -528,19 +557,25 @@ class Spectrum1D:
         return fig
 
     def integrate(self, frm: int, to: int) -> float:
-        """Calculate a simple Riemann sum in the given range"""
+        """Calculate a simple Riemann sum in the given range `frm` to `to`"""
         sum_slice = np.sum(self[frm:to])
         scale = self.scale
         dx = np.abs(scale[1] - scale[0])
         return sum_slice * dx
 
     def integrate_around(self, position: int, width: int) -> float:
+        """Integrate the spectrum around `position` with `width`
+
+        This integrates from `position - width/2` up until `position+width/2`
+        """
         return self.integrate(position - width / 2, position + width / 2)
 
-    def fit_lorentz(self) -> lorentz:
-        return lorentz.fit(self.scale, self._fft.real)
+    def fit_lorentz(self) -> lorentzian:
+        """Try to fit a single lorentz function over the whole spectrum"""
+        return lorentzian.fit(self.scale, self._fft.real)
 
     def crop(self, frm: int, to: int) -> Self:
+        """Only keep values within `frm` and `to`"""
         scale = self._uc.hz_scale()[frm:to]
         uc = ng.fileio.fileiobase.uc_from_freqscale(
             scale, self.observation_frequency / 1e6, "hz"
@@ -553,17 +588,253 @@ class Spectrum1D:
         )
 
     def crop_around(self, position: int, width: int) -> Self:
+        """Only keep values around `position` that are at most `width//2` away to either side"""
         return self.crop(position - width // 2, position + width // 2)
 
-    def noise(self, frm: int, to: int) -> float:
-        return np.std(self[slice(frm, to)].real)
+    def noise(self, frm: int = 0, to: int = -1) -> float:
+        """Estimate noise by calculating the standard deviation over the given range
+
+        By default this is the whole spectrum
+        """
+        return np.std(self[slice(frm, to)]).real
+
+    def peaks(
+        self,
+        threshold: float | None = None,
+        lineshape: Lineshape
+        | ng.analysis.lineshapes1d.scale
+        | ng.analysis.lineshapes1d.location_scale
+        | str = Lineshape.LORENTZ,
+        algorithm: Algorithm = Algorithm.DOWNWARD,
+    ) -> list[Peak]:
+        """Find peaks in the spectrum above the given `threshold`
+
+        Args:
+            threshold (float | None, optional): Minimum amplitude of the signal to be considered for peak detection.
+            If no threshold is provided `3 * self.noise()` will be used. Defaults to None.
+            lineshape (Lineshape | ng.analysis.lineshapes1d.scale | ng.analysis.lineshapes1d.location_scale | str):
+            Will estimate the linewidth of the found peaks for the given lineshape. Only supports lineshapes
+            with two parameters. Defaults to Lineshape.LORENTZ.
+            algorithm (Algorithm, optional): Select the Algorithm for peak finding. Possible values
+            can be found in `spectrometer.data.Algorithm` or {"downward", "connected", "thres", "thres-fast"}.
+            Defaults to Algorithm.DOWNWARD.
+
+        Raises:
+            ValueError: Raised on invalid lineshape with more than two parameters (e.g. Voigt lineshape)
+
+        Returns:
+            list[Peak]: List of `Peak` tuples with (location, fwhm, amplitude, signal_strength) guesses of the peaks for
+            the given lineshape (e.g. Lorentz, Gauss, ...)
+        """
+        # Get lineshape class
+        if isinstance(lineshape, Lineshape):
+            lineshape = lineshape.value
+        elif isinstance(lineshape, str):
+            lineshape = ng.analysis.lineshapes1d.ls_str2class(lineshape)
+
+        if lineshape.nparam(10) != 2:
+            msg = "Can only pick peaks with location and linewidth as parameters, e.g. Voigt is unsupported"
+            raise ValueError(msg)
+
+        peaks = ng.analysis.peakpick.pick(
+            self._fft.real,
+            pthres=threshold if threshold else 3 * self.noise(),
+            lineshapes=[lineshape],
+            algorithm=algorithm.value
+            if isinstance(algorithm, Algorithm)
+            else algorithm,
+            est_params=True,  # Estimate linewidth and amplitudes
+            cluster=True,  # Cluster results, default: True
+            table=True,  # indexable by string key - return as list of (peak_location, linewidth, amplitude)
+        )
+        """
+            np.recarray[int, int, float, float]: Numpy array with the columns
+            [location, cluster_id, linewidth, amplitude] as recarray indexable by the names
+            ["X_AXIS", "cID", "X_LW", "VOL"]
+        """
+
+        delta = np.abs(self.scale[1] - self.scale[0])
+        return [
+            Peak(
+                location=self.scale[location.astype(int)],
+                fwhm=fwhm * delta,
+                amplitude=self._fft[location.astype(int)],
+                signal_strength=signal_strength,
+            )
+            for location, fwhm, signal_strength in zip(
+                peaks["X_AXIS"], peaks["X_LW"], peaks["VOL"], strict=True
+            )
+        ]
+
+    def fit(
+        self,
+        threshold: float | None = None,
+        lineshape: Lineshape
+        | ng.analysis.lineshapes1d.scale
+        | ng.analysis.lineshapes1d.location_scale
+        | ng.analysis.lineshapes1d.location_2params
+        | str = Lineshape.LORENTZ,
+    ) -> tuple[npt.NDArray, list[Peak]]:
+        """Fit all peaks in the spectrum with the given lineshape
+
+        Args:
+            threshold (float | None, optional): Minimum amplitude of the signal to be considered for peak detection.
+            If no threshold is provided `3 * self.noise()` will be used. Defaults to None.
+            lineshape (Lineshape | ng.analysis.lineshapes1d.scale
+                                 | ng.analysis.lineshapes1d.location_scale
+                                 | ng.analysis.lineshapes1d.location_2params
+                                 | str, optional): Shape of the peaks to fit. This will also be used
+                                 for guessing peak/lineshape parameters if supported, otherwise it
+                                 will fall back to lorentz shape, but only for initial guessing.
+                                 Defaults to Lineshape.LORENTZ.
+
+        Raises:
+            ValueError: On unsupported Lineshape
+
+        Returns:
+            FitResult: NamedTuple with the fitting results. First field are the fitted parameters,
+            the number of which depend on the lineshape (usually 2 [gauss, lorentz] or 3 [voigt])
+            and the second contains the amplitudes.
+        """
+        # If this is adapted to two dimensions, remember that the order is always (y, x) since
+        # the direct dimension is always assumed to be last by nmrglue
+
+        # Get lineshape class
+        if isinstance(lineshape, Lineshape):
+            lineshape = lineshape.value
+        elif isinstance(lineshape, str):
+            lineshape = ng.analysis.lineshapes1d.ls_str2class(lineshape)
+        lineshapes = [lineshape]
+
+        peakpick_args = {
+            "data": self._fft.real,
+            "pthres": threshold if threshold else 3 * self.noise(),
+            "algorithm": Algorithm.DOWNWARD.value,
+            "est_params": True,  # Estimate linewidth and amplitudes
+            "cluster": True,  # Cluster results, default: True
+            "table": True,  # indexable by string key - return as list of (peak_location, linewidth, amplitude)
+        }
+
+        # Optimizer initialization parameters and bounds for every peak found
+        # Currently only supports 2 or 3 optimization parameters
+        match lineshape.nparam(10):
+            case 2:
+                peaks = ng.analysis.peakpick.pick(
+                    lineshapes=lineshapes, **peakpick_args
+                )
+
+                # e.g. gauss, lorentz
+                peak_params_guess = [
+                    [(location, linewidth)]
+                    for location, linewidth in zip(
+                        peaks["X_AXIS"],
+                        peaks["X_LW"],
+                        strict=True,
+                    )
+                ]
+                peak_params_bounds = [
+                    [
+                        # (location), (linewidth) | minimum and maximum values for every peak
+                        ((None, None), (0.0, None)),
+                    ]
+                    for peak in peaks
+                ]
+            case 3:
+                peaks = ng.analysis.peakpick.pick(
+                    lineshapes=[Lineshape.LORENTZ], **peakpick_args
+                )
+
+                # e.g. voigt, pseudo voigt
+                peak_params_guess = [
+                    [
+                        (
+                            location,
+                            linewidth,
+                            0.5,
+                        )
+                    ]
+                    for location, linewidth in zip(
+                        peaks["X_AXIS"], peaks["X_LW"], strict=True
+                    )
+                ]
+                peak_params_bounds = [
+                    [
+                        # (location), (linewidth), ('scale') | minimum and maximum values for every peak
+                        ((None, None), (0.0, None), (0.0, 1.0)),
+                    ]
+                    for peak in peaks
+                ]
+            case n:
+                msg = f"Lineshape of {lineshape} with {n} parameters is unfortunately currently not supported."
+                raise ValueError(msg)
+
+        # Initial optimization amplitude for every peak found
+        amplitude_params_guess = peaks["VOL"]
+
+        # amplitude bounds for optimization algorithm
+        amplitude_bounds = [(None, None) for peak in peaks]
+
+        # center location indexes of the regions - just use peak locations for now
+        centers = [(x,) for x in peaks["X_AXIS"]]
+
+        # Indexes of centers/regions into the list of regions (not the spectrum)
+        region_ids = list(peaks["cID"])
+
+        # Width of the box around each peak, needs to be a tuple and integer!
+        box_width = (np.rint(np.mean(peaks["X_LW"])).astype(int),)
+
+        params_best, amplitudes_best, _iers = ng.analysis.linesh.fit_spectrum(
+            spectrum=self._fft.real,
+            lineshapes=lineshapes,
+            params=peak_params_guess,
+            amps=amplitude_params_guess,
+            bounds=peak_params_bounds,
+            ampbounds=amplitude_bounds,
+            centers=centers,
+            rIDs=region_ids,
+            box_width=box_width,
+            error_flag=False,
+            verb=False,
+        )
+
+        simulated_spectrum = ng.linesh.sim_NDregion(
+            shape=self._fft.real.shape,
+            lineshapes=lineshapes,
+            params=params_best,
+            amps=amplitudes_best,
+        )
+
+        parameters = np.asarray(params_best)
+        parameters = parameters.reshape(-1, parameters.shape[-1])
+        amplitudes = np.asarray(amplitudes_best)
+
+        delta = np.abs(self.scale[1] - self.scale[0])
+        peaklist = [
+            Peak(
+                location=self.scale[int(param_best[0])],
+                fwhm=param_best[1] * delta,
+                amplitude=amplitude,
+                signal_strength=signal_strength,
+                other_parameters=tuple(o for o in param_best[2:]),
+            )
+            for param_best, amplitude, signal_strength in zip(
+                parameters,
+                amplitudes,
+                peaks["VOL"],
+                strict=True,
+            )
+        ]
+
+        return simulated_spectrum, peaklist
 
     @property
     def max_peak(self) -> int:
+        """Maximium signal value"""
         return np.argmax(np.abs(self._fft))
 
     @property
     def hz(self) -> _Spectrum1DHz:
+        """Version of this spectrum indexable by Hertz"""
         return _Spectrum1DHz(
             self._fft,
             self.spectral_width,
@@ -573,6 +844,7 @@ class Spectrum1D:
 
     @property
     def ppm(self) -> _Spectrum1Dppm:
+        """Version of this spectrum indexable by chemical shift"""
         return _Spectrum1Dppm(
             self._fft,
             self.spectral_width,
@@ -582,33 +854,44 @@ class Spectrum1D:
 
     @property
     def scale(self) -> npt.NDArray:
+        """Scale of the spectrum, i.e. the corresponding index for every signal value"""
         return np.linspace(*self.limits, len(self._fft))
 
     @property
     def limits(self) -> tuple[int, int]:
+        """Minimum and maximum index for the spectrum"""
         return 0, len(self._fft) - 1
 
     @property
     def real(self) -> npt.NDArray:
+        """Only the real part of the spectrum"""
         return self._fft.real
 
     @property
     def imag(self) -> npt.NDArray:
+        """Only the imaginary part of the spectrum"""
         return self._fft.imag
 
     @property
     def absolute(self) -> npt.NDArray:
+        """The absolute value of the spectrum"""
         return np.absolute(self._fft)
 
     @property
+    def phase(self) -> npt.NDArray:
+        """The phase value of the spectrum"""
+        return np.angle(self._fft)
+
+    @property
     def size(self) -> int:
+        """Size/Length of the spectrum, i.e. how many discrete values have been recorded"""
         return self._fft.size
 
     def _to_index(self, key: float) -> int:
         return key
 
     def _any_to_index(self, key: Any) -> int:
-        # don't edit ellipsis or none
+        # don't edit ellipsis or None
         if isinstance(key, EllipsisType) or key is None:
             return key
 
@@ -628,7 +911,8 @@ class Spectrum1D:
         except TypeError:
             pass
 
-        raise TypeError(f"Couln't convert index! Are you sure {key} is a valid index?")
+        msg = f"Couln't convert index! Are you sure {key} is a valid index?"
+        raise TypeError(msg)
 
     def __getitem__(self, key: Any):
         try:

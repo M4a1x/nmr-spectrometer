@@ -19,7 +19,7 @@ def main() -> None:
 
     logger.info("Creating pulse sequences...")
     delays_us = np.linspace(1_000, 400_000, 400)
-    pulse_length_us = 8  # From rabi nutation experiment 
+    pulse_length_us = 8  # From rabi nutation experiment
     repetition_time_s = 5
     record_length = 10_000
     sequences = [

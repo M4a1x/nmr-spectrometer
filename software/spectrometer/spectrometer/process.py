@@ -189,7 +189,7 @@ class decaying_sinus:
         )
 
 
-class lorentz:
+class lorentzian:
     def __init__(self, amplitude: float, gamma: float, position: float) -> None:
         self.amplitude = amplitude
         self.gamma = gamma
