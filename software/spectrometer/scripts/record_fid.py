@@ -14,7 +14,7 @@ def main() -> None:
     logger.info("Creating pulse sequence...")
     pulse_length_us = 8
     delay_us = 25  # Wait for coil to ring down
-    record_length = 15e3
+    record_length = 10e3
     seq = NMRSequence.simple(
         pulse_length_us=pulse_length_us,
         delay_us=delay_us,
@@ -29,7 +29,9 @@ def main() -> None:
 
     logger.info("Connecting to server and sending sequence...")
     spec = Spectrometer(
-        tx_freq=25_090_000, sample_rate=320e3
+        # internal oscillator has stability of +-28ppm max
+        # TODO: calibration!
+        tx_freq=25_001_000, sample_rate=320e3
     )  # minimum 30_720, maximum ~122.88e6/27 before FIFOs fill
     spec.connect()
     data = spec.send_sequence(seq)
@@ -41,9 +43,9 @@ def main() -> None:
         spectral_width=spec.sample_rate,
         carrier_freq=0.0,  # Offset between rx_freq and magnet resonance freq. Needs to be calibrated
         observation_freq=spec.rx_freq,
-        label="1H",
-        sample="Toluene",
-        pulse=f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
+        label="none", #"1H",
+        sample="none", #"Toluene",
+        pulse=f"sample_signal_25MHz_10mVpp_30dB_attenuator,record_length={record_length},sample_rate={spec.sample_rate}", #f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
         spectrometer="magnETHical v0.1",
     )
     time = fid.timestamp.strftime("%Y%m%d-%H%M%S")
