@@ -71,10 +71,7 @@ style = [
 ]
 fmt = ["black {args:.}", "ruff --fix {args:.}", "style"]
 all = ["style", "typing"]
-demo = ["jupyter notebook docs/demo/full_demo.ipynb"]
-slides = [
-  "jupyter nbconvert full_demo.ipynb --to slides --reveal-prefix reveal.js --post serve",
-]
+demo = ["cd docs/demo && jupyter lab full_demo.ipynb"]
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.10", "3.11"]
