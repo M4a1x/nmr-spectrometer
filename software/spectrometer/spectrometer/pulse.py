@@ -591,7 +591,7 @@ class Spectrometer:
             self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
         except OSError:
-            logger.debug("Couldn´t close the socket. Maybe it is already closed?")
+            logger.debug("Couldn't close the socket. Maybe it is already closed?")
 
     def __del__(self) -> None:
         self.disconnect()

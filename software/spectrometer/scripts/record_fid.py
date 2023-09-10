@@ -31,7 +31,8 @@ def main() -> None:
     spec = Spectrometer(
         # internal oscillator has stability of +-28ppm max
         # TODO: calibration!
-        tx_freq=25_001_000, sample_rate=320e3
+        tx_freq=25_090_000,
+        sample_rate=320e3,  # ok for 25°C
     )  # minimum 30_720, maximum ~122.88e6/27 before FIFOs fill
     spec.connect()
     data = spec.send_sequence(seq)
@@ -43,9 +44,9 @@ def main() -> None:
         spectral_width=spec.sample_rate,
         carrier_freq=0.0,  # Offset between rx_freq and magnet resonance freq. Needs to be calibrated
         observation_freq=spec.rx_freq,
-        label="none", #"1H",
-        sample="none", #"Toluene",
-        pulse=f"sample_signal_25MHz_10mVpp_56dB_attenuator,df=1ppm,record_length={record_length},sample_rate={spec.sample_rate}", #f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
+        label="1H",
+        sample="Toluene",
+        pulse=f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
         spectrometer="magnETHical v0.1",
     )
     time = fid.timestamp.strftime("%Y%m%d-%H%M%S")
