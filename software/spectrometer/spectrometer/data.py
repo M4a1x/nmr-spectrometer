@@ -717,56 +717,60 @@ class Spectrum1D:
 
         # Optimizer initialization parameters and bounds for every peak found
         # Currently only supports 2 or 3 optimization parameters
-        match lineshape.nparam(10):
-            case 2:
-                peaks = ng.analysis.peakpick.pick(
-                    lineshapes=lineshapes, **peakpick_args
-                )
-
-                # e.g. gauss, lorentz
-                peak_params_guess = [
-                    [(location, linewidth)]
-                    for location, linewidth in zip(
-                        peaks["X_AXIS"],
-                        peaks["X_LW"],
-                        strict=True,
+        try:
+            match lineshape.nparam(10):
+                case 2:
+                    peaks = ng.analysis.peakpick.pick(
+                        lineshapes=lineshapes, **peakpick_args
                     )
-                ]
-                peak_params_bounds = [
-                    [
-                        # (location), (linewidth) | minimum and maximum values for every peak
-                        ((None, None), (0.0, None)),
-                    ]
-                    for peak in peaks
-                ]
-            case 3:
-                peaks = ng.analysis.peakpick.pick(
-                    lineshapes=[Lineshape.LORENTZ], **peakpick_args
-                )
 
-                # e.g. voigt, pseudo voigt
-                peak_params_guess = [
-                    [
-                        (
-                            location,
-                            linewidth,
-                            0.5,
+                    # e.g. gauss, lorentz
+                    peak_params_guess = [
+                        [(location, linewidth)]
+                        for location, linewidth in zip(
+                            peaks["X_AXIS"],
+                            peaks["X_LW"],
+                            strict=True,
                         )
                     ]
-                    for location, linewidth in zip(
-                        peaks["X_AXIS"], peaks["X_LW"], strict=True
-                    )
-                ]
-                peak_params_bounds = [
-                    [
-                        # (location), (linewidth), ('scale') | minimum and maximum values for every peak
-                        ((None, None), (0.0, None), (0.0, 1.0)),
+                    peak_params_bounds = [
+                        [
+                            # (location), (linewidth) | minimum and maximum values for every peak
+                            ((None, None), (0.0, None)),
+                        ]
+                        for peak in peaks
                     ]
-                    for peak in peaks
-                ]
-            case n:
-                msg = f"Lineshape of {lineshape} with {n} parameters is unfortunately currently not supported."
-                raise ValueError(msg)
+                case 3:
+                    peaks = ng.analysis.peakpick.pick(
+                        lineshapes=[Lineshape.LORENTZ], **peakpick_args
+                    )
+
+                    # e.g. voigt, pseudo voigt
+                    peak_params_guess = [
+                        [
+                            (
+                                location,
+                                linewidth,
+                                0.5,
+                            )
+                        ]
+                        for location, linewidth in zip(
+                            peaks["X_AXIS"], peaks["X_LW"], strict=True
+                        )
+                    ]
+                    peak_params_bounds = [
+                        [
+                            # (location), (linewidth), ('scale') | minimum and maximum values for every peak
+                            ((None, None), (0.0, None), (0.0, 1.0)),
+                        ]
+                        for peak in peaks
+                    ]
+                case n:
+                    msg = f"Lineshape of {lineshape} with {n} parameters is unfortunately currently not supported"
+                    raise ValueError(msg)
+        except IndexError as err:
+            msg = "Didn't find any peaks, can't continue"
+            raise RuntimeError(msg) from err
 
         # Initial optimization amplitude for every peak found
         amplitude_params_guess = peaks["VOL"]
