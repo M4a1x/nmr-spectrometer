@@ -685,6 +685,9 @@ class Server:
             host=str(self.ip_address), user="root", connect_timeout=5
         ) as conn:
             conn.run("nohup ./marcos_server &>./marcos_server.log </dev/null &")
+            
+        # Make sure server is up and running before continuing
+        time.sleep(1)
 
     def stop(self) -> None:
         if self.is_running():
