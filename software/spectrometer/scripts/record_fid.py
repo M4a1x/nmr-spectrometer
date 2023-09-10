@@ -45,7 +45,7 @@ def main() -> None:
         observation_freq=spec.rx_freq,
         label="none", #"1H",
         sample="none", #"Toluene",
-        pulse=f"sample_signal_25MHz_10mVpp_30dB_attenuator,record_length={record_length},sample_rate={spec.sample_rate}", #f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
+        pulse=f"sample_signal_25MHz_10mVpp_50dB_attenuator,df=1ppm,record_length={record_length},sample_rate={spec.sample_rate}", #f"single_90_degree_pulse,length={pulse_length_us}us,delay={delay_us}us,record_length={record_length},sample_rate={spec.sample_rate},probe=andrew",
         spectrometer="magnETHical v0.1",
     )
     time = fid.timestamp.strftime("%Y%m%d-%H%M%S")
