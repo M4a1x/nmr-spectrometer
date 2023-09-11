@@ -103,7 +103,7 @@ $> .venv/bin/activate.bat     (for cmd)
 > **Note**
 > If you're using `Powershell` you might have to change the execution policy on your machine. The instructions on how to do that are printed, if the above command fails.
 
-##### Automatic creating using `Hatch`
+##### Automatic creation using `Hatch`
 [Hatch](https://hatch.pypa.io/latest/) is the new standard package manager in Python. It is built on top of `pip` (which installs a package) to automatically figure out dependencies and manage virtual environments. To use it you first need to install it for the current user with `pip`:
 ```bash
 $> python3 -m pip install hatch
@@ -135,7 +135,7 @@ To be able to use the `spectrometer` library in your project you now need to ins
 $> python3 -m pip install ./nmr-spectrometer/software/spectrometer
 ```
 
-If you're using hatch you can alternatively add it as a dependency to the `pyproject.toml` by adding the following line to your dependencies
+If you're using hatch you can alternatively add it as a dependency to your `pyproject.toml` by adding the following line to your dependencies
 ```toml
 dependencies = [
   ...
@@ -155,10 +155,32 @@ magnETHical v0.1.0
 ```
 
 Congrats! The spectrometer control library is now installed!
-## ⚙️ Running the tests <a name = "tests"></a>
+
+
+## ⚙️ Running the tests/scripts/demo<a name = "tests"></a>
+
+If you'd like to install this package to edit or run any of its contents, e.g. run the scripts, the demo or fix a bug you need to install the package in development mode. Since this package is built using `hatch` you need to first install hatch (if not already installed):
+```bash
+$> python3 -m pip install hatch
+```
+
+...
+
+Now you can do a simple
+```bash
+$> hatch run demo
+```
+
+and a browser window with a demo `jupyter notebook` should open. 
+
+Have fun exploring!
+
+
 The simplest test is running marcos test without/with water. measure coil ringing
 
 Explain how to run the automated tests for this system.
+
+
 
 
 ## 🧪 Usage <a name="usage"></a>
