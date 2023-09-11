@@ -230,6 +230,8 @@
 % schwarzer block von mini-circuits
 
 \begin{frame}{The passive approach leaked too much power}
+  % TODO remind of why switch
+  % zahlen - gefühl - 25mhz -> wellenlänge
   \centering
 
   \begin{circuitikz}
@@ -341,9 +343,9 @@
 
 \section{The complete setup}
 
-% Add picture of complete setup
 
 \begin{frame}{Our NMR is affordable \ldots}
+  \vspace*{-0.5\baselineskip}
   \begin{table}
     \begin{tabular}{@{}
         l
@@ -365,14 +367,10 @@
       \textbf{Sum}        &                                                    &                 & \textbf{10142.80} \\
     \end{tabular}
   \end{table}
-  % \freefootnote{Prices incl. VAT [CHF]}
-  % \textsuperscript{\ref{foot}}
-  %\footnote{Integrated in Console\label{foot}}
-  % Add mini-circuits prices
-  % Add superconducting prices? see notes
+  \freefootnote{Prices incl. VAT [CHF]}
 \end{frame}
 
-\begin{frame}{\ldots{} and competitive}
+\begin{frame}{\ldots{} competitive \ldots{}}
   \begin{table}
     \begin{tabular}{@{} lrrr @{}}
       \toprule
@@ -388,8 +386,15 @@
   \freefootnote{For 5mm standard NMR tubes}
 \end{frame}
 
+% Add picture of complete setup
+\begin{frame}{\ldots{} and portable}
+  \vspace*{-2\baselineskip}
+  \centering
+  \includegraphics[height=\textheight]{complete_setup.jpg}
+\end{frame}
+
 % Results
-\section{Measurement Results}
+\section{Experimental Results}
 
 \begin{frame}{Simple Pulse Sequence}
   \centering
@@ -398,9 +403,17 @@
 
 \begin{frame}{We can already see a water FID}
   \centering
-  \includegraphics[width=0.9\textwidth]{images/fid_sine_fit.pdf}
-  \note[item]{Add T2* of fit here!}
-  \note[item]{Outliers at beginning are due to CIC filters}
+  % \includegraphics[width=0.9\textwidth]{images/fid_sine_fit.pdf}
+  % TODO: add T2*
+  \begin{tikzpicture}
+    \node[anchor=south west,inner sep=0] (image) at (0,0) {
+      \includegraphics[width=0.9\textwidth]{fid_sine_fit.pdf}
+    };
+    \begin{scope}[overlay]
+      \node[anchor=east](t2) at (image.north east){\(T_2^* = \qty{2.55}{\milli\second}\)};
+    \end{scope}
+  \end{tikzpicture}
+  \note[item]{Outliers at the beginning are due to CIC filters}
 \end{frame}
 
 \begin{frame}{\ldots and do a Fourier transform}
@@ -422,9 +435,19 @@
       };
       \path[draw=grey,dashed,->] ([yshift=1mm,xshift=-3mm]structure.south east) to ([xshift=0.7cm,yshift=2.5cm]fft.center);
       \path[draw=grey,dashed,->] ([yshift=1mm,xshift=3mm]structure.south west) to ([xshift=0.6cm,yshift=2.5cm]fft.center);
+      \node[anchor=north east](label) at (fft.north east){%
+        \(
+        \begin{aligned}
+          T_2^*       & = \qty{2.71}{\milli\second} \\
+          \text{FWHM} & = \qty{117.7}{\hertz}
+        \end{aligned}
+        \)
+      };
     \end{scope}
   \end{tikzpicture}
-  \note{Ask neighbours about lineshape, why not lorentz?}
+  \note[item]{Not Lorentz because of missing shimming/inhomogeneities}
+  \note[item]{Measured input signal of -92dBm/15.8uV resulted in amplitude of 2200}
+  \note[item]{SNR of around 350, With FWHM 2.5Hz/1ppm we estimate snr of 11000}
 \end{frame}
 
 \begin{frame}{Toluene also has a visible signal}
@@ -450,7 +473,7 @@
         \includesvg[height=0.15\textheight]{images/toluene.svg}
       };
       \path[draw=grey,dashed,->] ([yshift=5mm,xshift=-4mm]structure.south east) to ([yshift=1.5cm,xshift=1.75cm]fft.center);
-      \path[draw=grey,dashed,->] ([yshift=2mm,xshift=2mm]structure.south west) to ([yshift=2.75cm]fft.center);
+      \path[draw=grey,dashed,->] ([yshift=2mm,xshift=2mm]structure.south west) to ([yshift=3.1cm]fft.center);
     \end{scope}
   \end{tikzpicture}
   \note{It's a full tube of toluene, not a solution}
@@ -459,10 +482,24 @@
 
 \begin{frame}{Rabi nutation (pulse calibration) of water}
   \centering
-  \includegraphics[width=0.9\textwidth]{rabi_nutation_fit.pdf}
+  \begin{tikzpicture}
+    \node (rabi)
+    {
+      \includegraphics[width=0.9\textwidth]{rabi_nutation_fit.pdf}
+    };
+    \begin{scope}[overlay]
+      \node[anchor=north east](label) at (rabi.north east){%
+        \(
+        \begin{aligned}
+          2\pi{}          & = \qty{32.3}{\micro\second} \\
+          \frac{\pi{}}{2} & = \qty{8.07}{\micro\second}
+        \end{aligned}
+        \)
+      };
+    \end{scope}
+  \end{tikzpicture}
   \note[item]{\(T_{period} = \qty{32}{\micro\second}\)}
   \note[item]{\(T_{\frac{\pi}{2}} = \qty{8}{\micro\second}\)}
-  % TODO: Add arrow to pi/2 pulse with pi/2 pulse length (8us?)
 \end{frame}
 
 \begin{frame}{Spin Echo Sequence}
@@ -495,29 +532,52 @@
   \note[item]{\(T_2 = \qty{190}{\milli\second}\)}  % Add to slide
 \end{frame}
 
-% Demonstration! Measure FID of water
+% Demonstration! Measure FID of water/toluene
 % TODO: Backup slides with notebook screenshots of measurements
 \begin{frame}[standout]
   Demo time!
 \end{frame}
 
 % Review
+% Conclusion
+% Restate main message
+% complement with other interpretations 
+\begin{frame}{Review}
+  \begin{itemize}
+    \item Why?
+    \item The parts%
+          \begin{itemize}
+            \item Console
+            \item Amplifiers
+            \item Switch
+            \item Probe
+          \end{itemize}
+    \item Capture \& Process Software
+    \item Experimental Results
+    \item Demonstration
+  \end{itemize}
+\end{frame}
 % We've understood why NMR is desirable
 % We've gone through the concept of what it is
 % We've step by step built the spectrometer from console, tx, rx, switch and probe
 % We've now seen how a the software works and performed a measurement
 % I hope I could convince you that the whole setup is working
-% Now the individual parts can be improved individually
 
-\begin{frame}{The setup is working}
-  % Now the individual parts can be improved further
-  % Outlook!
-  % Shim driver, include same as others.. challenges etc.
+\begin{frame}{Outlook}
+  \begin{itemize}
+    \item Shim Driver
+    \item Shielding
+    \item Improve any part individually%
+          \begin{itemize}
+            \item Cheaper Magnet
+            \item Better Probe
+          \end{itemize}
+    \item Investigate temperature stability
+    \item Sell it to NexMR
+  \end{itemize}
 \end{frame}
 
-% Conclusion
-% Restate main message
-% complement with other interpretations 
+% NuevoMR shims, sabr enterprises manget
 
 % Close
 \begin{frame}{}
