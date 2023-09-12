@@ -1,0 +1,108 @@
+\documentclass{standalone}
+
+% Fonts
+\usepackage{fontspec}  % Requires LuaLaTeX
+\usepackage{mathtools}  % Math
+\usepackage[
+  warnings-off={
+      mathtools-colon,%
+      mathtools-overbracket,%
+    }
+]{unicode-math}% Load after mathtools
+\usepackage[tracking]{microtype}
+\microtypesetup{protrusion=true,expansion=true}  % classicthesis
+
+\setmainfont[Numbers=Lowercase,Scale=1.04]{TeX Gyre Pagella}
+\setsansfont{Merriweather Sans}
+\setmonofont[AutoFakeSlant,Scale=MatchLowercase]{inconsolata}
+\setmathfont[mathrm=sym,mathit=sym,mathsf=sym,mathbf=sym,mathtt=sym,NFSSFamily=tgpl]{TeX Gyre Pagella Math}
+\newfontfamily{\unitnumberfont}[Numbers=Uppercase]{Merriweather Sans}%TeX Gyre Pagella}  % Upright numbers for units in siunitx
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage{pgfplots}		% Also loads Tikz
+\pgfplotsset{compat=1.18}       % Set compatibility version. Can be updated as required
+\usepackage{pgfplotstable}	% For advanced table calcs, e.g. 'y expr' to mathematically process input data:
+\usepackage[edges]{forest}	% Comprehensive trees
+\usepackage{tikz-3dplot}
+
+% Only use libraries as needed to keep compilation times low
+\usetikzlibrary{
+  positioning,	% Relative positioning etc.
+  calc,			% Calculate distances, coordinates etc.
+  shapes, 		% For cross out
+  backgrounds,	% Draw on background layer
+  fit,			% Fit new node around existing coordinates
+  decorations,
+  arrows,
+  arrows.spaced,
+  intersections,
+  trees,
+  % circuits.ee.IEC,% Electrical engineering circuits lib
+  patterns,
+  3d,
+  tikzmark,		% Marks/coordinates at arbitrary positions
+}
+\usepgfplotslibrary{
+  colorbrewer,
+  units,
+  dateplot,
+  fillbetween,
+  groupplots,
+}
+\usepackage[european, siunitx]{circuitikz}
+
+% Print a contour around letters, e.g. black text with a white border on some noisy
+% background, so that text remains legible.
+% NOT COMPATIBLE WITH XELATEX! Requires pdflatex or lualatex (our case)
+\usepackage[outline]{contour}
+\contourlength{0.12em}
+
+\newcommand*{\ctrw}[1]{% Black text, white contour
+  \hypersetup{hidelinks}% Hide links, which might be colored
+  \contour{white}{\textcolor{black}{#1}}%
+}%
+
+\newcommand*{\ctrb}[1]{% White text, black contour
+  \hypersetup{hidelinks}% Hide links, which might be colored
+  \contour{black}{\textcolor{white}{#1}}%
+}
+
+
+\begin{document}
+\begin{circuitikz}
+    \ctikzset{bipoles/amp/width=0.9}
+    \draw[nodes={align=center}]
+    (0,0) coordinate(mid)
+
+
+    % RP
+    (mid) node[draw, minimum height=5.5cm, minimum width=2.5cm,label=Console](redpitaya){}
+    (redpitaya.west) coordinate(inp) node[right]{Input}
+    ($(redpitaya.east)!0.75!(redpitaya.north east)$) coordinate(rptx) node[left]{Transmit}
+    ($(redpitaya.east)!0.75!(redpitaya.south east)$) coordinate(rprx) node[left]{Receive}
+
+    % Computer
+    (-3,0) node(seq){Sequence}
+    (seq.east) -- (redpitaya.west) node[inputarrow]{} coordinate(console)
+
+    % TX
+    (rptx) to[lowpass,l=Lowpass,>] ++(3,0)
+    to[amp,l=Amplifier,>] ++(3,0) coordinate(tx)
+
+    % Circulator
+    (mid -| tx) node[circulator,label={left:Switch}](circ){}
+    (tx) -| (circ.n) node[inputarrow,rotate=270]{}
+
+    % RX
+    (rprx -| circ) coordinate(rx)
+    (circ.s) |- (rx)
+    (rx) to[amp,l=Amplifier,>] ++(-3,0)
+    to[lowpass,l=Lowpass,>] ++(-3,0) node[inputarrow,rotate=180]{}
+
+    % Probe
+    (circ.e) -- ++(1,0)
+    node[dinantenna](probe){}
+    node[below=1ex]{Coil}
+    ;
+\end{circuitikz}
+\end{document}

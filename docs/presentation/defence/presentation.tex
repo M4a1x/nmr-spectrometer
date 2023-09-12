@@ -32,7 +32,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{\Huge\magnethical}
-\subtitle{Building a 25\,MHz NMR Spectrometer}
+\subtitle{Master Thesis: Building a 25\,MHz NMR Spectrometer}
 \date{\today}
 \author{Maximilian Stabel}
 \institute{ETH Zürich}
@@ -53,15 +53,21 @@
   \vspace{\baselineskip}
 
   \hfill{}---Richard Feynman
-  \note[item]{In the spirit of Richard Feynman we will together build an NMR machine and make sure we truly understand.}
-  \note[item]{This presentation should hopefully be understood by everyone here, but please interrupt me if something isn't clear.}
-  \note[item]{I hope everyone learns something new today}
-  \note[item]{Even if it is only a newfound or reawoken appreciation for the wonders of magnetic resonance}
-  \note[item]{Transition: But before diving in --- you might ask why we care about building an NMR? Just use it?}
+  \note[item]{In the spirit of Richard Feynman... }
+  \note[item]{My master thesis is about building an NMR spectrometer}
+  \note[item]{I'm Max and I'll be your host for today}
+  \note[item]{Speaking of understanding...}
 \end{frame}
 
 % Need / Motivation
-\section*{Why?}
+\begin{frame}{There is not a lot of NMR research in the Global South}
+  \centering
+  \includegraphics[height=0.8\textheight]{images/nmr-affiliations-per-million-people_naturalbreaks.pdf}
+
+  \(\frac{\text{NMR publications}}{\text{million people}}\)
+  \note[item]{Only publications, doesn't include use of NMR!}
+  \note[item]{I'm Max and I'll talk about my master thesis: building a 25MHz NMR spectrometer}
+\end{frame}
 \note{Reminder: What is NMR spectrometer}
 
 \begin{frame}{Nuclear Magnetic Resonance}
@@ -92,19 +98,13 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{There is not a lot of NMR research in the Global South}
-  \centering
-  \includegraphics[height=0.8\textheight]{images/nmr-affiliations-per-million-people_naturalbreaks.pdf}
-
-  \(\frac{\text{NMR publications}}{\text{million people}}\)
-  \note[item]{Only publications, doesn't include use of NMR!}
-\end{frame}
 
 % Task / Main Message
 % One sentence to remember if they remember only one
 \begin{frame}[standout]
   \centering
   Build an accessible\\NMR spectrometer
+  \note[item]{The goal of my thesis was...}
 \end{frame}
 
 % Preview
@@ -124,57 +124,76 @@
 \section{The parts}
 \begin{frame}{Our goal is to build an accessible NMR spectrometer}
   \centering
-  \begin{circuitikz}
-    \ctikzset{bipoles/amp/width=0.9}
-    \draw[nodes={align=center}]
-    (0,0) coordinate(mid)
+  \includegraphics[width=0.9\textwidth]{block_diagram.pdf}
+  % \begin{circuitikz}
+  %   \ctikzset{bipoles/amp/width=0.9}
+  %   \draw[nodes={align=center}]
+  %   (0,0) coordinate(mid)
 
+  %   % RP
+  %   (mid) node[draw, minimum height=5.5cm, minimum width=2.5cm,label=Console](redpitaya){}
+  %   (redpitaya.west) coordinate(inp) node[right]{Input}
+  %   ($(redpitaya.east)!0.75!(redpitaya.north east)$) coordinate(rptx) node[left]{Transmit}
+  %   ($(redpitaya.east)!0.75!(redpitaya.south east)$) coordinate(rprx) node[left]{Receive}
 
-    % RP
-    (mid) node[draw, minimum height=5.5cm, minimum width=2.5cm,label=Console](redpitaya){}
-    (redpitaya.west) coordinate(inp) node[right]{Input}
-    ($(redpitaya.east)!0.75!(redpitaya.north east)$) coordinate(rptx) node[left]{Transmit}
-    ($(redpitaya.east)!0.75!(redpitaya.south east)$) coordinate(rprx) node[left]{Receive}
+  %   % Computer
+  %   (-3,0) node(seq){Sequence}
+  %   (seq.east) -- (redpitaya.west) node[inputarrow]{} coordinate(console)
 
-    % Computer
-    (-3,0) node(seq){Sequence}
-    (seq.east) -- (redpitaya.west) node[inputarrow]{} coordinate(console)
+  %   % TX
+  %   (rptx) to[lowpass,l=Lowpass,>] ++(3,0)
+  %   to[amp,l=Amplifier,>] ++(3,0) coordinate(tx)
 
-    % TX
-    (rptx) to[lowpass,l=Lowpass,>] ++(3,0)
-    to[amp,l=Amplifier,>] ++(3,0) coordinate(tx)
+  %   % Circulator
+  %   (mid -| tx) node[circulator,label={left:Switch}](circ){}
+  %   (tx) -| (circ.n) node[inputarrow,rotate=270]{}
 
-    % Circulator
-    (mid -| tx) node[circulator,label={left:Switch}](circ){}
-    (tx) -| (circ.n) node[inputarrow,rotate=270]{}
+  %   % RX
+  %   (rprx -| circ) coordinate(rx)
+  %   (circ.s) |- (rx)
+  %   (rx) to[amp,l=Amplifier,>] ++(-3,0)
+  %   to[lowpass,l=Lowpass,>] ++(-3,0) node[inputarrow,rotate=180]{}
 
-    % RX
-    (rprx -| circ) coordinate(rx)
-    (circ.s) |- (rx)
-    (rx) to[amp,l=Amplifier,>] ++(-3,0)
-    to[lowpass,l=Lowpass,>] ++(-3,0) node[inputarrow,rotate=180]{}
-
-    % Probe
-    (circ.e) -- ++(1,0)
-    node[dinantenna](probe){}
-    node[below=1ex]{Coil}
-    ;
-  \end{circuitikz}
+  %   % Probe
+  %   (circ.e) -- ++(1,0)
+  %   node[dinantenna](probe){}
+  %   node[below=1ex]{Coil}
+  %   ;
+  % \end{circuitikz}
   \note[item]{Go through the parts left to right}
   \note[item]{Our switch only, others might include more analog processing}
 \end{frame}
 
 \begin{frame}{The console\\is a ready-made FPGA board\footnote{Red Pitaya SDRlab 122-16}}
-  \centering
+  % \centering
   \includegraphics[height=0.8\textheight]{rp122-16.png}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=north east, inner sep=0] (block) at (current page.north east) {\colorbox{white}{\includegraphics[width=6cm]{block_diagram.pdf}}};
+    \draw[red, ultra thick, rounded corners] (block.south west) ++(0.1,0.2) rectangle ++(2.5,3);
+  \end{tikzpicture}
   \note[item]{FPGA == programmable hardware, very fast}
   \note[item]{oversampling}
   \note[item]{CIC filter (decimation, low pass filter, moving average)}
+  \note[item]{The signal needs to be filtered and then amplified: Next Slide}
 \end{frame}
 
 \begin{frame}{The power amplifier has two stages}
   \centering
-  \includegraphics[width=0.9\textwidth]{poweramp.png}
+  \vspace*{4\baselineskip}
+  \begin{columns}
+    \begin{column}{0.2\textwidth}
+      \vspace*{2\baselineskip}
+      \includegraphics[width=\textwidth]{dds_wave.jpg}
+    \end{column}
+    \begin{column}{0.8\textwidth}
+      \includegraphics[width=\textwidth]{poweramp.png}
+    \end{column}
+  \end{columns}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=north east, inner sep=0] (block) at (current page.north east) {\colorbox{white}{\includegraphics[width=6cm]{block_diagram.pdf}}};
+    \draw[red, ultra thick, rounded corners] (block.south west) ++(2.7,2.2) rectangle ++(2.3,1);
+  \end{tikzpicture}
+  % \includegraphics[width=0.9\textwidth]{poweramp.png}
   \note[item]{We want cheap, so using a simple is the obvious first approach}
   \note[item]{Unfortunately there's a lot to do:%
     \begin{itemize}
@@ -192,9 +211,27 @@
   \note[item]{dB is logarithmic unit}
 \end{frame}
 
+\begin{frame}{The low-noise amplifier had\\instability issues}
+  \centering
+  \vspace*{2\baselineskip}
+  \includegraphics[width=0.9\textwidth]{preamp.png}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=north east, inner sep=0] (block) at (current page.north east) {\colorbox{white}{\includegraphics[width=6cm]{block_diagram.pdf}}};
+    \draw[red, ultra thick, rounded corners] (block.south west) ++(4,0.1) rectangle ++(1,1);
+  \end{tikzpicture}
+  \note[item]{Low-noise }
+  \note[item]{Feedback loop --- stray capacitance}
+  \note[item]{Solution: Smaller housing, shorter loop}
+  \note[item]{We need 3x for enough gain}
+\end{frame}
+
 \begin{frame}{We use a transistor-based active switch}
   \centering
-  \includegraphics[height=0.9\textheight]{tr_switch.png}
+  \includegraphics[height=0.9\textheight]{tr_switch.png} \hspace*{5em}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=north east, inner sep=0] (block) at (current page.north east) {\colorbox{white}{\includegraphics[width=6cm]{block_diagram.pdf}}};
+    \draw[red, ultra thick, rounded corners] (block.south west) ++(4.3,1.25) rectangle ++(1.3,0.8);
+  \end{tikzpicture}
   \note[item]{Active}
   \note[item]{Isolation: \qty{60}{dB}}
   \note[item]{Silicon-on-insulator (not pHEMT GaAs) i.e. FET tech, not PIN-Diode}
@@ -208,18 +245,14 @@
   }
 \end{frame}
 
-% TODO: Add how it works
-\begin{frame}{The low-noise amplifier had instability issues}
-  \centering
-  \includegraphics[width=0.9\textwidth]{preamp.png}
-  \note[item]{Low-noise }
-  \note[item]{Feedback loop --- stray capacitance}
-  \note[item]{Solution: Smaller housing, shorter loop}
-\end{frame}
 
 \begin{frame}{The probe}
-  \centering
+  % \centering
   \includegraphics[height=0.8\textheight]{probe.jpg}
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[anchor=north east, inner sep=0] (block) at (current page.north east) {\colorbox{white}{\includegraphics[width=6cm]{block_diagram.pdf}}};
+    \draw[red, ultra thick, rounded corners] (block.south west) ++(5.6,1.25) rectangle ++(0.6,1);
+  \end{tikzpicture}
   \note[item]{Many turns --- high inductance --- low capacitance --- sensitive to stray capacitance}
 \end{frame}
 
@@ -241,17 +274,17 @@
         S[table-format=5.2,table-align-text-pre=false]
         @{}}
       \toprule
-                          & {\qty{600}{\mega\hertz}\footnote{estimated costs}} & {mini-circuits} & {\magnethical}    \\
+                          & {\qty{600}{\mega\hertz}\footnote{estimated costs}} & {mini-circuits} & {\magnethical}          \\
       \midrule
-      Power Amplifier     & 50000                                              & 323.49          & 36.01             \\
-      Switch              & {-}                                                & 82.06           & 20.05             \\
-      Probe               & 100000                                             & {-}             & {\approx} 15.00   \\
-      Low-Noise Amplifier & 50000                                              & 409.38          & 73.11             \\
-      Shim Driver         & {-}                                                & {-}             & 257.08            \\
-      Console             & 200000                                             & {-}             & 662.53            \\
-      Magnet              & 1000000                                            & {-}             & {\approx} 9000.00 \\
+      Power Amplifier     & 50000                                              & 323.49          & 36.01                   \\
+      Switch              & {-}                                                & 82.06           & 20.05                   \\
+      Probe               & 100000                                             & {-}             & {\approx} 15.00         \\
+      Low-Noise Amplifier & 50000                                              & 409.38          & 73.11                   \\
+      Shim Driver         & {-}                                                & {-}             & 257.08                  \\
+      Console             & 200000                                             & {-}             & 662.53                  \\
+      Magnet              & 1000000                                            & {-}             & {\approx} 9000.00       \\
       \bottomrule
-      \textbf{Sum}        &                                                    &                 & \textbf{10142.80} \\
+      \textbf{Sum}        &                                                    &                 & \textbf{\num{10142.80}} \\
     \end{tabular}
   \end{table}
   \freefootnote{Prices incl. VAT [CHF]}
@@ -409,8 +442,16 @@
 
 \begin{frame}{\(T_2\) decay of water}
   \centering
-  \includegraphics[width=0.9\textwidth]{t2_decay_fit.pdf}
-  \note[item]{\(T_2 = \qty{190}{\milli\second}\)}  % Add to slide
+  \begin{tikzpicture}
+    \node (decay)
+    {
+      \includegraphics[width=0.9\textwidth]{t2_decay_fit.pdf}
+    };
+    \begin{scope}[overlay]
+      \node[anchor=north east](label) at (decay.north east){\(T_2^* = \qty{190}{\milli\second}\)};
+    \end{scope}
+  \end{tikzpicture}
+  \note[item]{\(T_2 = \)}  % Add to slide
 \end{frame}
 
 % Demonstration! Measure FID of water/toluene
