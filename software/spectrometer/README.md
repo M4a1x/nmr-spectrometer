@@ -37,6 +37,7 @@
 - [⛏️ Built Using ](#️-built-using-)
 - [✍️ Authors ](#️-authors-)
 - [Notes](#notes)
+- [Roadmap](#roadmap)
 
 ## 🧐 About <a name = "about"></a>
 The magnETHical spectrometer is a low-cost low-field home-made NMR spectrometer developed at ETH Zürich. This project is providing an interface for setting up the spectrometer software on the RedPitaya 122-16 (SDRLab) system, sending and recording pulse sequences.
@@ -201,6 +202,7 @@ Add notes about how to use the system.
 ## Notes
 
 For analysis of later spectra:
+- [`CCPNMR`](https://ccpn.ac.uk/)
 - [`POKY`](https://github.com/pokynmr/POKY) is the successor of [SPARKY](https://www.cgl.ucsf.edu/home/sparky) by UCSF and the [`NMRFAM-SPARKY`](https://nmrfam.wisc.edu/nmrfam-sparky-distribution/) distribution
 - [`spectrochempy`](https://www.spectrochempy.fr) looks promising (only Bruker, JCAMP, OPUS, OMNIC data)
 - `penguins` (reads only Bruker data?)
@@ -208,6 +210,11 @@ For analysis of later spectra:
 Other noteworthy data formats:
 - [`nmrML`](https://github.com/nmrML/nmrML) open NMR data format. read supported by NMRglue
 - [`JCAMP-DX`](http://www.jcamp-dx.org/) Open NMR data format. Read supported by NMRglue
+
+## Roadmap
+- No further analysis capabilities planned beyond simple plotting of spectra and simple fit, everything else see Notes above
+- [PySeq Support/FLOCRA](https://github.com/stockmann-lab/flocra-pulseq)
+- Automatic Calibration and Shimming, see e.g. [MGH](https://github.com/stockmann-lab/mgh_marcos)
 
 
 [status-badge]: https://img.shields.io/badge/status-active-success.svg
