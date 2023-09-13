@@ -1,6 +1,6 @@
 \documentclass{ethpresentation}
 \usepackage{multimedia}
-\setbeameroption{show notes on second screen} % use e.g. pympress to view
+% \setbeameroption{show notes on second screen} % use e.g. pympress to view
 
 % Simple handout with just the slides
 % "article" mode is better, but this might be useful in a pinch?
@@ -25,6 +25,8 @@
 % Notes:
 % - Include challenges faced and overcome, so it's mentioned
 % - Include lessons learned
+% - estimate 2min per slide on average 
+%  -> was a bit faster (~43min for 29 slides), took ~60min including demonstration
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -449,7 +451,7 @@
       \includegraphics[width=0.9\textwidth]{t2_decay_fit.pdf}
     };
     \begin{scope}[overlay]
-      \node[anchor=north east](label) at (decay.north east){\(T_2^* = \qty{190}{\milli\second}\)};
+      \node[anchor=north east](label) at (decay.north east){\(T_2 = \qty{190}{\milli\second}\)};
     \end{scope}
   \end{tikzpicture}
   \note[item]{\(T_2 = \)}  % Add to slide
