@@ -7,11 +7,48 @@
 
 
 \section{NMR Spectroscopy}
+
+Nuclear Magnetic Resonance is the fundamental principle describing the effect that atomic nuclei absorb radio waves at a certain frequency when exposed to an external magnetic field. This phenomenon is called \enquote{resonance}. The magnetic dipole moment \(\vec{\mu}\) can be but in relation with the quantum spin number \(\vec{S}\) through the gyromagnetic ratio \(\gamma\) --- which is a constant property of a given nucleus --- with the relation
+\[
+    \vec{\mu} = \gamma\vec{S}
+\]
+Atomic nuclei with both an even number of protons and neutrons do not show this effect, because their spin is zero and they have no nuclear magnetic dipole moment, which can be easily verified with the equation above. Examples of nuclei that are so-called \enquote{NMR active} include \ch{}
+
+Placed inside an external magnetic field we call \(B_0\) and excited with the right frequency radio wave the total spin magnetization will start precessing around the external magnetic field \(B_0\) according to the relation
+\[
+    \omega = -\gamma{}B_0
+\]
+where \(\gamma\) is again the gyromagnetic ratio and \(\omega = 2\pi{}f\) with \(f\) being the precession frequency. This precession can be observed when the excitation radio wave stops and we listen for radio waves emitted by the nuclei as they relax from their excited state back to their previous state. Because the resonant frequency is also dependent on the surroundings\sidenote{For example couplings inside the molecule} of the atom, structural, chemical and physical analysis can be performed by measuring this shift of expected resonance frequency to the observed. Chemists call this shift in frequency the \enquote{Chemical Shift (CS)}.
+
+The conceptually simplest method of NMR spectroscopy would be to send an \enquote{infinitely} long\sidenote{In practice just \emph{very} long} radio wave with a slowly changing frequency to find the exact frequencies that the nuclei resonate at. This technique is called \acrlong{cwnmr} or short \acrshort{cwnmr}.
+
+The Fourier theorem states that any periodic signal can be written as a sum of pure sinus waves. In practice, any time signal can be viewed as periodic with a period of infinity. The process of decomposing a signal into its sine components is called Fourier Transform (FT)\sidenote{In practice, a specific algorithm called Fast Fourier Transform (FFT) is used. If it is performed on discrete values (e.g. arrays of data), it is often called DFFT for Discrete Fast Fourier Transform}. The other way around --- composing a signal by summing up pure sine waves --- is called inverse Fourier Transform or iFT.
+
+The concept of Fourier Transformation can then be used to very easily send multiple frequencies at once. This concept is called pulsed NMR or FT-NMR. The simplest pulse is a multiplication of a rectangle signal (see the left side of \reffig{rect}) with a simple pure sine wave (see the left side of \reffig{sine-inf}) with a frequency close to the suspected resonance frequency. In practice, this simply means quickly switching the transmission of the sine wave on and off (see the left side of \reffig{fig:sine-pulse}). Because a single rectangle pulse consists of many frequencies (right side of \reffig{rect}), only a single pulse of a sine wave close to the relevant resonant frequency is needed to excite multiple nuclei with slightly different resonance frequencies (see \reffig{sine-inf} and \reffig{sine-pulse})\sidenote{A multiplication of the time domain signals results in a convolution in the frequency domain}. The shorter the pulse, the more frequencies can be excited, but less energy is transmitted in total and per frequency.
+\begin{figure}[tbh]
+    \includesvg{images/pulse_fft/1s_rect_pulse_fft.svg}
+    \caption{A rectangle window function of length \qty{1}{\second} in time domain with an amplitude of 1 on the left side and its Fourier transform on the right side, capped to \(\pm{}\qty{10}{\hertz}\)}
+    \labfig{rect}
+\end{figure}
+
+\begin{figure}[tbh]
+    \includesvg{images/pulse_fft/20hz_inf_fft.svg}
+    \caption{An infinite sine wave of \qty{20}{\hertz} plotted from \qty{-1}{\second} to \qty{1}{\second} on the left side and its Fourier Transform on the right}
+    \labfig{sine-inf}
+\end{figure}
+
+\begin{figure}[tbh]
+    \includesvg{images/pulse_fft/20hz_1s_pulse_fft.svg}
+    \caption{A pulsed sine wave of \qty{20}{\hertz} and a pulse length of \qty{1}{\second} plotted from \qty{-1}{\second} to \qty{1}{\second} on the left side and its Fourier Transform on the right. Notice the broadening in the centre compared to the pure sine wave in \reffig{sine-inf}. We are sending multiple frequencies around \qty{20}{\hertz} at the same time simply by pulsing a single frequency sine wave.}
+    \labfig{sine-pulse}
+\end{figure}
+
+
 Principles of Pulses and relaxation
 rotating reference frame
 different variatns: continuous wave, pulse, CIDNP, ...
 different goals: structure, chemical shifts, J coupling/electron bonds/...
-requirements on homogenity, noise, coil, rf, ...
+!requirements on homogenity, noise, coil, rf, ...
 
 
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.0" width="600" height="400" xmlns="http://www.w3.org/2000/svg"><script xmlns=""/>
+
+ <!-- Axis -->
+ <path stroke="#000" stroke-width="1" d="M10,360 H590 M40,390 V10"/>
+
+ <!-- Labels -->
+ <g font-family="Bitstream Vera Sans" font-size="30px" text-align="end" text-anchor="end">
+  <text x="35" y="348">0</text>
+  <text x="35" y="112" font-style="italic">A</text>
+ </g>
+
+ <!-- Graph -->
+ <path stroke="#f00" stroke-width="3" fill="none" d="M10,360 H190 V100 H450 V360 H590"/>
+
+</svg>
