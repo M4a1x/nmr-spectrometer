@@ -3,9 +3,12 @@
     \dictum[Richard Feynman]{What I cannot create,\\I do not understand.}
 }
 
-\chapter{Methods}
+% Methods
+\chapter{The spectrometer}
 \labch{methods}
 % Write in theorem-proof fashion
+
+The individual parts of the spectrometer have been designed with several goals in mind. The main guiding principle was reproducibility and availability such that anyone can reproduce the build with minimal effort. All the necessary steps are documented below, including the reasoning for steps not taken. For verification and testing of the parts below the console (see \refsec{console}) itself may be used\sidenote{Instruction for using the RedPitaya as an \gls{lcrmeter}, \acrshort{vna}, or spectrum analyser can be found in its documentation}. A more practical solution is using separate devices for this to avoid the reconfiguration hassles. The open-source NanoVNA-H4\sidenote{\approx{}60CHF, \url{https://nanovna.com/}} \acrshort{vna} and the tinySA\sidenote{\approx{}50CHF, \url{https://tinysa.org/}} spectrum analyser are affordable and at these frequencies very capable alternatives to expensive lab equipment. They have been used extensively during the development of the hardware.
 
 The following sections describe the design and build process --- including the reasoning behind the decisions taken --- of the \magnethical{} NMR spectrometer. \reffig{block-diagram} shows an overview schematic of the main components that will be discussed.
 
@@ -19,6 +22,7 @@ The following sections describe the design and build process --- including the r
 The section order follows the path of the signal, that is, clockwise around the schematic starting with the console.
 
 \section{The console}
+\labsec{console}
 \begin{marginfigure}[-4.5\baselineskip]
     \includegraphics{block_diagram_highlight_console.pdf}
     \labfig{block-diagram-console}
@@ -87,11 +91,17 @@ building the coil
     \centering
     \includegraphics{images/probe.jpg}
     \caption{\captiontitle{Probe holder and \acrshort{rf} coil with tuning and matching capacitors} The capacitors are tunable from \qtyrange{4.5}{20}{\pico\farad} of make JZ200HV. The coil has a diameter of \(d = \qty{7.5}{\milli\meter}\), wire diameter \(D = \qty{0.2}{\milli\meter}\) and \(n = \qty{18}{turns}\) on a length of \(l = \qty{4}{\milli\meter}\). It has a measured inductance of \(L_{\qty{1}{\mega\hertz}} = \qty{2.7}{\micro\henry}\) and a resistance of \(R_{\qty{1}{\mega\hertz}} = \qty{0.63}{\ohm}\). The body was 3D printed and the circuit cut by hand.}
-    \labfig{switch}
+    \labfig{probe}
 \end{figure}
 
-\section{The 32-channel current supply}
+\section{The 32-channel current source}
 building the power supply
+\begin{figure}[hbt]
+    \centering
+    \includegraphics{images/32-channel_current_source.png}
+    \caption{\captiontitle{32-channel programmable current source.} 3D rendering of the current source \acrshort{pcb} in \gls{kicad}. The \acrshort{spi} interface is on the right, the power connectors on the left and the 32 output channels on the top and bottom of the \acrshort{pcb}. It consists of 4 8-channel \acrshort{adc}s (AD5676R) setting a voltage that is converted to a constant current by two \acrshort{opamp}s: LMV358 for signal scaling and shifting and TCA0372 for the constant current source.}
+    \labfig{current-source}
+\end{figure}
 
 \section{The software}
 \labsec{software}
