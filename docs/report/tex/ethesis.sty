@@ -640,7 +640,8 @@
     contents=\blankpage,%
 ]{blankpage.fg}
 \DeclarePageStyleByLayers{blank}{blankpage.fg}
-\KOMAoptions{cleardoublepage=blank}
+\KOMAoptions{cleardoublepage=blank}              % Blank page before new chapter and other cleardouble
+\patchcmd{\partheademptypage}{empty}{blank}{}{}  % Blank page also after part page
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

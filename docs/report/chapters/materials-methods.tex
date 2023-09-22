@@ -57,7 +57,36 @@ All of these digital signal-processing tasks are performed by the \acrshort{marc
     \labfig{block-diagram-pa}
 \end{marginfigure}
 
-Building of the power amplifier
+The power amplifier has to amplify the low-power digitally synthesised signal from the console. The console described in \refsec{console} above has a maximum output power of \qty{0.5}{\volt} or \qty{-2}{\deci\belm} into a \qty{50}{\ohm} load.
+
+The output power required to excite a volume of \qty{1}{\centi\meter\cubed} on a bandwidth of about \qty{10}{\kilo\hertz} or \qty{20}{ppm} in a high field magnet (\qty{500}{\mega\hertz} (\ch{^1H})/\qty{11.7}{\tesla}) is about \qty{11}{\watt} \sidecite{louis-josephDesigningBuildingLowcost2019}. The magnet in this work (see \refsec{magnet}) has a field strength of \qty{25}{\mega\hertz} (\ch{^1H})/\qty{0.6}{\tesla}, therefore \qty{20}{ppm} equals an excitation bandwidth of only \qty{500}{\hertz}. The sample Volume is only \(\qty{100}{\micro\litre} = \qty{0.1}{\centi\meter\cubed}\) as well, reducing the required energy further.
+
+Targeting a pulse length of \qty{20}{\micro\second} for a \ch{^1H} \(\frac{\pi}{2}\)-pulse the RF pulse needs to generate a magnetic field of about
+\[
+    B = \frac{\alpha}{\gamma\tau} = \frac{\frac{\pi}{2}}{\qty{42.577}{\mega\hertz\per\tesla}\cdot{}\qty{20}{\micro\second}} = \qty{1.845}{\milli\tesla}
+\]
+
+The magnet has a homogenous region of \(\qty{100}{\micro\litre}\) for a \qty{5}{\milli\meter} NMR tube, resulting in a length of about \(l = \qty{6}{\milli\meter}\). If we assume a simple solenoid of that length with about \(n = 20\) turns, a Q factor of 100 (usually in the range of 10 to 1000 \sidecite{mispelterNMRProbeheadsBiophysical2015}) and a self inductance of \(L = \qty{3}{\micro\henry}\) we can roughly estimate the required peak power \(P\) with the following formulas \cite{mispelterNMRProbeheadsBiophysical2015}
+\begin{align}
+    B & = \mu{}_0nI\frac{1}{l}             \\
+    P & = R\underbar{I}^2 = R\frac{I^2}{2} \\
+    Q & = \frac{L\omega}{R}                \\
+\end{align}
+Where \(B\) is the magnet field produced by the current \(I\) through a solenoid of length \(l\) with \(n\) windings and and air core of permittivity \(\mu{}_0\). \(P\) is the maximum power pushed into the solenoid by current \(I\) over resistance \(R\) and \(Q\) is the definition of the quality factor for a self inductance \(L\) and resistance \(R\). Putting it all together results in an estimated power level of
+\begin{align}
+    P & = \frac{B^2l^2L\omega}{2\mu{}_0^2n^2Q}                                                                                                                                              \\
+      & = \frac{(\qty{1.845}{\milli\tesla})^2 \cdot (\qty{6}{\milli\metre})^2 \cdot \qty{3}{\micro\henry} \cdot 2\pi{} \cdot \qty{25}{\mega\hertz}}{2 \cdot \mu{}_0^2 \cdot 20^2 \cdot 100} \\
+      & = \qty{457.1}{\milli\watt}                                                                                                                                                          \\
+\end{align}
+
+The exact power required is difficult to calculate at best du to various losses of the materials, the sample, the surrounding materials and losses due to radiation. Previous works with low-field NMR spectrometers used power amplifiers with a maximum power output of \qty{1}{\watt}\cite{chenUltralowCostNMR2015} and \qty{5}{W}\cite{louis-josephDesigningBuildingLowcost2019}. Lower power RF amplifiers have the advantage of lower required voltages, lower noise, less cooling requirements and simpler integrated designs.
+
+The most affordable option for the power amplification would be based on \acrshort{rf} transistors. Unfortunately, this also necessitates an involved design process including not only biasing and feedback design, but also impedance matching and power supply circuits of a possible multi-stage power amplifier. This alone could be the topic of another thesis. Therefore, an \acrshort{mmic} approach has been chosen. Furthermore, availability in the \qty{1}{\watt} range is large due to a large commercial market in this power range especially for CATV amplifiers. Therefore, a \qty{1}{\watt} \acrshort{mmic} amplifier was chosen.
+
+The \acrfull{mmic} amplifier has biasing, possible feedback and stabilization requirements all integrated on a single substrate design. In an application only power, \acrshort{dc} blocking and adequate cooling has to be supplied.
+
+The final design can be found in \reffig{poweramp}. A schematic
+
 \begin{figure}[hbt]
     \centering
     \includegraphics{images/poweramp.png}
@@ -87,6 +116,11 @@ building of the switch
 \end{marginfigure}
 building the coil
 
+Solenoid is probably the best design in terms of sensitivity for NMR, but inductance increases rapidly with the dimensions. Thus it is best used for small samples and/or low fields\cite{mispelterNMRProbeheadsBiophysical2015}.
+
+Assuming a long coil magnetic field is estimated by
+B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
+
 \begin{figure}[hbt]
     \centering
     \includegraphics{images/probe.jpg}
@@ -103,9 +137,13 @@ building the power supply
     \labfig{current-source}
 \end{figure}
 
+\section{The magnet}
+\labsec{magnet}
+
 \section{The software}
 \labsec{software}
 
+Cite nmrglue here \sidecite{helmusNmrglueOpenSource2013}
 design and development of the control software
 short description of marcos
 
