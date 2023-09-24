@@ -1,6 +1,7 @@
 \chapter{Schematics}
 \labch{schematics}
 \section{Power Amplifier}
+\labsec{poweramp-schematic}
 \includegraphics[angle=90,width=0.9\textwidth]{poweramp.pdf}
 
 \section{Switch}
@@ -18,6 +19,133 @@
 \includegraphics[angle=90,width=\textwidth,page=2]{32-channel_current_source.pdf}
 
 \includegraphics[angle=90,width=\textwidth,page=3]{32-channel_current_source.pdf}
+
+\chapter{Lists of Parts}
+\labch{lists-of-parts}
+% TODO: Maybe add prices for all individual parts
+Below are the complete part lists for the schematics above. A lot of standard parts are available from many different manufacturers, the given \acrfull{mpn} in these cases are only one of many possible options. For example most of the RLC parts, the linear power supplies (7850, LM317, \ldots) and the pin headers --- among others.
+
+As customary in a lot of designs, the comma dot has often been replaced by the SI-Prefix for the given value or the variable name in case of no prefix. For example, 4k7 for a resistor is equivalent to \qty{4.7}{\kilo\ohm}. Equivalently, a 5u6 capacitor has a value of \qty{5.6}{\micro\farad}. If there is no prefix, the symbol is sometimes used, for example, 37R4 is equal to a \qty{37.4}{\ohm} resistor. This is usually done for better readability and less ambiguity --- especially on bad prints where the point can easily vanish.
+
+\newpage
+\section{Power Amplifier}
+\begin{center}
+    \begin{tabular}{@{} llll @{}}
+        \toprule
+        Qty & Reference(s)              & Value                       & \acrshort{mpn}     \\
+        \midrule
+        6   & C1, C2, C3, C4, C10, C15  & 100n,50V,10\%               & C0805C104J5RACTU   \\
+        6   & C5, C11, C8, C9, C13, C14 & 1u,50V,10\%                 & CL21B105KBFNNNG    \\
+        2   & C6, C12                   & 1n,50V,10\%                 & 08055C102KAT2A     \\
+        1   & C7                        & 68p,50V                     & 08055A680JAT2A     \\
+        2   & C16, C17                  & 10u,50V,10\%                & GRM21BR61H106KE43L \\
+        2   & C18, C19                  & 130p/50V                    & GRM2165C1H131JA01D \\
+        1   & D1                        & SS13HE,Schottky,30V,1A      & SS13HE             \\
+        4   & D2, D3, D4, D5            & S1B (1N4002)                & S1B-13-F           \\
+        1   & F2                        & PTC fuse,6V,0.75A,0.2s,40mΩ & 0805L075SL         \\
+        1   & J1                        & Power                       & 68491-102HLF       \\
+        1   & J2                        & RF\_IN                      & 142-0701-851       \\
+        1   & J3                        & RF\_OUT                     & 142-0701-851       \\
+        1   & J4                        & Power\_Enable               & 68491-102HLF       \\
+        1   & L1                        & 5u6                         & CC453232-5R6KL     \\
+        1   & L2                        & 470n                        & L-15FR47JV4E       \\
+        1   & L3                        & 360n,5\%,RF                 & 36502AR36JTDG      \\
+        1   & Q1                        & MMBT3904                    & MMBT3904-7-F       \\
+        1   & Q2                        & BCP51                       & BCP51,115          \\
+        2   & R1, R2                    & 150                         & AC0805FR-07150RL   \\
+        1   & R3                        & 37R4                        & CR0805-FX-37R4ELF  \\
+        2   & R4, R7                    & 240, 1\%                    & RC0805FR-07240RL   \\
+        1   & R5                        & 715, 1\%                    & RT0805FRE07715RL   \\
+        1   & R6                        & 2k43, 1\%                   & ERJ-6ENF2431V      \\
+        2   & R8, R10                   & 1k                          & 1623131-1          \\
+        1   & R9                        & 10k                         & CRCW080510K0FKEAC  \\
+        1   & R11                       & 4k7                         & AC0805FR-074K7L    \\
+        1   & U1                        & ADL5536                     & ADL5536ARKZ-R7     \\
+        1   & U2                        & PHA-202+                    & PHA-202+           \\
+        2   & U3, U4                    & LM317\_SOT-223              & LM317MQDCYR        \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+
+\newpage
+\section{Switch}
+\begin{center}
+    \begin{tabular}{@{} llll @{}}
+        \toprule
+        Qty & Reference(s) & Value                      & \acrshort{mpn}   \\
+        \midrule
+        3   & C1, C2, C3   & 1u/50V                     & CL21B105KBFNNNG  \\
+        2   & C4, C5       & 200p/50V                   & C0805C201K5HACTU \\
+        1   & C8           & 100n/50V                   & C0805C104J5RACTU \\
+        1   & D1           & BAS321Z                    & BAS321Z          \\
+        1   & J1           & RF1                        & 142-0701-851     \\
+        1   & J2           & RF2                        & 142-0701-851     \\
+        1   & J3           & RFC                        & 142-0701-851     \\
+        1   & J4           & 2x,2.54mm pitch,pin header & 68491-102HLF     \\
+        1   & J5           & 4x,2.54mm pitch,pin header & 69190-104HLF     \\
+        1   & U1           & 7805                       & UA78M05IDCYR     \\
+        1   & U2           & QPC6324                    & QPC6324          \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\newpage
+\section{Low Noise Amplifier}
+\begin{center}
+    \begin{tabular}[c]{@{} llll @{}}
+        \toprule
+        Qty & Reference(s) & Value          & \acrshort{mpn}    \\
+        \midrule
+        1   & C1           & 1p5,50V,10\%   & CC0805BRNPO9BN1R5 \\
+        2   & C2, C4       & 2u2,25V,10\%   & CL21A225KAFNNNG   \\
+        2   & C3, C7       & 100n,50V,10\%  & CL21B104KBCNNNC   \\
+        1   & C5           & 1n,50V,10\%    & CL21B102KBANFNC   \\
+        1   & C6           & 10u,25V,10\%   & CL21A106KAYNNNG   \\
+        2   & C8, C9       & 1u,50V,10\%    & CL21B105KBFNNNG   \\
+        1   & D1           & BAV99          & BAV99             \\
+        1   & D2           & BAS321Z        & BAS321Z           \\
+        1   & J1           & RF\_IN         & 142-0701-851      \\
+        1   & J2           & RF\_OUT        & 142-0701-851      \\
+        1   & J3           & Power          & 68491-102HLF      \\
+        1   & L1           & 15u            & CV201210-150K     \\
+        1   & L2           & 5n1,5\%,Unshld & 0805HT-5N1TJLC    \\
+        1   & R1           & 1k5,1\%        & RT0805FRE101K5L   \\
+        1   & U1           & PHA-13LN       & PHA-13LN+         \\
+        1   & U2           & 7805           & UA78M05IDCYR      \\
+        \bottomrule
+    \end{tabular}
+\end{center}
+
+\newpage
+\section{32-channel current source}
+\begin{longtable}[c]{@{} lp{5cm}p{5cm}l @{}}
+    \toprule
+    Qty & Reference(s)                                                                                                                                                                                                                                                                                                                                                             & Value                                               & \acrshort{mpn}  \\
+    \midrule
+    40  & C1, C3, C9, C10, C15, C16, C21, C22, C27, C28, C29, C31, C37, C38, C43, C44, C49, C50, C55, C56, C57, C59, C65, C66, C71, C72, C77, C78, C83, C84, C85, C87, C93, C94, C99, C100, C105, C106, C111, C112                                                                                                                                                                 & 10u, tantalum                                       & TMCP1A106KTRF   \\
+    72  & C2, C4, C5, C6, C7, C8, C11, C12, C13, C14, C17, C18, C19, C20, C23, C24, C25, C26, C30, C32, C33, C34, C35, C36, C39, C40, C41, C42, C45, C46, C47, C48, C51, C52, C53, C54, C58, C60, C61, C62, C63, C64, C67, C68, C69, C70, C73, C74, C75, C76, C79, C80, C81, C82, C86, C88, C89, C90, C91, C92, C95, C96, C97, C98, C101, C102, C103, C104, C107, C108, C109, C110 & 100n, ceramic, low ESR, low ESI                     & 0805ZD104KAT2A  \\
+    2   & J1, J3                                                                                                                                                                                                                                                                                                                                                                   & Red, banana power plug, enclosure                   & 6091            \\
+    1   & J2                                                                                                                                                                                                                                                                                                                                                                       & Black, banana power plug, enclosure                 & 6092            \\
+    1   & J4                                                                                                                                                                                                                                                                                                                                                                       & 10pos, 2row, DIN41651, 2.54mm pitch, idc            & 72454-010LF     \\
+    4   & J5, J6, J7, J8                                                                                                                                                                                                                                                                                                                                                           & 16pos, 2row, DIN41651, 2.54mm pitch, idc            & 72454-016LF     \\
+    1   & N1                                                                                                                                                                                                                                                                                                                                                                       & Enclosure, Hammond 1590                             & 1590Z150        \\
+    32  & R1, R3, R11, R13, R21, R23, R31, R33, R41, R43, R51, R53, R61, R63, R71, R73, R81, R83, R91, R93, R101, R103, R111, R113, R121, R123, R131, R133, R141, R143, R151, R153                                                                                                                                                                                                 & 10k                                                 & RT0805FRE1310KL \\
+    64  & R2, R4, R7, R8, R12, R14, R17, R18, R22, R24, R27, R28, R32, R34, R37, R38, R42, R44, R47, R48, R52, R54, R57, R58, R62, R64, R67, R68, R72, R74, R77, R78, R82, R84, R87, R88, R92, R94, R97, R98, R102, R104, R107, R108, R112, R114, R117, R118, R122, R124, R127, R128, R132, R134, R137, R138, R142, R144, R147, R148, R152, R154, R157, R158                       & 2k                                                  & RT0805FRE072KL  \\
+    32  & R5, R6, R15, R16, R25, R26, R35, R36, R45, R46, R55, R56, R65, R66, R75, R76, R85, R86, R95, R96, R105, R106, R115, R116, R125, R126, R135, R136, R145, R146, R155, R156                                                                                                                                                                                                 & 1k                                                  & RT0805FRE071KL  \\
+    32  & R9, R10, R19, R20, R29, R30, R39, R40, R49, R50, R59, R60, R69, R70, R79, R80, R89, R90, R99, R100, R109, R110, R119, R120, R129, R130, R139, R140, R149, R150, R159, R160                                                                                                                                                                                               & 1, precision, current sense                         & ERJ-6DQF1R0V    \\
+    4   & U1, U10, U19, U28                                                                                                                                                                                                                                                                                                                                                        & AD5676R                                             & AD5676RBRUZ     \\
+    16  & U2, U4, U6, U8, U11, U13, U15, U17, U20, U22, U24, U26, U29, U31, U33, U35                                                                                                                                                                                                                                                                                               & LMV358                                              & LMV358IDR       \\
+    16  & U3, U5, U7, U9, U12, U14, U16, U18, U21, U23, U25, U27, U30, U32, U34, U36                                                                                                                                                                                                                                                                                               & NCV0372                                             & NCV0372BDWR2G   \\
+    \midrule
+    1   & -                                                                                                                                                                                                                                                                                                                                                                        & 10pos, 2row, DIN41651, 2.54mm pitch, ids, enclosure & 4610-6000       \\
+    4   & -                                                                                                                                                                                                                                                                                                                                                                        & 16pos, 2row, DIN41651, 2.54mm pitch, idc, enclosure & 4616-6000       \\
+    1   & -                                                                                                                                                                                                                                                                                                                                                                        & 10pos, 2row, DIN41651, 2.54mm pitch, ids, cable     & 71600-310LF     \\
+    4   & -                                                                                                                                                                                                                                                                                                                                                                        & 16pos, 2row, DIN41651, 2.54mm pitch, idc, cable     & 71600-316LF     \\
+    \bottomrule
+\end{longtable}
+
+
 
 % \chapter{About this thesis}
 % \labch{about}
