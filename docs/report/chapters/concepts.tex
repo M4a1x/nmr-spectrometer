@@ -5,8 +5,23 @@
 \chapter{Concepts}
 \labch{concepts}
 
+This chapter will quickly introduce the topics the reader is expected to be familiar with going into the thesis. It aims to be a quick reminder of the most important formulas and concepts without going into any depth. A full introduction to chemistry, \acrshort{nmr}, electronics and \acrshort{rf} engineering is outside the scope of this text. For a better introduction than the author will ever be capable of, please take a look at other literature, such as \enquote{Spin Dynamics}\sidecite{levittSpinDynamicsBasics2008a}, \enquote{Experimental Pulse NMR}\sidecite{fukushimaExperimentalPulseNMR2019}, \enquote{Halbleiter-Schaltungstechnik}\sidecite{tietzeHalbleiterSchaltungstechnik2019} and \enquote{The Art of Electronics}\sidecite{horowitzArtElectronics2022}.
 
 \section{NMR Spectroscopy}
+Simply put, a nucleus of an \enquote{NMR active}\sidenote{For example \ch{^1H}, \ch{^{13}C}, \ch{^{19}F}, \ldots} atom will absorb and then later emit radio waves at a specific frequency that depends on an external magnetic field -- the stronger the field the higher the frequency:
+
+\[
+    \omega = \gamma{}B_0
+\]
+
+The specific frequency \(\omega\) is usually called the \emph{Larmor frequency}. \(\gamma\) is called the \emph{gyromagnetic ratio} and depends on the atom. Finally, \(B_0\) is the name for the external static magnetic field produced by a large magnet\sidenote{As opposed to \(B_1\) which is the magnetic component of the radio wave.}.
+
+Nature now has it, that the exact frequency that the nuclei \emph{resonante} with depends on their surroundings. Inversely, we can thus exploit this property to figure out these surroundings if we know the frequency at which the nuclei resonate. \emph{Surroundings} include for example whether an atom is located next to another atom only in space due to some folding of a long molecule or whether a chemical bond is present as well.
+
+Thus we need to send radio waves at multiple frequencies and then look at the corresponding return signals. To speed this process up, we can send all frequencies we're interested in at the same time using so-called \acrshort{ftnmr}.
+
+\todo{bring the above and below paragraphs together}
+
 
 Nuclear Magnetic Resonance is the fundamental principle describing the effect that atomic nuclei absorb radio waves at a certain frequency when exposed to an external magnetic field. This phenomenon is called \enquote{resonance}. The magnetic dipole moment \(\vec{\mu}\) can be but in relation with the quantum spin number \(\vec{S}\) through the gyromagnetic ratio \(\gamma\) --- which is a constant property of a given nucleus --- with the relation
 \[
@@ -43,6 +58,8 @@ The concept of Fourier Transformation can then be used to very easily send multi
     \labfig{sine-pulse}
 \end{figure}
 
+Mention z-plane orientation vs xy plane measurement
+
 TODO: Introduce formulas needed for rf pulse amplifier output power calculation
 
 Principles of Pulses and relaxation
@@ -54,10 +71,13 @@ different goals: structure, chemical shifts, J coupling/electron bonds/...
 
 
 
+
 \section{RF-Engineering}
 Q/I Modulation
 superheterodyne/homodyne/direct sampling receiver
 oversampling vs undersampling?
+reflection coefficient
+wave propagation
 
 
 \section{Concept}

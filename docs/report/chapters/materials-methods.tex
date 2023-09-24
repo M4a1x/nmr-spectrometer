@@ -66,26 +66,25 @@ Targeting a pulse length of \qty{20}{\micro\second} for a \ch{^1H} \(\frac{\pi}{
     B = \frac{\alpha}{\gamma\tau} = \frac{\frac{\pi}{2}}{\qty{42.577}{\mega\hertz\per\tesla}\cdot{}\qty{20}{\micro\second}} = \qty{1.845}{\milli\tesla}
 \]
 
-The magnet has a homogenous region of \(\qty{100}{\micro\litre}\) for a \qty{5}{\milli\meter} NMR tube, resulting in a length of about \(l = \qty{6}{\milli\meter}\). If we assume a simple solenoid of that length with about \(n = 20\) turns, a Q factor of 100 (usually in the range of 10 to 1000 \sidecite{mispelterNMRProbeheadsBiophysical2015}) and a self inductance of \(L = \qty{3}{\micro\henry}\) we can roughly estimate the required peak power \(P\) with the following formulas \cite{mispelterNMRProbeheadsBiophysical2015}
+The magnet has a homogenous region of \(\qty{100}{\micro\litre}\) for a \qty{5}{\milli\meter} NMR tube, resulting in an NMR active length of about \(l = \qty{6}{\milli\meter}\). If we assume a simple solenoid of that length with about \(n = 20\) turns, a Q factor of 100 (usually in the range of 10 to 1000 \sidecite{mispelterNMRProbeheadsBiophysical2015}) and a self-inductance of \(L = \frac{\mu_0n^2A}{l} = \qty{3}{\micro\henry}\)\sidenote{} we can roughly estimate the required peak power \(P\) with the following formulas \cite{mispelterNMRProbeheadsBiophysical2015}
 \begin{align}
-    B & = \mu{}_0nI\frac{1}{l}             \\
+    B & = \frac{\mu{}_0nI}{l}              \\
     P & = R\underbar{I}^2 = R\frac{I^2}{2} \\
     Q & = \frac{L\omega}{R}                \\
 \end{align}
-Where \(B\) is the magnet field produced by the current \(I\) through a solenoid of length \(l\) with \(n\) windings and and air core of permittivity \(\mu{}_0\). \(P\) is the maximum power pushed into the solenoid by current \(I\) over resistance \(R\) and \(Q\) is the definition of the quality factor for a self inductance \(L\) and resistance \(R\). Putting it all together results in an estimated power level of
+where \(B\) is the magnet field produced by the current \(I\) through a solenoid of length \(l\) with \(n\) windings and and air core of permittivity \(\mu{}_0\). \(P\) is the maximum power pushed into the solenoid by current \(I\) over resistance \(R\) and \(Q\) is the definition of the quality factor for a self inductance \(L\) and resistance \(R\). Putting it all together results in an estimated power level of
 \begin{align}
     P & = \frac{B^2l^2L\omega}{2\mu{}_0^2n^2Q}                                                                                                                                              \\
       & = \frac{(\qty{1.845}{\milli\tesla})^2 \cdot (\qty{6}{\milli\metre})^2 \cdot \qty{3}{\micro\henry} \cdot 2\pi{} \cdot \qty{25}{\mega\hertz}}{2 \cdot \mu{}_0^2 \cdot 20^2 \cdot 100} \\
-      & = \qty{457.1}{\milli\watt}                                                                                                                                                          \\
 \end{align}
 
-The exact power required is difficult to calculate at best du to various losses of the materials, the sample, the surrounding materials and losses due to radiation. Previous works with low-field NMR spectrometers used power amplifiers with a maximum power output of \qty{1}{\watt}\cite{chenUltralowCostNMR2015} and \qty{5}{W}\cite{louis-josephDesigningBuildingLowcost2019}. Lower power RF amplifiers have the advantage of lower required voltages, lower noise, less cooling requirements and simpler integrated designs.
+The exact power required is difficult to calculate at best due to various losses of the materials, the sample, the surrounding materials and losses due to radiation. Previous works with low-field NMR spectrometers used power amplifiers with a maximum power output of \qty{1}{\watt}\cite{chenUltralowCostNMR2015} and \qty{5}{W}\cite{louis-josephDesigningBuildingLowcost2019}. Lower power RF amplifiers have the advantage of lower required voltages, lower noise, less cooling requirements and simpler integrated designs.
 
 The most affordable option for the power amplification would be based on \acrshort{rf} transistors. Unfortunately, this also necessitates an involved design process including not only biasing and feedback design, but also impedance matching and power supply circuits of a possible multi-stage power amplifier. This alone could be the topic of another thesis. Therefore, an \acrshort{mmic} approach has been chosen. Furthermore, availability in the \qty{1}{\watt} range is large due to a large commercial market in this power range especially for CATV amplifiers. Therefore, a \qty{1}{\watt} \acrshort{mmic} amplifier was chosen.
 
 The \acrfull{mmic} amplifier has biasing, possible feedback and stabilization requirements all integrated on a single substrate design. In an application only power, \acrshort{dc} blocking and adequate cooling has to be supplied.
 
-The final design can be found in \reffig{poweramp}. A schematic
+The final board can be found in \reffig{poweramp}, with its schematic in the appendix \refsec{poweramp-schematic}.
 
 \begin{figure}[hbt]
     \centering
@@ -127,6 +126,9 @@ B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
     \caption{\captiontitle{Probe holder and \acrshort{rf} coil with tuning and matching capacitors} The capacitors are tunable from \qtyrange{4.5}{20}{\pico\farad} of make JZ200HV. The coil has a diameter of \(d = \qty{7.5}{\milli\meter}\), wire diameter \(D = \qty{0.2}{\milli\meter}\) and \(n = \qty{18}{turns}\) on a length of \(l = \qty{4}{\milli\meter}\). It has a measured inductance of \(L_{\qty{1}{\mega\hertz}} = \qty{2.7}{\micro\henry}\) and a resistance of \(R_{\qty{1}{\mega\hertz}} = \qty{0.63}{\ohm}\). The body was 3D printed and the circuit cut by hand.}
     \labfig{probe}
 \end{figure}
+
+\section{The Low Noise Amplifier}
+
 
 \section{The 32-channel current source}
 building the power supply
