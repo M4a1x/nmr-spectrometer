@@ -216,7 +216,7 @@ The shimming error could be a Z2 shimming error, see \sidecite{minerShimmingAinM
 \begin{figure}[h!bt]
     \centering
     \includegraphics{fft_raw.pdf}
-    \caption{\captiontitle{Fourier spectrum of \reffig{fid-raw}.} It shows a Lorentz-shaped peak around roughly \qty{600}{\hertz} with a slight broadening on the right side and a distorted baseline. The data was obtained through an automatic zero fill, complex Fourier transform and an automated zero order phase correction of \ang{37}.}
+    \caption{\captiontitle{Fourier spectrum of \reffig{fid-raw}.} It shows a Lorentz-shaped peak around roughly \qty{600}{\hertz} with a slight broadening on the right side and a distorted baseline. The data was obtained through an automatic zero fill, complex Fourier transformed and automatically zero order phase corrected with a shift of \ang{37}.}
     \labfig{fft-raw}
 \end{figure}
 
@@ -229,7 +229,7 @@ Performing a least-squares fit again the two deviations become even more apparen
     \labfig{fft-fit}
 \end{figure}
 
-To systematically find the pulse lengths required for various flip angles --- most importantly the \(\frac{\pi}{2}\)-pulse length used above --- the above experiment can simply be executed with varying pulse lengths. The resulting \enquote{signal strength} is measured by integrating the area under the peak in the Fourier spectrum. To keep the phase information, a phase correction is only performed once on a strong signal and then applied to all Fourier transforms. Plotting this signal strength measure over the length of the pulse that caused it in \si{\micro\second} results in \reffig{rabi-nutation}.
+To systematically find the pulse lengths required for various flip angles --- most importantly the \(\frac{\pi}{2}\)-pulse length used above --- the above experiment can simply be executed with varying pulse lengths. The resulting \enquote{signal strength} is measured by integrating the area under the peak in the Fourier spectrum. To keep the phase information, a phase correction is only performed once on a strong signal and then applied to all Fourier transforms. Plotting this signal strength measure over the length of the pulse that caused it in \unit{\micro\second} results in \reffig{rabi-nutation}.
 
 \begin{figure}[h!bt]
     \centering
@@ -251,8 +251,6 @@ It clearly shows a decaying sine wave. The magnet causes the spins of the nuclei
 
 The decay of the signal can be explained again with the de-phasing of the spins. Due to the inhomogeneous magnetic fields the different nuclei experience, they resonate at different frequencies. With a \(T_2^*\) of only \qty{2.5}{\milli\second} already has a significant impact in this timeframe and is not negligible anymore compared to the pulse length.
 
-Without electronic shims the \acrshort{fid} decay \(T_2^*\) is quite fast with a half life of \qty{2.5}{\milli\second}. To measure the transversal relaxation rate \(T_2\) independently of the homogeneity of the magnetic field\sidenote{An therefore irrespective of de-phasing, dropping the \(^*\)} a so-called spin echo experiment can be used. \reffig{pulse-echo-sequence} shows the spin echo pulse sequence.
-
 \begin{marginfigure}
     \centering
     \includesvg{spin_echo_sequence_margin.svg}
@@ -260,9 +258,13 @@ Without electronic shims the \acrshort{fid} decay \(T_2^*\) is quite fast with a
     \labfig{pulse-echo-sequence}
 \end{marginfigure}
 
+Without electronic shims the \acrshort{fid} decay \(T_2^*\) is quite fast with a half life of \qty{2.5}{\milli\second}. To measure the transversal relaxation rate \(T_2\) independently of the homogeneity of the magnetic field\sidenote{An therefore irrespective of de-phasing, dropping the \(^*\)} a so-called spin echo experiment can be used. \reffig{pulse-echo-sequence} shows the spin echo pulse sequence.
+
 The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse another \(\pi\)-pulse is sent after a delay of \(\tau\), effectively flipping all the spins. In the presence of an inhomogeneous field with the spins rotating at slightly different frequencies, this \(\pi\)-pulse inverts the direction of their de-phasing causing them to align again when all spins returned to the starting point.
 
-\enquote{This is analogous to an egalitarian foot race for the kindergarten class, the race that makes everyone in the class a winner. Suppose that you made the following rules. Each kid would run in a straight line as fast as he or she could and when the teacher blows the whistle, every child would turn around and run back to the finish line at the same time. The \ang{180} pulse is like that whistle. The spins in the larger field get out of phase by \(+\Delta\theta\) in a time \(\tau\). After the \ang{180} pulse, they continue to precess faster than M but at 2 they return to the in-phase condition. The slower precessing spins do just the opposite, but again rephase after a time \(2\tau\)}\sidecite{suzukiLectureNoteSenior2011}.
+\enquote{This is analogous to an egalitarian foot race for the kindergarten class, the race that makes everyone in the class a winner. Suppose that you made the following rules. Each kid would run in a straight line as fast as he or she could and when the teacher blows the whistle, every child would turn around and run back to the finish line at the same time. The \ang{180} pulse is like that whistle. The spins in the larger field get out of phase by \(+\Delta\theta\) in a time \(\tau\). After the \ang{180} pulse, they continue to precess faster than M but at \(2\tau\) they return to the in-phase condition. The slower precessing spins do just the opposite, but again rephase after a time \(2\tau\)}\sidecite{suzukiLectureNoteSenior2011}.
+
+\reffig{spin-echo} shows the recorded signal after the \(\pi\)-pulse. A weak \acrshort{fid} is visible directly after the pulse. This can be explained by inaccurate pulse lengths. If the duration is slightly off both pulses will add their errors together since they rotate the spins around the same axis. There are more sophisticated sequences that compensate for this, but this is outside the scope of this text.
 
 \begin{figure}[h!bt]
     \centering
@@ -279,6 +281,8 @@ The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse ano
     \labfig{little-prince}
 \end{marginfigure}
 
+The weak \acrshort{fid} quickly decays until only noise is left. Then, the spin echo reappears much later centred exactly at \qty{100}{\milli\second} (the delay \(\tau\)). Notice the different timescale compared to the simple \acrshort{fid} experiment: A clear echo is still visible after \qty{100}{\milli\second} as opposed to \approx{}\qty{15}{\milli\second} before. This confirms the previous hypothesis that the short relaxation time of the \acrshort{fid} is due to the inhomogeneities of the unshimmed magnet. Much like looking inside that hat in The Little Prince (\reffig{little-prince}), this lets us catch a glimpse of the undisturbed nature of the atomic spins.
+
 \begin{figure}[h!bt]
     \centering
     \includegraphics{t2_decay_3d_fft.pdf}
@@ -286,12 +290,16 @@ The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse ano
     \labfig{t2-decay-3d}
 \end{figure}
 
+The right half of the spin echo (starting at \(2\tau\)) can be interpreted as a \acrshort{fid} again and Fourier transformed. Additionally varying the delay results in \reffig{t2-decay-3d}. It shows clearly the decaying amplitude of the central peak in the spectrum for increasing delay \(\tau\). Similar processing to the Rabi nutation experiment above, integrating over the spectra as a measure for \enquote{signal strength}, but plotting over \(2\tau\) results in the 2D plot in \reffig{t2-decay}.The plot visualizes the decay of the signal with increasing \(\tau\) even better.
+
 \begin{figure}[h!bt]
     \centering
     \includegraphics{t2_decay.pdf}
     \caption{\captiontitle{\(T_2\) decay of water}. Each data point is obtained by integrating the peak of the phase-corrected Fourier spectrum of a spin echo experiment as seen in \reffig{t2-decay-3d}. One can vaguely discern the expected exponential decay.}
     \labfig{t2-decay}
 \end{figure}
+
+Performing a least-squares optimized fit of an exponential function results in the orange curve in \reffig{t2-decay-fit}. The \(T_2\) fit of \qty{190}{\milli\second} is as expected orders of magnitude higher than the \(T_2^*\) of \qty{2.5}{\milli\second} measured above.
 
 \begin{figure}[h!bt]
     \centering
@@ -310,6 +318,8 @@ The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse ano
     \labfig{toluene}
 \end{marginfigure}
 
+The following paragraphs analyse the signal of an NMR test tube filled with pure Toluene. Looking at the chemical structure in \reffig{toluene} we expect two groups of signals. One from the \ch{CH_3} Methyl group and one from the Benzene ring. The different spins of the H nuclei in the benzene ring could be differentiated if the resolution of the spectrometer was high enough --- even with shimming this would be challenging with a low-field magnet of \qty{25}{\mega\hertz}.
+
 \begin{figure}[h!bt]
     \centering
     \includegraphics{fid_toluene.pdf}
@@ -317,9 +327,15 @@ The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse ano
     \labfig{fid-toluene}
 \end{figure}
 
+\reffig{fid-toluene} shows the \acrshort{fid} received from the Toluene sample measured analogous to the \acrshort{fid} of the water signal shown in \reffig{fid-raw}. The signal was recorded after a \qty{9}{\micro\second} pulse and a \qty{25}{\micro\second} delay. As opposed to the water signal in \reffig{fid-raw} the toluene signal in \reffig{fid-toluene} is not a simple decaying sine wave anymore, but a superposition of multiple frequencies. The signal, however, decays in a similar time frame as before. Again, the first points should be discarded as an erroneous output of the \acrshort{cic} filters. Additionally, the signal could be extrapolated backwards by the delay time to reduce the sinc baseline distortions stemming from the window effect.
+
+The superposition of multiple frequencies can be easily analyzed in the Fourier spectrum shown in \reffig{fft-toluene}. As is common practice in NMR spectra, the scale here is in \unit{\partspermillion} relative to the \(B_0\) field of \qty{25}{\mega\hertz} --- \(\qty{1}{\partspermillion} = \qty{2.5}{\hertz}\) --- and not an absolute frequency. As a reference compound DMSO-d6 was used, defining the \qty{0}{\partspermillion} point of the x-axis. Lastly, the x-axis is inverted for historical reasons.
+
 \begin{figure}[h!bt]
     \centering
     \includegraphics{fft_toluene.pdf}
     \caption{\captiontitle{\acrshort{fft} of Toluene measurement and simulation over a ppm scale}. The blue data line was obtained through a Fourier transform of the signal in \reffig{fid-toluene}. It was manually shifted by \qty{170}{\hertz} as there is no locking yet. The orange signal was created using MestReNova 14.3.3 simulating a spectra of Toluene at a $B_0$ field of \qty{25}{\mega\hertz}, a peak width of \qty{50}{\hertz} and scaled to match the measurement scale.}
     \labfig{fft-toluene}
 \end{figure}
+
+The simulated dashed orange line in \reffig{fft-toluene} shows the expected signal for Toluene in a \(B_0\) field of \qty{25}{\mega\hertz} while the blue line is the manually cropped and shifted measurement data. The expected peak at \qty{2}{\partspermillion} of the Methyl group is easily distinguishable from the peak of the Benzene ring at \approx{}\qty{7.2}{\partspermillion}. The artefacts already seen in the water signal can be observed here as well. The peak broadening now is on the left side of the peak --- due to the inverted x-axis and the sinc artefact from the windowing and the erroneous first points are clearly visible on the right side of the graph.
