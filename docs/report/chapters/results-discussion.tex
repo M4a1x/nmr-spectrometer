@@ -176,7 +176,7 @@ The following presents the measurement results of different pulse sequences sent
     \labfig{simple-pulse-sequence}
 \end{marginfigure}
 
-Probably the simplest \acrshort{nmr} pulse sequence consists of a single \(\frac{\pi}{2}\)-excitation pulse as seen in \reffig{simple-pulse-sequence}. Inserting a standard \qty{5}{\milli\metre} \acrshort{nmr} tube filled with water with the probe holder inside the magnet, an experiment can be performed using the commands described in \refsec{measurment}. Before the experiment, the \(\frac{\pi}{2}\)-pulse length has manually been determined to be \qty{8}{\micro\second} by varying the pulse length, finding the length of a \(\pi\) pulse and confirming that a pulse of half the duration gives a maximum signal. The coil rings less than \qty{25}{\micro\second}, confirmed by looking at the received signal through an oscilloscope. \reffig{fid-raw} shows the real part of the received signal from a water probe after the coil ringing.
+Probably the simplest \acrshort{nmr} pulse sequence consists of a single \(\frac{\pi}{2}\)-excitation pulse as seen in \reffig{simple-pulse-sequence}. Inserting a standard \qty{5}{\milli\metre} \acrshort{nmr} tube filled with water with the probe holder inside the magnet, an experiment can be performed using the commands described in \refsec{measurement}. Before the experiment, the \(\frac{\pi}{2}\)-pulse length has manually been determined to be \qty{8}{\micro\second} by varying the pulse length, finding the length of a \(\pi\) pulse and confirming that a pulse of half the duration gives a maximum signal. The coil rings less than \qty{25}{\micro\second}, confirmed by looking at the received signal through an oscilloscope. \reffig{fid-raw} shows the real part of the received signal from a water probe after the coil ringing.
 
 \begin{figure}[h!bt]
     \centering
@@ -222,6 +222,36 @@ The shimming error could be a Z2 shimming error, see \sidecite{minerShimmingAinM
 
 Performing a least-squares fit again the two deviations become even more apparent as seen in \reffig{fft-fit}. Even without shimming the linewidth is relatively narrow with a full width at half maximum of \qty{158}{\hertz} or about \qty{6.3}{ppm}.
 
+The Fourier spectrum can be used to easily estimate the \acrfull{snr} of the signal. With only one peak this is especially easy. The noise is estimated by calculating the standard deviation under the assumption that the expected value \(\mu{}\) is \(0\), which works by modelling it as a sum of \acrfull{iid} random variables or more specifically \acrfull{gwn}\sidenote{Due to the central limit theorem for large \(n\)}.
+
+The engineering definition of the \acrshort{snr} is the power \(P\) of the signal \(S\) divided by the power of the noise \(N\):\sidenote{\(S\) and \(N\) being random variables}
+\[
+    \text{SNR}_{Engineer} \coloneqq \frac{P_{signal}}{P_{noise}} = \frac{E[S^2]}{E[N^2]}
+\]
+The expected value is defined as
+\[
+    \mu{}_X \coloneqq E[X]
+\]
+The variance (also called the second central moment) is the square of the standard deviation, defined as\sidenote{The last equality being the reason the \acrfull{rms} (\(E[X^2]\)) is often confused with the \acrfull{std} \(E[(X-\mu{}_X)^2]\). In experimental sciences \(\mu\) is often assumed to be \(0\)}
+\[
+    \sigma{}_X^2 \coloneqq E[(X-\mu{}_X)^2] = E[X^2] - E[X]^2 \stackrel{\mu{}_X = 0}{=} E[X^2]
+\]
+The variance of the signal itself is \(0\) as well\sidenote{In theory the signal without noise doesn't change across multiple experiments}. Therefore we can simply write equivalently
+\[
+    \text{SNR}_{Engineer} = \frac{\mu{}_S^2}{\sigma{}_N^2}
+\]
+In NMR spectroscopy the SNR is usually defined with the amplitudes as opposed to the power used in engineering. Taking the square root the above equation becomes
+\[
+    \text{SNR}_{NMR} = \frac{\mu_S}{\sigma_N}
+\]
+Using the above definition the noise was estimated by calculating the \(\sigma{}_N\) from \qtyrange{1}{2}{\kilo\hertz} and using the peak amplitude as the mean \(\mu{}_S\) for the signal under the aforementioned assumptions. With an amplitude of 2396 and a noise of 9.64 this results in an SNR of \(248\) for the water spectrum.
+
+For a constant area under the curve (i.e. constant signal strength) the SNR for a lower linewidth due to shimming can be estimated. In this case, the amplitude and the half width at half maximum are antiproportional\sidenote{The proof of which is left as an exercise to the reader}. Assuming a resolution (i.e. full width at half maximum) of \qty{2.5}{\hertz}/\qty{0.1}{\partspermillion} can be achieved as stated by the magnet specification and given an amplitude of 2396 on a linewidth of \qty{118}{\hertz}/\qty{4.72}{\partspermillion} an SNR of
+\[
+    \text{SNR}_{NMR,shimmed} = \frac{2396 \cdot \frac{118}{2.5}}{9.64} = \num{12559}
+\]
+is achievable.
+
 \begin{figure}[h!bt]
     \centering
     \includegraphics{fft_fit.pdf}
@@ -234,7 +264,7 @@ To systematically find the pulse lengths required for various flip angles --- mo
 \begin{figure}[h!bt]
     \centering
     \includegraphics{rabi_nutation_raw.pdf}
-    \caption{\captiontitle{Rabi nutation of the water signal}. Each data point was generated by performing an \acrshort{fid} experiment as described in \reffig{fid-raw} and integrating over the resulting peak (see \reffig{fft-raw}) to obtain a measure of signal strength. The phase correction applied to all points was identical.}
+    \caption{\captiontitle{Rabi nutation of the water signal}. Each data point was generated by performing an \acrshort{fid} experiment as described in \reffig{fid-raw} and integrating over the resulting peak (see \reffig{fft-raw}) to obtain a measure of signal strength. The zero-order phase correction applied to all points was identical.}
     \labfig{rabi-nutation}
 \end{figure}
 

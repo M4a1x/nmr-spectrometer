@@ -833,7 +833,7 @@ class Spectrum1D:
 
     @property
     def max_peak(self) -> int:
-        """Maximium signal value"""
+        """Index of the maximium signal value"""
         return np.argmax(np.abs(self._fft))
 
     @property
