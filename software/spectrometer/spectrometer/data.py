@@ -35,7 +35,7 @@ class FID1D:
     Using the public interface is strongly preferred, though as this might change at any time!
 
     This class is intended as a simple and in scope restricted helper for working with a time domain
-    FID measurement. If constructed through __init__() it is guaranteed to be writable as a *.fid
+    FID measurement. If constructed through __init__() it is guaranteed to be writable as a `.fid`
     file and to be read in again without any loss of information (see test suite).
     """
 
@@ -325,7 +325,7 @@ class FID1D:
     def to_file(self, file: Path | str) -> None:
         """Store the 1D FID time domain data in a file in NMRPipe format
 
-        If the filename doesn't end in *.fid, this will automatically append the correct suffix.
+        If the filename doesn't end in `.fid`, this will automatically append the correct suffix.
         Will never overwrite. A new file with an increasing counter will be created if a name
         conflict occurs.
 

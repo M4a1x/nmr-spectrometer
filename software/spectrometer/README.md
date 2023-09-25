@@ -21,23 +21,26 @@
 
 <div align="center"> Spectrometer is the Python interface library for the magnETHical NMR spectrometer. Its aim is to make usage of the hardware as simple and convenient as possible.</div>
 
+# magnETHical
+
 ## 📝 Table of Contents
-- [📝 Table of Contents](#-table-of-contents)
-- [🧐 About ](#-about-)
-- [🏁 Getting Started ](#-getting-started-)
-  - [✅ Prerequisites](#-prerequisites)
-  - [🔧 Installation](#-installation)
-    - [Python \& Git](#python--git)
-    - [Virtual Environment](#virtual-environment)
-      - [Manual environment](#manual-environment)
-      - [Automatic creating using `Hatch`](#automatic-creating-using-hatch)
-    - [Spectrometer Packet](#spectrometer-packet)
-- [⚙️ Running the tests ](#️-running-the-tests-)
-- [🧪 Usage ](#-usage-)
-- [⛏️ Built Using ](#️-built-using-)
-- [✍️ Authors ](#️-authors-)
-- [Notes](#notes)
-- [Roadmap](#roadmap)
+- [magnETHical](#magnethical)
+  - [📝 Table of Contents](#-table-of-contents)
+  - [🧐 About ](#-about-)
+  - [🏁 Getting Started ](#-getting-started-)
+    - [✅ Prerequisites](#-prerequisites)
+    - [🔧 Installation](#-installation)
+      - [Python \& Git](#python--git)
+      - [Virtual Environment](#virtual-environment)
+        - [Manual environment](#manual-environment)
+        - [Automatic creation using `Hatch`](#automatic-creation-using-hatch)
+      - [Spectrometer Packet](#spectrometer-packet)
+  - [⚙️ Running the tests/scripts/demo](#️-running-the-testsscriptsdemo)
+  - [🧪 Usage ](#-usage-)
+  - [⛏️ Built Using ](#️-built-using-)
+  - [✍️ Authors ](#️-authors-)
+  - [Notes](#notes)
+  - [Roadmap](#roadmap)
 
 ## 🧐 About <a name = "about"></a>
 The magnETHical spectrometer is a low-cost low-field home-made NMR spectrometer developed at ETH Zürich. This project is providing an interface for setting up the spectrometer software on the RedPitaya 122-16 (SDRLab) system, sending and recording pulse sequences.
@@ -176,25 +179,86 @@ and a browser window with a demo `jupyter notebook` should open.
 
 Have fun exploring!
 
+To run the unit tests simply run
+```bash
+$> hatch run test
+```
 
-The simplest test is running marcos test without/with water. measure coil ringing
+Lastly,
 
-Explain how to run the automated tests for this system.
+```bash
+$> hatch run demo
+```
+should open the documentation.
 
-
-
+If you're curious on what these scripts actually execute take a look in the `pyproject.toml` file under `[tool.hatch.envs.default.scripts]`.
 
 ## 🧪 Usage <a name="usage"></a>
-To record spectra...
+Recording spectra is relatively straight forward and well documented in the `docs/demo/full_demo.ipynb` Jupyter notebook and in the different `record_` and `process_` files inside the `scripts` folder. Here a short quickstart (taken from the `full_demo.ipynb`) with the necessary commands for sending a simple pulse sequence at 25.091MHz, sampling at 320kHz for 9us, waiting for 25us and then recording for 20ms:
 
-How to use the software/hardware. Recomenndations on analysis (Jupyter...)
-Add notes about how to use the system.
+```python
+# Connect the server platform (i.e. the RedPitaya)
+server = Server("192.168.1.100")
+
+# Flash the FPGA bitstream (or "low level server")
+server.flash_fpga()
+
+# Compile the server on the spectrometer (or "high level server")
+server.setup()
+
+# Start the server on the spectrometer
+server.start()
+
+# Setup the spectrometer connection
+connection_settings = ConnectionSettings(ip_address="192.168.1.100")
+
+# Create the spectrometer object
+spectrometer = Spectrometer(
+    tx_freq=25_091_000,  # Center transmission frequency
+    rx_freq=None,  # Receive frequency
+    sample_rate=320_000,  # samples/second
+    server_config=connection_settings,
+)
+
+# Connect to the spectrometer server
+spectrometer.connect()
+
+# Define and send the sequence
+seq_simple = NMRSequence.simple(pulse_length_us=9, delay_us=25, record_length_us=20_000)
+data = spectrometer.send_sequence(seq_simple, debug=True)
+
+# Save
+fid = FID1D(
+    data=data,
+    spectral_width=spectrometer.sample_rate,
+    carrier_freq=0.0,
+    observation_freq=spectrometer.rx_freq,
+    label="1H",
+    sample="Water",
+    pulse="single_90_degree_pulse,length=9us,delay=30us",
+    spectrometer="magnETHical v0.1",
+)
+fid.to_file("my_experiment.fid")
+
+# Plot, e.g.
+fig = fid.plot()
+
+# Spectrum
+spectrum = fid.spectrum()  # zero-fill, FFT, zero phase correction
+fig = spectrum.hz.plot()
+fig = spectrum.ppm.plot()
+fit_spectrum, fitpeaks = spectrum.hz.fit()
+peaks = spectrum.hz.peaks()
+```
+
+For further details look at the API reference available through `hatch run docs` which should build and display the documentation inside a webbrowser. If it doesn't open, the rendered version will be available in `docs/html/_build`.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-  - [MaRCoS](https://github.com/vnegnev/marcos_extras) - Low-level control software for the RedPitaya and FPGA
-  - [NumPy](https://numpy.org/)/[SciPy](https://scipy.org/)/[Matplotlib](https://matplotlib.org/) - High-level control software and analysis
-  - [Sphinx](https://www.sphinx-doc.org) - Beautiful documentation
+- [MaRCoS](https://github.com/vnegnev/marcos_extras) - Low-level control software for the RedPitaya and FPGA
+- [NumPy](https://numpy.org/)/[SciPy](https://scipy.org/)/[Matplotlib](https://matplotlib.org/) - High-level control software and analysis
+- [Sphinx](https://www.sphinx-doc.org) - Beautiful documentation
+- [nmrglue](https://www.nmrglue.com/) - Simple NMR processing and analysis functions
 
 ## ✍️ Authors <a name = "authors"></a>
 - [Maximilian Stabel](mailto:mstabel@student.ethz.ch) - Idea & Initial work including Hardware & Software
@@ -215,7 +279,6 @@ Other noteworthy data formats:
 - No further analysis capabilities planned beyond simple plotting of spectra and simple fit, everything else see Notes above
 - [PySeq Support/FLOCRA](https://github.com/stockmann-lab/flocra-pulseq)
 - Automatic Calibration and Shimming, see e.g. [MGH](https://github.com/stockmann-lab/mgh_marcos)
-
 
 [status-badge]: https://img.shields.io/badge/status-active-success.svg
 [python-badge]: https://img.shields.io/badge/python->=3.7-blue

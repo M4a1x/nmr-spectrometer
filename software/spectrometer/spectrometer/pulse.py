@@ -244,10 +244,30 @@ class NMRSequence:
 
     @classmethod
     def empty(cls) -> Self:
+        """Returns an empty sequence"""
         return cls((np.empty(0), np.empty(0)), np.empty(0))
 
     @classmethod
     def build(cls, sequence: Sequence[Pulse | Delay | Record]) -> Self:
+        """Create a pulse sequence from a sequence of `Pulse`, `Delay` and `Record` instances
+
+        Example:
+
+            ::
+
+                seq = NMRSequence.build(
+                    [Pulse(duration_us=9, power=1), Delay(duration_us=25), Record(duration_us=20_000)]
+                )
+
+        Args:
+            sequence (Sequence[Pulse  |  Delay  |  Record]): Sequence, e.g. a list of events
+
+        Raises:
+            ValueError: On invalid input data
+
+        Returns:
+            Self: `NMRSequence` object defining a one channel pulse sequence
+        """
         tx_powers = []
         tx_times_us = []
         rx_times_us = []
@@ -288,13 +308,15 @@ class NMRSequence:
         `delay_us` after that, then record the signal for `record_length_us`.
 
         The received signal will be a simple Free Induction Decay (FID) of the sample,
-        It will decay with T2* if executed as independent experiment.
+        It will decay with :math:`T_2^*` if executed as independent experiment.
 
-                < pulse >
-                ┌───────┐
-                │       │
-                │       │<     delay     ><   record   >
-        ────────┘       └───────────────────────────────
+        ::
+
+                    < pulse >
+                    ┌───────┐
+                    │       │
+                    │       │<     delay     ><   record   >
+            ────────┘       └───────────────────────────────
 
         Args:
             pulse_length_us (float): Length of the single pulse in us (p1)
@@ -328,12 +350,14 @@ class NMRSequence:
         If multiple spin echoes are recorded with increasing `delay_tau_us` the T2 relaxation time can
         be estimated through the maxima of the spin echo signals.
 
-                <  p1  >                 <     p2     >
-                ┌──────┐                 ┌────────────┐
-                │      │                 │            │
-                │      │<   delay_tau   >│            │< delay_after_p2 >
-        ────────┘      └─────────────────┘            └──────────────────
-                   90°                        180°
+        ::
+
+                    <  p1  >                 <     p2     >
+                    ┌──────┐                 ┌────────────┐
+                    │      │                 │            │
+                    │      │<   delay_tau   >│            │< delay_after_p2 >
+            ────────┘      └─────────────────┘            └──────────────────
+                       90°                        180°
 
         Args:
             pulse_length_us (float): Length of a 90 degree pulse for the relevant Nuclei in us (p1)
@@ -685,7 +709,7 @@ class Server:
             host=str(self.ip_address), user="root", connect_timeout=5
         ) as conn:
             conn.run("nohup ./marcos_server &>./marcos_server.log </dev/null &")
-            
+
         # Make sure server is up and running before continuing
         time.sleep(1)
 

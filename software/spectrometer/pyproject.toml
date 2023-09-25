@@ -52,10 +52,15 @@ dependencies = [
   "mypy",
   "ruff",
   "pylint",
-  "jupyter",         # notebooks
-  "ipympl",          # interactive widgets in notebooks
-  "RISE>=5.7.2dev",  # notebook presentations
-  "jupyterlab_rise", # jupyter jab plugin for presentations
+  "jupyter",          # notebooks
+  "ipympl",           # interactive widgets in notebooks
+  "RISE>=5.7.2dev",   # notebook presentations
+  "jupyterlab_rise",  # jupyter jab plugin for presentations
+  "sphinx",           # documentation, TODO: own environment
+  "myst-parser",      # Docs Markdown support
+  "myst-nb",          # Docs Jupyter Notebook support
+  "sphinx_rtd_theme", # ReadTheDocs docs theme support
+  "jupytext",         # For Jupyter Notebook support
 ]
 
 [tool.hatch.envs.default.scripts]
@@ -72,6 +77,9 @@ style = [
 fmt = ["black {args:.}", "ruff --fix {args:.}", "style"]
 all = ["style", "typing"]
 demo = ["cd docs/demo && jupyter lab full_demo.ipynb"]
+html-docs = ["cd docs && make html && xdg-open _build/html/index.html"]
+man-docs = ["cd docs && make man && man ./magnethical.1"]
+docs = ["html-docs"]
 
 [[tool.hatch.envs.all.matrix]]
 python = ["3.10", "3.11"]
