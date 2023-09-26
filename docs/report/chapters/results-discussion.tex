@@ -172,7 +172,7 @@ The following presents the measurement results of different pulse sequences sent
 \begin{marginfigure}
     \centering
     \includesvg{simple_pulse_sequence.svg}
-    \caption{\captiontitle{Simple pulse sequence} The usual depiction of a simple pulse sequence. The \enquote{RF pulse} is a high frequency \acrshort{rf} pulse close to the resonance frequency of the nuclei to be observed. After the pulse, a decaying sinus signal can be received on the same coil -  the so-called \acrfull{fid}.}
+    \caption{\captiontitle{Simple pulse sequence} The usual depiction of a simple pulse sequence. The \enquote{RF pulse} is a high frequency \acrshort{rf} pulse close to the resonance frequency of the nuclei to be observed. After the pulse, a decaying cosine signal can be received on the same coil -  the so-called \acrfull{fid}.}
     \labfig{simple-pulse-sequence}
 \end{marginfigure}
 
@@ -190,13 +190,13 @@ Probably the simplest \acrshort{nmr} pulse sequence consists of a single \(\frac
 \begin{figure}[h!bt]
     \centering
     \includegraphics{fid_sine_fit.pdf}
-    \caption{\captiontitle{\acrfull{fid} of water with a sine fit.} The blue data is the same as in \reffig{fid-raw}. The orange dashed line is the result of a least squares fit of a decaying sinus. It shows an exponential decay in amplitude with a $T_2^*$ of \qty{2.5}{\milli\second} and a dominant frequency of about \qty{590}{\hertz}}
+    \caption{\captiontitle{\acrfull{fid} of water with a sine fit.} The blue data is the same as in \reffig{fid-raw}. The orange dashed line is the result of a least squares fit of a decaying sine wave. It shows an exponential decay in amplitude with a $T_2^*$ of \qty{2.5}{\milli\second} and a dominant frequency of about \qty{590}{\hertz}}
     \labfig{fid-sine-fit}
 \end{figure}
 
-The decay constant \(T_2^*\) of \qty{2.5}{\milli\second} is relatively short. In a properly shimmed high-field spectrometer it would be expected to be a few seconds --- several orders of magnitude higher. The discrepancy can easily be explained by the lack of any shimming. Therefore, a slightly different magnetic field acts on the individual water molecules, causing them to have slightly different resonance frequencies. As a result, they will de-phase quickly.
+The decay constant \(T_2^*\) of \qty{2.5}{\milli\second} is relatively short. In a properly shimmed high-field spectrometer it would be expected to be a few seconds --- several orders of magnitude higher. The discrepancy can easily be explained by the lack of any active shimming. Therefore, a slightly different magnetic field acts on the individual water molecules, causing them to have slightly different resonance frequencies. As a result, they will de-phase quickly.
 
-The Fourier spectrum in \reffig{fft-raw} was obtained through zero-filling the data, a complex discrete Fourier transform and an automatic zero order phase shift. As expected we obtain a single peak stemming from the two \ch{H}-Atoms in water, whose chemical structure is shown in \reffig{h2o}.
+The Fourier spectrum in \reffig{fft-raw} was obtained through zero-filling the data, a complex discrete Fourier transform and an automatic zero order phase shift. As expected we obtain a single peak stemming from the two magnetically identical \ch{^1H} in water, whose chemical structure is shown in \reffig{h2o}.
 
 \begin{marginfigure}
     \centering
@@ -207,11 +207,11 @@ The Fourier spectrum in \reffig{fft-raw} was obtained through zero-filling the d
 
 The shape seems almost Lorentzian, except for two deviations: %
 \begin{enumerate*}[label=(\arabic*)]
-    \item The broadening on the right side, which could be explained through a shimming error and
+    \item The (here small) broadening on the right side, which could be explained by the lack of active shimming and
     \item the baseline distortion around the peak, which can be explained through the first erroneous points in the \acrshort{fid} and the window effect of cutting off the signal in the beginning and end.
 \end{enumerate*}%
 \sidenote{See for example the right side of \reffig{rect} in the concepts chapter. Remember, that figure shows the absolute amplitude, not the real part}
-The shimming error could be a Z2 shimming error, see \sidecite{minerShimmingAinMagic1997} for examples of different kinds of shimming errors and their influences on the spectrum.
+The shimming error could be a \(Z^2\) shimming error, see \sidecite{minerShimmingAinMagic1997} for examples of different kinds of shimming errors and their influences on the spectrum.
 
 \begin{figure}[h!bt]
     \centering
@@ -220,13 +220,13 @@ The shimming error could be a Z2 shimming error, see \sidecite{minerShimmingAinM
     \labfig{fft-raw}
 \end{figure}
 
-Performing a least-squares fit again the two deviations become even more apparent as seen in \reffig{fft-fit}. Even without shimming the linewidth is relatively narrow with a full width at half maximum of \qty{158}{\hertz} or about \qty{6.3}{ppm}.
+Performing a least-squares fit again the two deviations become even more apparent as seen in \reffig{fft-fit}. Even without shimming the linewidth is relatively narrow with a full width at half maximum of \qty{118}{\hertz} or about \qty{4.7}{ppm}.
 
 The Fourier spectrum can be used to easily estimate the \acrfull{snr} of the signal. With only one peak this is especially easy. The noise is estimated by calculating the standard deviation under the assumption that the expected value \(\mu{}\) is \(0\), which works by modelling it as a sum of \acrfull{iid} random variables or more specifically \acrfull{gwn}\sidenote{Due to the central limit theorem for large \(n\)}.
 
 The engineering definition of the \acrshort{snr} is the power \(P\) of the signal \(S\) divided by the power of the noise \(N\):\sidenote{\(S\) and \(N\) being random variables}
 \[
-    \text{SNR}_{Engineer} \coloneqq \frac{P_{signal}}{P_{noise}} = \frac{E[S^2]}{E[N^2]}
+    \text{SNR}_{\text{Engineer}} \coloneqq \frac{P_{signal}}{P_{noise}} = \frac{E[S^2]}{E[N^2]}
 \]
 The expected value is defined as
 \[
@@ -238,17 +238,17 @@ The variance (also called the second central moment) is the square of the standa
 \]
 The variance of the signal itself is \(0\) as well\sidenote{In theory the signal without noise doesn't change across multiple experiments}. Therefore we can simply write equivalently
 \[
-    \text{SNR}_{Engineer} = \frac{\mu{}_S^2}{\sigma{}_N^2}
+    \text{SNR}_{\text{Engineer}} = \frac{\mu{}_S^2}{\sigma{}_N^2}
 \]
 In NMR spectroscopy the SNR is usually defined with the amplitudes as opposed to the power used in engineering. Taking the square root the above equation becomes
 \[
-    \text{SNR}_{NMR} = \frac{\mu_S}{\sigma_N}
+    \text{SNR}_{\text{NMR}} = \frac{\mu_S}{\sigma_N}
 \]
-Using the above definition the noise was estimated by calculating the \(\sigma{}_N\) from \qtyrange{1}{2}{\kilo\hertz} and using the peak amplitude as the mean \(\mu{}_S\) for the signal under the aforementioned assumptions. With an amplitude of 2396 and a noise of 9.64 this results in an SNR of \(248\) for the water spectrum.
+Using the above definition the noise was estimated by calculating the \(\sigma{}_N\) from \qtyrange{1}{2}{\kilo\hertz} and using the peak amplitude as the mean \(\mu{}_S\) for the signal under the aforementioned assumptions. With an amplitude of \(2505\) and a noise of \(7.83\) this results in an \snrnmr{} of \(320\) for the water spectrum.
 
-For a constant area under the curve (i.e. constant signal strength) the SNR for a lower linewidth due to shimming can be estimated. In this case, the amplitude and the half width at half maximum are antiproportional\sidenote{The proof of which is left as an exercise to the reader}. Assuming a resolution (i.e. full width at half maximum) of \qty{2.5}{\hertz}/\qty{0.1}{\partspermillion} can be achieved as stated by the magnet specification and given an amplitude of 2396 on a linewidth of \qty{118}{\hertz}/\qty{4.72}{\partspermillion} an SNR of
+For a constant area under the curve (i.e. constant signal strength) the \snrnmr{} for a lower linewidth due to shimming can be estimated. In this case, the amplitude and the half width at half maximum are antiproportional\sidenote{The proof of which is left as an exercise to the reader}. Assuming a resolution (i.e. full width at half maximum) of \qty{2.5}{\hertz}/\qty{0.1}{\partspermillion} can be achieved as stated by the magnet specification and given an amplitude of 2505 on a linewidth of \qty{118}{\hertz}/\qty{4.72}{\partspermillion} an \snrnmr{} of
 \[
-    \text{SNR}_{NMR,shimmed} = \frac{2396 \cdot \frac{118}{2.5}}{9.64} = \num{12559}
+    \text{SNR}_{\text{NMR,shimmed}} = \text{SNR}_{\text{NMR}} \cdot \frac{\text{FWHM}_{\text{measured}}}{\text{FWHM}_{\text{expected}}} = 320 \cdot \frac{118}{2.5} = \num{15066}
 \]
 is achievable.
 
@@ -259,7 +259,7 @@ is achievable.
     \labfig{fft-fit}
 \end{figure}
 
-To systematically find the pulse lengths required for various flip angles --- most importantly the \(\frac{\pi}{2}\)-pulse length used above --- the above experiment can simply be executed with varying pulse lengths. The resulting \enquote{signal strength} is measured by integrating the area under the peak in the Fourier spectrum. To keep the phase information, a phase correction is only performed once on a strong signal and then applied to all Fourier transforms. Plotting this signal strength measure over the length of the pulse that caused it in \unit{\micro\second} results in \reffig{rabi-nutation}.
+To systematically find the pulse lengths required for various flip angles --- most importantly the \(\frac{\pi}{2}\)-pulse length used above --- the above experiment can simply be executed with varying pulse lengths. The resulting \enquote{signal strength} is measured by integrating the area under the peak in the Fourier spectrum. To keep the phase information, an automatic phase correction is performed only once on a strong signal received after a pulse of roughly \(\frac{\pi}{2}\). The same zero-order phase correction is then applied to the Fourier transforms of all pulse lengths. Plotting this signal strength measure over the length of the pulse that caused it in \unit{\micro\second} results in \reffig{rabi-nutation}.
 
 \begin{figure}[h!bt]
     \centering
@@ -268,7 +268,7 @@ To systematically find the pulse lengths required for various flip angles --- mo
     \labfig{rabi-nutation}
 \end{figure}
 
-It clearly shows a decaying sine wave. The magnet causes the spins of the nuclei to align along the z-axis. We are measuring in the xy-plane. Therefore, the signal is strongest\sidenote{Referring to maxima \emph{and} minima} when applying a pulse of a duration that rotates the spins by \(\frac{\pi}{2}\) along the x- or y-axis or its \(\frac{\pi}{2} + n\pi{}\) multiples. The zero crossings are consequently at \(n\pi{}\) multiples. With 3 rotations taking roughly \qty{100}{\micro\second} we can estimate a \(\frac{\pi}{2}\)-pulse length of \(\qty{100}{\micro\second}\div 12 = \qty{8.3}{\micro\second}\).
+It clearly shows a decaying sine wave. The magnet causes the magnetization\sidenote{the macroscopic sum of all magnetic dipole moments of the nuclei} to align along the z-axis. We are measuring in the xy-plane. Therefore, the signal is strongest\sidenote{Referring to maxima \emph{and} minima} when applying a pulse of a duration that rotates the spins by \(\frac{\pi}{2}\) along the x- or y-axis or its \(\frac{\pi}{2} + n\pi{}\) multiples in the rotating reference frame (see e.g. \sidecite{keelerUnderstandingNMRSpectroscopy2010} for a more in-depth explanation of the concept). The zero crossings are consequently at \(n\pi{}\) multiples for integer \(n = 1,2,\ldots\). With 3 rotations taking roughly \qty{100}{\micro\second} we can estimate a \(\frac{\pi}{2}\)-pulse length of \(\qty{100}{\micro\second}\div (4 \cdot 3) = \qty{8.3}{\micro\second}\).
 
 \begin{figure}[h!bt]
     \centering
@@ -279,7 +279,9 @@ It clearly shows a decaying sine wave. The magnet causes the spins of the nuclei
 
 \reffig{rabi-nutation-fit} shows the result of a least-squares fit of a decaying sinusoid to the data. This is a simple way to determine the frequency of the oscillation. The fit directly returns a period of \qty{32}{\micro\second}, thus a \(\frac{\pi}{2}\)-pulse length of \qty{8}{\micro\second} --- confirming the estimation above.
 
-The decay of the signal can be explained again with the de-phasing of the spins. Due to the inhomogeneous magnetic fields the different nuclei experience, they resonate at different frequencies. With a \(T_2^*\) of only \qty{2.5}{\milli\second} already has a significant impact in this timeframe and is not negligible anymore compared to the pulse length.
+The decay of the signal can be explained again with the de-phasing of the spins. Due to the inhomogeneous magnetic fields the different nuclei experience, they resonate at different frequencies. A \(T_2^*\) of only \qty{2.5}{\milli\second} already has a significant impact in this timeframe and is not negligible anymore compared to the pulse length.
+
+Without electronic shims the \acrshort{fid} decay \(T_2^*\) is quite fast with a \(1/e\) time of \qty{2.5}{\milli\second}. To measure the transversal relaxation time \(T_2\) independently of the homogeneity of the magnetic field --- thus dropping the \(^*\) --- a so-called spin echo experiment can be used. \reffig{pulse-echo-sequence} shows the spin echo pulse sequence.
 
 \begin{marginfigure}
     \centering
@@ -288,13 +290,11 @@ The decay of the signal can be explained again with the de-phasing of the spins.
     \labfig{pulse-echo-sequence}
 \end{marginfigure}
 
-Without electronic shims the \acrshort{fid} decay \(T_2^*\) is quite fast with a half life of \qty{2.5}{\milli\second}. To measure the transversal relaxation rate \(T_2\) independently of the homogeneity of the magnetic field\sidenote{An therefore irrespective of de-phasing, dropping the \(^*\)} a so-called spin echo experiment can be used. \reffig{pulse-echo-sequence} shows the spin echo pulse sequence.
-
-The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse another \(\pi\)-pulse is sent after a delay of \(\tau\), effectively flipping all the spins. In the presence of an inhomogeneous field with the spins rotating at slightly different frequencies, this \(\pi\)-pulse inverts the direction of their de-phasing causing them to align again when all spins returned to the starting point.
+The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse another \(\pi\)-pulse is sent after a delay of \(\tau\), effectively inverting all the spins. In the presence of an inhomogeneous field with the spins rotating at slightly different frequencies in the rotating reference frame, this \(\pi\)-pulse inverts consequently the direction of their de-phasing, causing them to align again when all spins returned to the starting point.
 
 \enquote{This is analogous to an egalitarian foot race for the kindergarten class, the race that makes everyone in the class a winner. Suppose that you made the following rules. Each kid would run in a straight line as fast as he or she could and when the teacher blows the whistle, every child would turn around and run back to the finish line at the same time. The \ang{180} pulse is like that whistle. The spins in the larger field get out of phase by \(+\Delta\theta\) in a time \(\tau\). After the \ang{180} pulse, they continue to precess faster than M but at \(2\tau\) they return to the in-phase condition. The slower precessing spins do just the opposite, but again rephase after a time \(2\tau\)}\sidecite{suzukiLectureNoteSenior2011}.
 
-\reffig{spin-echo} shows the recorded signal after the \(\pi\)-pulse. A weak \acrshort{fid} is visible directly after the pulse. This can be explained by inaccurate pulse lengths. If the duration is slightly off both pulses will add their errors together since they rotate the spins around the same axis. There are more sophisticated sequences that compensate for this, but this is outside the scope of this text.
+\reffig{spin-echo} shows the recorded signal after the \(\pi\)-pulse. A weak \acrshort{fid} is visible directly after the \(\pi\)-pulse. This can be explained by inaccurate pulse lengths. If the duration is slightly off both pulses will add their errors together since they rotate the spins around the same axis. There are more sophisticated sequences that compensate for this, but this is outside the scope of this text.
 
 \begin{figure}[h!bt]
     \centering
@@ -320,7 +320,7 @@ The weak \acrshort{fid} quickly decays until only noise is left. Then, the spin 
     \labfig{t2-decay-3d}
 \end{figure}
 
-The right half of the spin echo (starting at \(2\tau\)) can be interpreted as a \acrshort{fid} again and Fourier transformed. Additionally varying the delay results in \reffig{t2-decay-3d}. It shows clearly the decaying amplitude of the central peak in the spectrum for increasing delay \(\tau\). Similar processing to the Rabi nutation experiment above, integrating over the spectra as a measure for \enquote{signal strength}, but plotting over \(2\tau\) results in the 2D plot in \reffig{t2-decay}.The plot visualizes the decay of the signal with increasing \(\tau\) even better.
+The right half of the spin echo (starting at \(2\tau\)) can be interpreted as an \acrshort{fid} again and Fourier transformed. Additionally varying the delay results in \reffig{t2-decay-3d}. It shows clearly the decaying amplitude of the central peak in the spectrum for increasing delay \(\tau\). Similar processing to the Rabi nutation experiment above, integrating over the spectra as a measure for \enquote{signal strength}, but plotting over \(2\tau\) results in the 2D plot in \reffig{t2-decay}. The plot visualizes the decay of the signal with increasing \(\tau\) even better.
 
 \begin{figure}[h!bt]
     \centering
@@ -348,7 +348,7 @@ Performing a least-squares optimized fit of an exponential function results in t
     \labfig{toluene}
 \end{marginfigure}
 
-The following paragraphs analyse the signal of an NMR test tube filled with pure Toluene. Looking at the chemical structure in \reffig{toluene} we expect two groups of signals. One from the \ch{CH_3} Methyl group and one from the Benzene ring. The different spins of the H nuclei in the benzene ring could be differentiated if the resolution of the spectrometer was high enough --- even with shimming this would be challenging with a low-field magnet of \qty{25}{\mega\hertz}.
+The following paragraph analyses the signal of an NMR test tube filled with pure Toluene. Looking at the chemical structure in \reffig{toluene} we expect two groups of signals. One from the \ch{CH_3} Methyl group and one from the Benzene ring. The different spins of the H nuclei in the benzene ring could be differentiated if the resolution of the spectrometer was high enough --- even with shimming this would be challenging with a low-field magnet of \qty{25}{\mega\hertz}.
 
 \begin{figure}[h!bt]
     \centering
@@ -359,7 +359,7 @@ The following paragraphs analyse the signal of an NMR test tube filled with pure
 
 \reffig{fid-toluene} shows the \acrshort{fid} received from the Toluene sample measured analogous to the \acrshort{fid} of the water signal shown in \reffig{fid-raw}. The signal was recorded after a \qty{9}{\micro\second} pulse and a \qty{25}{\micro\second} delay. As opposed to the water signal in \reffig{fid-raw} the toluene signal in \reffig{fid-toluene} is not a simple decaying sine wave anymore, but a superposition of multiple frequencies. The signal, however, decays in a similar time frame as before. Again, the first points should be discarded as an erroneous output of the \acrshort{cic} filters. Additionally, the signal could be extrapolated backwards by the delay time to reduce the sinc baseline distortions stemming from the window effect.
 
-The superposition of multiple frequencies can be easily analyzed in the Fourier spectrum shown in \reffig{fft-toluene}. As is common practice in NMR spectra, the scale here is in \unit{\partspermillion} relative to the \(B_0\) field of \qty{25}{\mega\hertz} --- \(\qty{1}{\partspermillion} = \qty{2.5}{\hertz}\) --- and not an absolute frequency. As a reference compound DMSO-d6 was used, defining the \qty{0}{\partspermillion} point of the x-axis. Lastly, the x-axis is inverted for historical reasons.
+The superposition of multiple frequencies can be easily analysed in the Fourier spectrum shown in \reffig{fft-toluene}. As is common practice in NMR spectra, the scale here is in \unit{\partspermillion} relative to the \(B_0\) field of \qty{25}{\mega\hertz} --- \(\qty{1}{\partspermillion} = \qty{2.5}{\hertz}\) --- and not an absolute frequency. The zero point for the simulation was set by MestReNova by definition to the resonance frequency of \acrshort{tms}\sidenote{The resonance frequency of the \ch{^1H} nuclei in \acrshort{tms} is relatively low so that a lot of signals are assigned a positive chemical shift. It is an accepted international standard.}.  The measured signal has been manually shifted as the spectrometer has no locking functionality yet. Lastly, the x-axis is inverted for historical reasons.
 
 \begin{figure}[h!bt]
     \centering
