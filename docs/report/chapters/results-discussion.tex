@@ -1,11 +1,11 @@
 \setchapterpreamble[u]{%
     \margintoc\hfil%
-    \dictum[Unknown]{Yet another quote}
+    \dictum[Willy Brandt]{Es wächst zusammen,\\was zusammengehört}
 }
 \chapter{The complete spectrometer}
 \labch{complete}
 
-The following sections look at the built spectrometer from a user's point of view. The first \refsec{user-perspective} describes the assembly and operation of the spectrometer built above. The following \refsec{water-signal} discusses how to measure a signal with water as a simple and approachable example.
+The following sections look at the built spectrometer from a user's point of view. The first \refsec{user-perspective} describes the assembly and operation of the spectrometer built above. The following sections set up the console (\refsec{console}) and control software (\refsec{control-software}). Lastly, \refsec{measurement} discusses the how to measure a signal with a simple and approachable example.
 
 \section{Software Setup}
 \labsec{user-perspective}
@@ -68,7 +68,8 @@ The short conceptual overview is reproduced in figure \reffig{overview} for the 
     \labfig{overview}
 \end{figure*}
 
-\subsection{Setting up the RedPitaya}
+\section{Setting up the RedPitaya}
+\labsec{console}
 Having ordered or built the parts\sidenote{Again, see \refch{methods}}, connected them using \acrshort{sma} cables and powered them through a lab power supply, the console needs to be configured. The configuration of the console is relatively simple as most of the complexity has been programmed into the \gls{python} control library. The user thus only needs to ensure that a working \acrshort{linux} distribution is running on the \acrshort{rp} and that the \acrshort{ip} address is known. The official distribution that is pre-installed on the micro SD card that ships with the \acrshort{rp} is completely sufficient.
 
 If the user needs to create a new microSD card, the \href{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}{setup of the microSD card is described in the \acrshort{rp} docs} and is summarized here for simplicity on a Linux based system.
@@ -76,7 +77,7 @@ If the user needs to create a new microSD card, the \href{https://redpitaya.read
 \begin{enumerate}
     \item \href{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}{Download the newest microSD card image}
     \item Insert the microSD card into your computer.
-    \item Figure out its name using \lstinline{lsblk} or \lstinline{df -h}, e.g. \lstinline{/dev/mmcblk0} or \lstinline{/dev/sdc}.
+    \item Determine its name using \lstinline{lsblk} or \lstinline{df -h}, e.g. \lstinline{/dev/mmcblk0} or \lstinline{/dev/sdc}.
     \item Copy the image on the microSD card using\\ \lstinline{dd bs=1M if=red_pitaya_image_file.img of=/dev/mmcblk0 status=progress}
     \item Done!
 \end{enumerate}
@@ -92,11 +93,12 @@ It is highly recommended to set up a passwordless login scheme from the computer
         $ ssh-keygen -t ed25519             # create a keyfile
         $ ssh-copy-id root@rp-xxxxxx.local  # alternatively: root@192.168.1.100
     \end{minted}
-    \caption{Installing prerequisites}
+    \caption{\captiontitle{Generating SSH keyfiles for passwordless login.} Accept default configurations when prompted.}
     \label{lst:pubkey}
 \end{listing}
 
-\subsection{Setting up the control software}
+\section{Setting up the control software}
+\labsec{control-software}
 On the computer, you need \href{https://git-scm.com/}{\lstinline{git}} and \href{https://www.python.org/}{\lstinline{python3}} to run the software. On Linux, they can usually be installed with one of the commands in Listing \ref{lst:install-prerequisites}.
 
 \begin{listing}[h!bt]
@@ -136,7 +138,7 @@ The user can now install the control software including all dependencies indepen
     \label{lst:install}
 \end{listing}
 
-The installation process automatically adds scripts for controlling the spectrometer to the command line. These can be used to manually flash the firmware, set up the spectrometer hardware, and start the sequence processing server.
+The installation process automatically adds scripts for controlling the spectrometer to the command line seen in Listing \ref{lst:cmds}. These can be used to manually flash the firmware, set up the spectrometer hardware, and start the sequence processing server.
 
 \begin{listing}[h!bt]
     \begin{minted}{shell-session}
@@ -147,15 +149,97 @@ The installation process automatically adds scripts for controlling the spectrom
         $ magnethical is_running
     \end{minted}
     \caption{Command line spectrometer control commands}
-    \label{lst:install}
+    \label{lst:cmds}
 \end{listing}
 
 \section{Performing a Measurement}
 \labsec{measurement}
 With the package and all dependencies installed as described above, the system is ready to be used. The software and hardware support arbitrary pulse sequences with one transmit and one receive channel\sidenote{This could be expanded software side to 2 receive and 2 transmit channels}. A simple example is described here, for a more in-depth explanation of all the different functions, please look at the \acrshort{api} reference in the repository. More examples for measurements are available as well --- in particular, all measurements described below in \refch{results} are located in the \lstinline{scripts} folder inside the Python package as well as a full demo notebook\sidenote{To be precise: a \href{https://jupyter.org/}{Jupyter Notebook}. It's a tool for integrating Python code with text blocks and inline outputs making data analysis and plotting more convenient.} inside the \lstinline{docs} folder.
 
-\todo{Measuring a reference signal. Which commands? How to? Measure signal generator signal}
+\begin{listing}[h!bt]
+    \begin{minted}{python}
+        # Import the necessary packages
+        from spectrometer import (
+            Server,
+            ConnectionSettings,
+            Spectrometer,
+            NMRSequence,
+            FID1D
+        )
 
+        # Connect the server platform (i.e. the RedPitaya)
+        server = Server("192.168.1.100")
+
+        # Flash the FPGA bitstream (or "low level server")
+        server.flash_fpga()
+
+        # Compile the server on the spectrometer (or "high level server")
+        server.setup()
+
+        # Start the server on the spectrometer
+        server.start()
+
+        # Setup the spectrometer connection
+        connection_settings = ConnectionSettings(ip_address="192.168.1.100")
+
+        # Create the spectrometer object
+        spectrometer = Spectrometer(
+            tx_freq=25_091_000,  # Center transmission frequency
+            rx_freq=None,  # Receive frequency
+            sample_rate=320_000,  # samples/second
+            server_config=connection_settings,
+        )
+
+        # Connect to the spectrometer server
+        spectrometer.connect()
+
+        # Define and send the sequence
+        seq_simple = NMRSequence.simple(pulse_length_us=9, delay_us=25, record_length_us=20_000)
+        data = spectrometer.send_sequence(seq_simple, debug=True)
+
+        # Save
+        fid = FID1D(
+            data=data,
+            spectral_width=spectrometer.sample_rate,
+            carrier_freq=0.0,
+            observation_freq=spectrometer.rx_freq,
+            label="1H",
+            sample="Water",
+            pulse="single_90_degree_pulse,length=9us,delay=30us",
+            spectrometer="magnETHical v0.1",
+        )
+        fid.to_file("my_experiment.fid")
+
+        # Plot, e.g.
+        fig = fid.plot()
+
+        # Spectrum
+        spectrum = fid.spectrum()  # zero-fill, FFT, zero-order phase correction
+        fig = spectrum.hz.plot()
+        fig = spectrum.ppm.plot()
+        fit_spectrum, fitpeaks = spectrum.hz.fit()
+        peaks = spectrum.hz.peaks()
+    \end{minted}
+    \caption{\captiontitle{Performing a measurement on a sample using the control software}. The hardware is assumed to be set up, connected and powered up. The \qty{5}{\milli\metre} NMR tube with the sample should be inside the probe holder that was inserted into the magnet and the connection between the RedPitaya and the Laptop running the control software was verified. The code sends a single pulse of \qty{9}{\micro\second}, waits for \qty{25}{\micro\second}, records the received signal and plots it in the time and frequency domains.}
+    \label{lst:demo}
+\end{listing}
+
+\section{Editing the control software}
+The source code of the control software is available on the ETH Gitlab and can be easily obtained through \lstinline{git} as done in line 2 of Listing \ref{lst:hatch}. It uses \lstinline{hatch} for package and dependency management, which needs to be installed globally. \lstinline{hatch} then provides commands for running a demo Jupyter notebook, unittests\sidenote{unittests are individual tests of separate components as opposed to integration tests that verify the interplay and compatibility of several units}, compiling and reading the documentation. The demo doesn't work offline and needs a connection the spectrometer. The documentation and unittests are standalone. See Listing \ref{lst:hatch} for examples on using the commands.
+
+\begin{listing}[h!bt]
+    \begin{minted}{shell-session}
+        $ python -m pip install hatch  # Install globally with no venv activated
+        $ git clone https://gitlab.ethz.ch/mstabel/nmr-spectrometer
+        $ cd nmr-spectrometer
+        $ hatch run demo  # Open the demo Jupyter notebook in a browser
+        $ hatch run docs  # Compile and open the documentation and API reference
+        $ hatch run test  # Run the unit tests
+        $ hatch shell     # Activate the virtual environment
+    \end{minted}
+    \caption{\captiontitle{Using hatch to perform common tasks when editing the control software}. The invoked commands can be found in the \lstinline{pyprojects.toml} file in the repository. Examples for using the library are available in the \lstinline{scripts} and \lstinline{docs} folders.}
+    \label{lst:hatch}
+\end{listing}
 
 \setchapterpreamble[u]{%
     \margintoc\hfil%
@@ -167,7 +251,7 @@ The following presents the measurement results of different pulse sequences sent
 
 \section{Measuring a water signal}
 \labsec{water-signal}
-\subsection{A first signal}
+\section{A first signal}
 
 \begin{marginfigure}
     \centering

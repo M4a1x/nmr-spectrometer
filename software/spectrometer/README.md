@@ -187,7 +187,7 @@ $> hatch run test
 Lastly,
 
 ```bash
-$> hatch run demo
+$> hatch run docs
 ```
 should open the documentation.
 
@@ -244,7 +244,7 @@ fid.to_file("my_experiment.fid")
 fig = fid.plot()
 
 # Spectrum
-spectrum = fid.spectrum()  # zero-fill, FFT, zero phase correction
+spectrum = fid.spectrum()  # zero-fill, FFT, zero-order phase correction
 fig = spectrum.hz.plot()
 fig = spectrum.ppm.plot()
 fit_spectrum, fitpeaks = spectrum.hz.fit()

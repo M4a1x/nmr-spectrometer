@@ -5,13 +5,19 @@
 }
 \chapter{Conclusion}
 \labch{conclusion}
-
-Parts have been developed separately for easy reconfiguration and experimentation. A final design could be integrated on a single \acrshort{pcb}, reducing cost by at least another \approx50CHF as well as noise due to a shorter path and raising signal power due to fewer reflections and impedance mismatches.
-
-The tuning and matching of the probe should be made possible from outside the magnet for easier and quicker operation.
-
-With the recently increasing focus on low-field low-cost magnetic resonance work leveraging the higher capabilities and lower costs of modern electronics --- especially in the \acrshort{sdr} domain --- a joint effort and interface would be highly advantageous. Many homebrew NMR console control software solutions exist, most rudimentary and not compatible with other works. While software for analysing spectra exist, processing spectra can be cumbersome not only due to the various file formats, but also due the focus of existing tools on Bruker and Varian systems which often provide proprietary processing options.
-
-Standardization
 % Higher level discussion/results by referencing back to motivation
 % Provide an outlook on further work, e.g. by referencing back to unfinished/unacomplished goals in the motivation
+
+\refch{concepts} briefly introduced the basic concepts needed to understand the electronics and chemistry of the spectrometer. \refch{methods} then looked at the different parts of it in detail, whereas \refch{complete} described the usage of the whole system. Finally, \refch{results} described and discussed the experimental results obtained with the designed system.
+
+An affordable low-field low-cost easy-to-use and easy-to-build NMR spectrometer was designed, built characterised and tested.
+
+Immediate next steps include the completion of the shimming system and more iterations on the probe. Tuning and matching should be possible from outside the magnet for easier and quicker operation in addition to shielding to remove the RF noise.
+
+The main functions separated into individual parts allow for easy reconfiguration and experimentation during the early stages of the project. A final design could later integrate them on a single \acrshort{pcb}, reducing cost further as well as noise due to a shorter path and raising signal power due to fewer reflections and impedance mismatches.
+
+Looking especially towards its application in the Global South, the temperature behaviour and stability of the system need first to be characterized and then possibly compensated through isolation cooling and/or heating.
+
+With the recently increasing focus on low-field low-cost magnetic resonance work leveraging the higher capabilities and lower costs of modern electronics --- especially in the \acrshort{sdr} domain --- a joint effort and interface would be highly advantageous as well. Some homebrew NMR console control software solutions exist and have been mentioned before. A lot of them are rudimentary and not compatible with each other. While software solutions for analysing spectra exist, processing spectra can be cumbersome not only due to the various file formats but also due to the focus of existing tools on commercial systems which often provide proprietary processing options.
+
+There is still a lot to be done before \magnethical{} is ready for deployment. It lays the groundwork for further optimization, integration and exploration. It's the beginning of a great new quest.
