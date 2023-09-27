@@ -12,6 +12,8 @@ The individual parts of the spectrometer have been designed with several goals i
 
 The following sections describe the design and build process --- including the reasoning behind the decisions taken --- of the \magnethical{} NMR spectrometer. \reffig{block-diagram} shows an overview schematic of the main components that will be discussed.
 
+In general, the components were selected to be standard parts wherever possible. RF electronics are highly sensitive to stray capacitances and inductances, therefore most dedicated RF components use surface mount\sidenote{as opposed to through-hole (SMT)} (SMD) technology, sometimes even without pins. The passive components, like inductors, capacitors and resistors are in 0805\sidenote{0805 means \qty{0.08}{in} x \qty{0.05}{in}. PCB design is a mess of different unit systems, e.g. board sizes are often given in \unit{\milli\metre} whereas trace width is often given in \unit{mil} (thousandth of an \unit{in}). Rarely 0805 is written as 2012M: \qty{2.0}{\milli\metre} x \qty{1.2}{\milli\metre}} sizing, which was deemed large enough to be still easy to solder by hand. All traces were impedance matched to \qty{50}{\ohm} on standard \qty{1.6}{\milli\metre} FR4 cards, milled with standard drill sizes to facilitate the use of affordable standard manufacturing processes. Lastly, SMA connectors were chosen for their small footprint and secure screw connection, as opposed to BNC connectors (large) and SMB connectors (less secure connection). Most parts were searched for using the parametric search functionality of the big distributors and filtered for only active, available and stocked parts --- a rather large restriction in times of a global chip shortage.
+
 \begin{figure}[hbt]
     \centering
     \includegraphics{images/block_diagram.pdf}
@@ -34,7 +36,14 @@ The relatively low frequency of \(f_0 = \qty{25}{\mega\hertz}\)\sidenote{Given b
 \]
 if oversampling is to be used. The setup could also make use of the low bandwidth of the signal and use the aliasing effect of the analogue-to-digital conversion to its advantage using undersampling. Since this requires taking further care when sampling and filtering, and the expected frequencies are low enough to make oversampling feasible, oversampling is employed in this setup. This has the added advantage of higher flexibility since the sampling frequency can be easily adjusted downwards.
 
-For digital processing, a \acrfull{fpga} is used, which can be thought of as a piece of programmable hardware. To ease development a ready-made \acrshort{fpga} board --- the RedPitaya SDRlab 122-16 --- was chosen. With a sampling frequency of \qty{122.88}{\mega\sample\per\second} it is well above the Nyquist limit. Combined with a resolution of \qty{16}{bit} it is more than capable of capturing all relevant data from the analogue signal. Due to the commercial nature, the board is easily procured directly from RedPitaya or any of the well-known distributors\sidenote{For example Digikey, Mouser, Farnell, \dots}. A possible open-source alternative in the future would be the LimeSDR\sidenote{\url{https://limemicro.com/products/boards/limesdr/}}. With a sampling frequency of \qty{61.44}{\mega\sample\per\second}, limited by the USB3 interface, and a resolution of \qty{12}{bit} it is less powerful than the RedPitaya, but still fast enough for oversampling without loss of information. This board would cost less than half (\approx 280CHF) of the RedPitaya board and would enable a completely open design of the spectrometer --- in line with the accessibility goals of this work. Unfortunately, due to the young age of this project and the crowd-sourced nature, no board was available for purchase at the time of writing.
+For digital processing, a \acrfull{fpga} is used, which can be thought of as a piece of programmable hardware. To ease development a ready-made \acrshort{fpga} board --- the RedPitaya SDRlab 122-16 shown in \reffig{redpitaya} --- was chosen. With a sampling frequency of \qty{122.88}{\mega\sample\per\second} it is well above the Nyquist limit. Combined with a resolution of \qty{16}{bit} it is more than capable of capturing all relevant data from the analogue signal. Due to the commercial nature, the board is easily procured directly from RedPitaya or any of the well-known distributors\sidenote{For example Digikey, Mouser, Farnell, \dots}. A possible open-source alternative in the future would be the LimeSDR\sidenote{\url{https://limemicro.com/products/boards/limesdr/}}. With a sampling frequency of \qty{61.44}{\mega\sample\per\second}, limited by the USB3 interface, and a resolution of \qty{12}{bit} it is less powerful than the RedPitaya, but still fast enough for oversampling without loss of information. This board would cost less than half (\approx 280CHF) of the RedPitaya board and would enable a completely open design of the spectrometer --- in line with the accessibility goals of this work. Unfortunately, due to the young age of this project and the crowd-sourced nature, no board was available for purchase at the time of writing.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics{images/rp122-16.png}
+    \caption{\captiontitle{RedPiaya SDRlab 122-16.} 3D rendering of the console in KiCAD. Can be thought of as an \enquote{RF Raspberry Pi}. It has a Dual Core ARM Cortex A9, \qty{512}{\mega\byte} RAM, Gigabit Ethernet, 2x transmit, 2x receive, an ADC sample rate of \qty{122.88}{\mega\sample\per\second}, \qty{16}{\bit} resolution, a bandwidth of \qty{300}{\kilo\hertz} to \qty{550}{\mega\hertz} and a voltage range of \qty{0.5}{Vpp}/\qty{-2}{\deci\belm} (\qty{50}{\ohm}). The DAC has the same sample rate and voltage range, but a resolution of \qty{14}{\bit} and a bandwidth of \qty{300}{\kilo\hertz} to \qty{60}{\mega\hertz}.}
+    \labfig{poweramp}
+\end{figure}
 
 After sampling the signal is demodulated using a quadrature detection system by multiplying it with the signal of a complex numerically controlled local oscillator. The same principle is applied inversely on the sending side for modulation. The resulting complex demodulated signal is then passed through a \acrfull{cic} filter for low-pass filtering and decimation to filter out high-frequency components of the signal and reduce the size of the data stream. The full data steam would incur a bandwidth of
 \[
@@ -72,19 +81,20 @@ The magnet has a homogenous region of \(\qty{100}{\micro\litre}\) for a \qty{5}{
     P & = R\underbar{I}^2 = R\frac{I^2}{2} \\
     Q & = \frac{L\omega}{R}                \\
 \end{align}
-where \(B\) is the magnet field produced by the current \(I\) through a solenoid of length \(l\) with \(n\) windings and and air core of permittivity \(\mu{}_0\). \(P\) is the maximum power pushed into the solenoid by current \(I\) over resistance \(R\) and \(Q\) is the definition of the quality factor for a self inductance \(L\) and resistance \(R\). Putting it all together results in an estimated power level of
+where \(B\) is the magnet field produced by the current \(I\) through a solenoid of length \(l\) with \(n\) windings and and air core of permittivity \(\mu{}_0\). \(P\) is the maximum power pushed into the solenoid by current \(I\) over resistance \(R\) and \(Q\) is the definition of the quality factor for a self-inductance \(L\) and resistance \(R\). Putting it all together results in an estimated power level of
 \begin{align}
     P & = \frac{B^2l^2L\omega}{2\mu{}_0^2n^2Q}                                                                                                                                              \\
       & = \frac{(\qty{1.845}{\milli\tesla})^2 \cdot (\qty{6}{\milli\metre})^2 \cdot \qty{3}{\micro\henry} \cdot 2\pi{} \cdot \qty{25}{\mega\hertz}}{2 \cdot \mu{}_0^2 \cdot 20^2 \cdot 100} \\
+      & = \qty{457.12}{\milli\watt}
 \end{align}
 
 The exact power required is difficult to calculate at best due to various losses of the materials, the sample, the surrounding materials and losses due to radiation. Previous works with low-field NMR spectrometers used power amplifiers with a maximum power output of \qty{1}{\watt}\cite{chenUltralowCostNMR2015} and \qty{5}{W}\cite{louis-josephDesigningBuildingLowcost2019}. Lower power RF amplifiers have the advantage of lower required voltages, lower noise, less cooling requirements and simpler integrated designs.
 
 The most affordable option for the power amplification would be based on \acrshort{rf} transistors. Unfortunately, this also necessitates an involved design process including not only biasing and feedback design, but also impedance matching and power supply circuits of a possible multi-stage power amplifier. This alone could be the topic of another thesis. Therefore, an \acrshort{mmic} approach has been chosen. Furthermore, availability in the \qty{1}{\watt} range is large due to a large commercial market in this power range especially for CATV amplifiers. Therefore, a \qty{1}{\watt} \acrshort{mmic} amplifier was chosen.
 
-The \acrfull{mmic} amplifier has biasing, possible feedback and stabilization requirements all integrated on a single substrate design. In an application only power, \acrshort{dc} blocking and adequate cooling has to be supplied.
+The \acrfull{mmic} amplifier has biasing, possible feedback and stabilization requirements all integrated on a single substrate design. In an application-only power, \acrshort{dc} blocking and adequate cooling have to be supplied since this is a Class A amplifier design.
 
-The final board can be found in \reffig{poweramp}, with its schematic in the appendix \refsec{poweramp-schematic}.
+The final board can be found in \reffig{poweramp}, with its schematic in the appendix \refsec{poweramp-schematic} and the part list in \refsec{poweramp-parts}.
 
 \begin{figure}[hbt]
     \centering
@@ -92,6 +102,26 @@ The final board can be found in \reffig{poweramp}, with its schematic in the app
     \caption{\captiontitle{\acrshort{rf} power amplifier.} 3D rendering of the power amplifier \acrshort{pcb} in KiCAD. The signal travels from left to right with the power supply circuitry above. It contains two \acrshort{mmic} amplifier stages, the AD5536 and the PHA-202+. A \qty{-6}{\deci\bel} attenuator was added in between and a passive low-pass filter in front (\(f_c = \qty{35}{\mega\hertz}\)). \(G \approx \qty{32}{\deci\bel}\), \(P_{\qty{1}{\deci\bel}} \approx \qty{+30}{\deci\belm}\)}
     \labfig{poweramp}
 \end{figure}
+
+The signal from the RedPitaya travels left to right through a low pass, the pre-amplifier, an attenuator and the power amplifier. The parts at the top of the board are standard linear voltage regulators used for stabilizing the voltage from the external DC supply. The power amplifier chip itself can be switched off by cutting the voltage supply.
+
+The low-pass input filter functions as a digital reconstruction filter, smoothing the digitally synthesised waveform by filtering out high-frequency components of the signal left over from the switching of the FPGA and the zero-order hold DAC chip. It's a passive Chebyshev low-pass LC ladder filter realized with three 0805-sized SMD components.
+
+The power amplifier is a PHA-202+, chosen for its easy powering requirements, \qty{50}{\ohm} matching and wide availability. However, it doesn't have enough gain (\qty{18.3}{\deci\bel})) to take the signal from \qty{-2}{\deci\belm} all the way to \qty{+30}{\deci\belm}. The missing \qty{14}{\deci\bel} in amplification are provided by the preamp (\qty{20}{\deci\bel}) minus the following attenuator (\qty{6}{\deci\bel}).
+
+The AD5536 pre-amplifier is a \qty{50}{\ohm} matched, widely available \qty{20}{\deci\bel} gain GaAs gain block from Analog Devices. It's in an easy-to-solder package and has a low enough frequency specification to work with \qty{25}{\mega\hertz}. Alternatives with this gain and power are often difficult to solder due to the leadless design, unmatched (e.g. AFIC901N) \qty{75}{\ohm} matched (e.g. MAAL-011139) and often can't amplify such a slow signal (e.g. TAT7430B, starting at \qty{50}{\mega\hertz}).
+
+The \qty{6}{\deci\bel} resistive attenuator in between the amplifiers is realized as a \(\pi\)-circuit similar to the low pass ladder filter. It is used to stabilize the adjacent amplifiers and will dampen any oscillations that might occur due to load or stray capacitances or inductances. If necessary the attenuation could be reduced to e.g. \qty{3}{\deci\bel} to increase the maximum power output of the amplifier, however, since the \(P_{\qty{1}{\deci\bel}} = \qty{29}{\deci\belm}\) for the PHA-202+ it won't grow linearly. The potential distortions should be of little consequence for the transmission signal.
+
+For blocking the DC bias current for the amplifiers simple 0805 100nF caps are used in series as a high pass filter. For a \qty{50}{\ohm} system we can calculate the minimum value for the capacitors using the standard formula \(X_C = \frac{1}{2\pi{}fC}\) and keeping in mind that the block is loaded on both sides thus \( 2 \cdot \qty{50}{\ohm} = \qty{100}{\ohm}\). For \qty{25}{\mega\hertz} we thus get a minimum capacitance of
+\[
+    C = \frac{1}{2\pi{}fX} = \frac{1}{2\pi{} \cdot{} \qty{25}{\mega\hertz} \cdot{} \qty{100}{\ohm}} = \qty{63.7}{\pico\farad}
+\]
+The chosen \qty{100}{\nano\farad} are significantly larger and simply chosen for convenience and availability. Their high-pass cut-off frequency is at
+\[
+    f = \frac{1}{2\pi{}XC} = \frac{1}{2\pi{} \cdot{} \qty{100}{\ohm} \cdot{} \qty{100}{\nano\farad}} = \qty{15.9}{\kilo\hertz}
+\]
+For the chosen capacitors\sidenote{C0805C104J5RACTU} by KEMET this can be easily verified using the provided K-SIM simulator\sidenote{\url{https://ksim3.kemet.com/capacitor-simulation}}, which confirms an insertion loss (S21) of \qty{0}{\deci\bel} and an input reflection (S11) of \qty{-68}{\deci\bel} for \qty{25}{\mega\hertz}.
 
 \section{The switch}
 \begin{marginfigure}[-4.5\baselineskip]
@@ -129,6 +159,11 @@ B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
 
 \section{The low noise amplifier}
 
+Basically the same as the power amplifier, just lower noise.
+
+Mention input filter
+
+Mention protection diodes
 
 \section{The 32-channel current source}
 building the power supply
@@ -141,13 +176,22 @@ building the power supply
 
 \section{The magnet}
 \labsec{magnet}
+Bought, mention SABR Enterprises, LLC as manufacturer,
+
+NuevoMR, LLC did magnetic ink shimming and electronic shims: covering spherical harmonic fields of order 1-4 (fourth order field \(XY(X^2-Y^2)\) is not created),
+
+Schematic in appendix: \refsec{magnet-schematic}
+
+Material: Temperature Compensated Samarium Cobalt (SmCo TC), EC 2:17-TC16 (RTC: -0.001\%/°C)
 
 \section{The software}
 \labsec{software}
 
 Cite nmrglue here \sidecite{helmusNmrglueOpenSource2013}
+
 design and development of the control software
-short description of marcos
+
+short description of marcos? Already mentioned in console?
 
 
 % Building process
