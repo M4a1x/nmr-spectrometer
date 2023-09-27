@@ -176,13 +176,11 @@ building the power supply
 
 \section{The magnet}
 \labsec{magnet}
-Bought, mention SABR Enterprises, LLC as manufacturer,
+The magnet was built by SABR Enterprises, LLC with a homogenous volume of \qty{100}{\micro\litre} using a \qty{5}{\milli\metre} NMR tube. It has a field strength of \qty{0.6}{\tesla}/\qty{25}{\mega\hertz} with a homogeneity of at least \qty{0.1}{\partspermillion} inside the homogenous volume with the magnetic ink shims and active electronic shimming performed by NuevoMR, LLC\sidenote{spherical harmonic fields of order 1-4 (except \(XY(X^2-Y^2)\))}. A simple two-dipole setup is employed due to the ease of construction and shimming. The schematic can be found in the appendix \refsec{magnet-schematic}.
 
-NuevoMR, LLC did magnetic ink shimming and electronic shims: covering spherical harmonic fields of order 1-4 (fourth order field \(XY(X^2-Y^2)\) is not created),
+A Halbach array --- the so-called NMR Mandhala --- was considered as well. While the achievable field strengths of \qtyrange{0.5}{2}{\tesla} \sidecite{blumichCompactNMR2014} are sufficient, the initially achievable line width of \qty{700}{\partspermillion} \sidecite{raichDesignConstructionDipolar2004} (without shims) magnets is not\sidenote{The chosen dipole magnet achieved a homogeneity \qty{4.7}{\partspermillion} without active shims}. This can be compensated by further passive and active shimming, at the expense of adding complexity to the design. The shimming of Mandhala magnets is still ongoing research, e.g. \sidecite{danieliSmallMagnetsPortable2010}, \sidecite{parkerShimmingHalbachMagnets2016} or \sidecite{wangDesignShimmingMethod2022}. This design is worth investigating further in the future promising low sub-kg weighta as well as price reductions --- also considering the current price point for the dipole magnet of \approx \qty{9}{kCHF}.
 
-Schematic in appendix: \refsec{magnet-schematic}
-
-Material: Temperature Compensated Samarium Cobalt (SmCo TC), EC 2:17-TC16 (RTC: -0.001\%/°C)
+For the material, temperature-compensated samarium cobalt (SmCo TC)\sidenote{EC 2:17-TC16} with a reversible temperature coefficient (RTC) of \qty{-0.001}{\%\per\kelvin} was chosen. The more common and cheaper Neodymium is more temperature sensitive with an RTC of around \qty{-0.1}{\%\per\kelvin}. Due to the low field, multiple scans will likely be required for at least some NMR measurements, exasperating the undesirable effect of a field drift over longer periods.
 
 \section{The software}
 \labsec{software}
