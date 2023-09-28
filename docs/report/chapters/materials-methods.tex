@@ -207,9 +207,7 @@ The Qorvo QPC6324 was therefore selected with a still acceptable insertion loss 
     \includegraphics{block_diagram_highlight_coil.pdf}
     \labfig{block-diagram-coil}
 \end{marginfigure}
-building the coil
-
-Solenoid is probably the best design in terms of sensitivity for NMR, but inductance increases rapidly with the dimensions. Thus it is best used for small samples and/or low fields\cite{mispelterNMRProbeheadsBiophysical2015}.
+To create the required \(B_1\) field to perturbate the population of spin states in the sample an \acrshort{rf} field needs to be generated\sidenote{while an \acrshort{rf} wave is generated as well, the far field is not used in the experiments and considered part of the loss.}. There are many possible designs for this conversion from the transmission line, the simplest being a solenoid coil used here. Myriads of parameters can be optimized in the probe including its type, but the solenoid is probably one of the best designs in terms of sensitivity for NMR, even though the inductance increases rapidly with the dimensions. It is best used for small samples and/or low fields\cite{mispelterNMRProbeheadsBiophysical2015}.
 
 Assuming a long coil magnetic field is estimated by
 B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
@@ -220,6 +218,10 @@ B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
     \caption{\captiontitle{Probe holder and \acrshort{rf} coil with tuning and matching capacitors} The capacitors are tunable from \qtyrange{4.5}{20}{\pico\farad} of make JZ200HV. The coil has a diameter of \(d = \qty{7.5}{\milli\meter}\), wire diameter \(D = \qty{0.2}{\milli\meter}\) and \(n = \qty{18}{turns}\) on a length of \(l = \qty{4}{\milli\meter}\). It has a measured inductance of \(L_{\qty{1}{\mega\hertz}} = \qty{2.7}{\micro\henry}\) and a resistance of \(R_{\qty{1}{\mega\hertz}} = \qty{0.63}{\ohm}\). The body was 3D printed and the circuit cut by hand.}
     \labfig{probe}
 \end{figure}
+
+A lot more work can be done. The presented probe is utterly simple and functional, but by no means optimized in any way. Different designs, parameters and configurations are to be explored. This includes saddle coils.
+
+Integrating a second coil with a fixed small sample for locking could be done as well.
 
 \section{The low noise amplifier}
 
