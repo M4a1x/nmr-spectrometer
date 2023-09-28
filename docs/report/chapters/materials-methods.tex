@@ -61,6 +61,7 @@ All of these digital signal-processing tasks are performed by the \acrshort{marc
 \end{figure}
 
 \section{The power amplifier}
+\labsec{poweramp}
 \begin{marginfigure}[-4.5\baselineskip]
     \includegraphics{block_diagram_highlight_tx.pdf}
     \labfig{block-diagram-pa}
@@ -128,15 +129,78 @@ For the chosen capacitors\sidenote{C0805C104J5RACTU} by KEMET this can be easily
     \includegraphics{block_diagram_highlight_switch.pdf}
     \labfig{block-diagram-switch}
 \end{marginfigure}
-building of the switch
+
+The switch has two main functions:
+\begin{enumerate*}
+    \item Protecting the receive path from the high power pulses when transmitting and
+    \item blocking the noise of the transmit power amplifier when receiving.
+\end{enumerate*}
+The simplest approach for the user would be a passive switch, that doesn't need an active signal and simply forwards everything from the transmit port to the probe and everything from the probe to the receive port and nothing else. The possibly most popular design is the passive switch presented in \sidecite{loweFastRecoveryProbe1968} and pictured in \reffig{passive-switch-schematic}. It is based on easy-to-build, cheap and passive. On the downside, it has a narrow bandwidth, which isn't a problem for our case, as the resonance frequency of the permanent magnet is fixed and varies only slightly.
 
 \begin{figure}[hbt]
     \centering
-    \includegraphics{images/tr_switch.png}
+    \begin{circuitikz}
+        \ctikzset{
+            diode=empty,
+            diodes/scale=0.8
+        }
+        \draw[nodes={align=center}]
+
+        % tx diodes
+        (0,0) node[left]{Transmit} to[short,o-*] ++(1,0) coordinate(tx)
+        (tx) -- ++(0, 0.5) to[D] ++(1.5,0) -- ++(0,-0.5)
+        (tx) -- ++(0,-0.5) to[D,invert] ++(1.5,0) -- ++(0, 0.5)
+        to[short,*-] ++(1,0) coordinate(mid)
+
+        % A/B
+        (mid) node[below](A){A}
+        (mid) to[short,*-o] ++(0,2) node[above]{Probe}
+        (mid) -- ++(3,0) coordinate(b)
+        (b) node[above](B){B}
+
+        % rx diodes
+        (b) to[short,-*] ++(0,-0.5) coordinate(rx)
+        (rx) -- ++(-0.5,0) to[D] ++(0,-1.5) -- ++(0.5,0)
+        (rx) -- ++(0.5,0) to[D,invert] ++(0,-1.5) -- ++(-0.5,0)
+        to[short,*-] ++(0,-0.5) node[ground]{}
+
+        (b) to[short, *-o] ++(1,0)
+        node[right]{Receive}
+        ;
+        \draw[<->] (A.east |- B.west) -- (B.west);
+        \draw ($(A.east|-B.west)!0.5!(B.west)$) node[above]{\(\frac{\lambda}{4}\)};
+    \end{circuitikz}
+    \caption{\captiontitle{The passive switch.} Based on Diodes and \acrshort{rf} properties, the passive switch forwards the signal based on signal power. Due to the diode characteristics, the switch leaks up to \qty{0.7}{\volt} without attenuation --- including noise.}
+    \labfig{passive-switch-schematic}
+\end{figure}
+
+The passive switch's working principle is based on the diode's characteristic to only start conducting above \qty{0.7}{\volt} forward bias and \acrshort{rf} wave propagation properties. When transmitting with high power, the wave amplitude is above \qty{0.7}{\volt}. Since there is no \acrshort{dc} bias the voltage also goes negative, hence the crossed diodes. They can therefore be thought of as shorts in this case so the pulse is sent from the transmit input port through point A in the centre to the probe connected at the top. Looking from point B towards ground it looks like a short-circuit as mentioned before. This short-circuit is then transformed by the \(\frac{\lambda}{4}\) length cable so it looks like an open circuit when looking from point A towards point B. Therefore the only path the transmit pulse \enquote{sees} is towards the probe, because the receive port looks like an open circuit --- there's nothing connected.
+
+On the other hand, the received signal is very low in signal amplitude --- low enough that the diodes don't start conducting. Therefore they function as an open circuit. The signal coming from the probe port travels therefore through point A to point B and into the receiver, ignoring the paths \enquote{disconnected} by the diodes.
+
+This switch was built by the electronic workshop and can be found in \reffig{passive-switch}. Instead of only one crossed diode pair four pairs were used. Since the wavelength of a \(f = \qty{25}{\mega\hertz}\) wave is about \(\lambda{} = \qty{12}{\metre}\), a \enquote{lumped element \(\frac{\lambda}{4}\)-impedance transformer} was used which electrically simply looks like a \qty{3}{\metre} cable. The circuit consists of an inductor in series and two shunt capacitors to its sides. To increase the attenuation of the signal the impedance transformer and diode subcircuit have been repeated three times in the realized circuit in \reffig{passive-switch}.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=\textwidth]{images/passive_tr_switch_assembled.jpg}
+    \caption{\captiontitle{Passive \acrshort{rf} \acrshort{tr} switch} The power amplifier output would be connected on the left, the probe at the top and the low noise amplifier on the right.}
+    \labfig{passive-switch}
+\end{figure}
+
+Unfortunately, due to the diode characteristics, the switch leaked at least \qty{7}{\deci\belm} of power which would be amplified by the low noise amplifiers to levels that could damage other electronics downstream. Additionally, during receive the power amplifier would generate more noise than anticipated and the diodes would conduct lower voltages than calculated, therefore adding noise to the received signal that was orders of magnitude larger than the actual signal. For these reasons, active switch designs were explored.
+
+The active design of this kind of switch is called \acrfull{spdt} switch. A simple variant would be replacing the crossed diodes with biased PIN-diodes functioning effectively as \acrshort{rf} switches. This kind of \acrshort{spdt} switch is very fast and conceptually simple. Unfortunately, they typically also suffer from worse isolation at lower frequencies and have a higher power consumption due to the biasing compared to \acrshort{fet} switches. Biasing itself comes with its own challenges of mixing \acrshort{ac} and \acrshort{dc} usually using chokes and capacitors similar to the amplifier case. Lastly, many PIN diodes don't work at these low frequencies (\(<\qty{100}{\mega\hertz}\)) as the intrinsic region doesn't store enough charge for the negative half wave of the sinusoid.
+
+Since the maximum power requirements are relatively low (see \refsec{poweramp}), integrated \acrshort{fet} switches become a viable solution. These work by simply connecting the individual branches using \acrshort{fet} transistors. Though slightly slower and less capable for higher power applications they provide very good isolation at these \enquote{low} frequencies in the \unit{\mega\hertz} range. They are commercially widely available for use in wireless infrastructure due to their broadband handling capabilities. Many variants exist that are already matched to \qty{50}{\ohm} and are absorptive in the off state. This helps with shortening the duration of the coil ringing and proves a safeguard for the power amplifier in case of misuse as most power amplifiers can be damaged when the output is open or unconnected like in a PIN-diode-based switch.
+
+The Qorvo QPC6324 was therefore selected with a still acceptable insertion loss of \qty{0.9}{\deci\bel} and a high isolation of over \qty{60}{\deci\bel}, a \(P_{\qty{1}{\deci\bel}}\) of \qty{37}{\deci\belm}, \qty{50}{\ohm} matched, absorptive ports and \qty{3.6}{\volt} logic compatibility it's a good match for the circuit and easily controllable by the \acrfull{gpio} pins of the RedPitaya. No external circuitry or \acrshort{dc} blocking capacitors are needed, only a linear power supply to stabilize the input voltage and capacitances to limit the rise speed of the control lines were added to the \acrshort{pcb} design in \reffig{switch}.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=\textwidth]{images/tr_switch.png}
     \caption{\captiontitle{\acrshort{rf} \acrshort{tr} switch} 3D rendering of the switch \acrshort{pcb} in KiCAD. The transmit and receive amplifiers are connected on the left and right, the probe at the bottom connector. The central part is a Qorvo QPC6324 \acrfull{spdt} switch. Above it is a linear power supply and connection pins for active switching and power supply.}
     \labfig{switch}
 \end{figure}
-
 
 \section{The probe}
 \begin{marginfigure}[-4.5\baselineskip]
@@ -152,7 +216,7 @@ B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
 
 \begin{figure}[hbt]
     \centering
-    \includegraphics{images/probe.jpg}
+    \includegraphics[width=\textwidth]{images/probe.jpg}
     \caption{\captiontitle{Probe holder and \acrshort{rf} coil with tuning and matching capacitors} The capacitors are tunable from \qtyrange{4.5}{20}{\pico\farad} of make JZ200HV. The coil has a diameter of \(d = \qty{7.5}{\milli\meter}\), wire diameter \(D = \qty{0.2}{\milli\meter}\) and \(n = \qty{18}{turns}\) on a length of \(l = \qty{4}{\milli\meter}\). It has a measured inductance of \(L_{\qty{1}{\mega\hertz}} = \qty{2.7}{\micro\henry}\) and a resistance of \(R_{\qty{1}{\mega\hertz}} = \qty{0.63}{\ohm}\). The body was 3D printed and the circuit cut by hand.}
     \labfig{probe}
 \end{figure}
@@ -169,7 +233,7 @@ Mention protection diodes
 building the power supply
 \begin{figure}[hbt]
     \centering
-    \includegraphics{images/32-channel_current_source.png}
+    \includegraphics[width=\textwidth]{images/32-channel_current_source.png}
     \caption{\captiontitle{32-channel programmable current source.} 3D rendering of the current source \acrshort{pcb} in \gls{kicad}. The \acrshort{spi} interface is on the right, the power connectors on the left and the 32 output channels on the top and bottom of the \acrshort{pcb}. It consists of 4 8-channel \acrshort{adc}s (AD5676R) setting a voltage that is converted to a constant current by two \acrshort{opamp}s: LMV358 for signal scaling and shifting and TCA0372 for the constant current source.}
     \labfig{current-source}
 \end{figure}
