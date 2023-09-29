@@ -60,6 +60,8 @@ All of these digital signal-processing tasks are performed by the \acrshort{marc
     \labfig{marcos}
 \end{figure}
 
+\todo{Protection diodes, incl. graphs and measurements}
+
 \section{The power amplifier}
 \labsec{poweramp}
 \begin{marginfigure}[-4.5\baselineskip]
@@ -110,7 +112,7 @@ The low-pass input filter functions as a digital reconstruction filter, smoothin
 
 The power amplifier is a PHA-202+, chosen for its easy powering requirements, \qty{50}{\ohm} matching and wide availability. However, it doesn't have enough gain (\qty{18.3}{\deci\bel})) to take the signal from \qty{-2}{\deci\belm} all the way to \qty{+30}{\deci\belm}. The missing \qty{14}{\deci\bel} in amplification are provided by the preamp (\qty{20}{\deci\bel}) minus the following attenuator (\qty{6}{\deci\bel}).
 
-The AD5536 pre-amplifier is a \qty{50}{\ohm} matched, widely available \qty{20}{\deci\bel} gain GaAs gain block from Analog Devices. It's in an easy-to-solder package and has a low enough frequency specification to work with \qty{25}{\mega\hertz}. Alternatives with this gain and power are often difficult to solder due to the leadless design, unmatched (e.g. AFIC901N) \qty{75}{\ohm} matched (e.g. MAAL-011139) and often can't amplify such a slow signal (e.g. TAT7430B, starting at \qty{50}{\mega\hertz}).
+The AD5536 pre-amplifier is a \qty{50}{\ohm} matched, widely available \qty{20}{\deci\bel} gain GaAs gain block from Analog Devices. It's in an easy-to-solder package and has a low enough frequency specification to work with \qty{25}{\mega\hertz}. Alternatives with this gain and power are often difficult to solder due to the leadless design, unmatched (e.g. AFIC901N) \qty{75}{\ohm} matched (e.g. MAAL-011139) and often cannot amplify such a slow signal (e.g. TAT7430B, starting at \qty{50}{\mega\hertz}).
 
 The \qty{6}{\deci\bel} resistive attenuator in between the amplifiers is realized as a \(\pi\)-circuit similar to the low pass ladder filter. It is used to stabilize the adjacent amplifiers and will dampen any oscillations that might occur due to load or stray capacitances or inductances. If necessary the attenuation could be reduced to e.g. \qty{3}{\deci\bel} to increase the maximum power output of the amplifier, however, since the \(P_{\qty{1}{\deci\bel}} = \qty{29}{\deci\belm}\) for the PHA-202+ it won't grow linearly. The potential distortions should be of little consequence for the transmission signal.
 
@@ -207,10 +209,35 @@ The Qorvo QPC6324 was therefore selected with a still acceptable insertion loss 
     \includegraphics{block_diagram_highlight_coil.pdf}
     \labfig{block-diagram-coil}
 \end{marginfigure}
-To create the required \(B_1\) field to perturbate the population of spin states in the sample an \acrshort{rf} field needs to be generated\sidenote{while an \acrshort{rf} wave is generated as well, the far field is not used in the experiments and considered part of the loss.}. There are many possible designs for this conversion from the transmission line, the simplest being a solenoid coil used here. Myriads of parameters can be optimized in the probe including its type, but the solenoid is probably one of the best designs in terms of sensitivity for NMR, even though the inductance increases rapidly with the dimensions. It is best used for small samples and/or low fields\cite{mispelterNMRProbeheadsBiophysical2015}.
+To create the required \(B_1\) field to perturbate the population of spin states in the sample an \acrshort{rf} field needs to be generated\sidenote{while an \acrshort{rf} wave is generated as well, the far field is not used in the experiments and considered part of the loss.}. There are many possible designs for this conversion from the transmission line, the simplest being a solenoid coil used here. Myriads of parameters can be optimized in the probe including its type, length, diameter, number of windings, and consequently self-inductance and Q-factor as well. However, the solenoid is probably one of the best designs in terms of sensitivity for NMR, even though the inductance increases rapidly with the dimensions. It is best used for small samples and/or low fields \sidecite{mispelterNMRProbeheadsBiophysical2015} --- which is our case.
 
-Assuming a long coil magnetic field is estimated by
-B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
+In addition the probe holder should position the sample correctly in the central homogeneous region of the magnet which is a \qty{6}{\milli\metre} diameter sphere. To this end a custom 3D printed probe holder was created with the solenoid coil mounted including the tuning and matching circuit.
+
+The manufacturer of the magnet made a probe to guarantee the specifications of the magnet. This holder can be seen in \reffig{andrew-probe}. Unfortunately, the design files for the probe holder were not made available and the probe is significantly smaller than the space available in the magnet (\qty{50}{\milli\metre} x \qty{55}{\milli\metre} x \qty{9.5}{\milli\metre}), therefore correct positioning proved to be a challenge.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=\textwidth]{images/andrew-probe.png}
+    \caption{\captiontitle{Manufacturer's probe holder and \acrshort{rf} coil with tuning and matching capacitors} The body was 3D printed and the circuit cut by hand.}
+    \labfig{andrew-probe}
+\end{figure}
+
+The solenoid coil consists of \(\approx\qty{0.2}{\milli\metre}\) insulated copper wire wrapped around a clear plastic tube in 18 turns on a length of \qty{6}{\milli\metre} with a diameter of \qty{7.5}{\milli\metre} resulting in a theoretical self inductance of
+\[
+    L = \frac{\mu{}_0N^2A}{l} = \frac{\mu{}_0 \cdot{} 18^2 \cdot{} \pi{}  \cdot{} \frac{\qty{7.5}{\milli\metre}}{2}^2}{\qty{6}{\milli\metre}} = \qty{3.00}{\micro\henry}
+\]
+for a long air-filled coil. The self inductance of the coil inside the circuit (that is, with tuning and matching capacitors attached) was measured to be \qty{2.3}{\micro\henry} at \qty{1}{\kilo\hertz} with a PM6303 RCL meter.
+
+The tuning and matching of the probe was performed outside the magnet with the resulting curve in \reffig{andrew-probe-tum}. The tuning and matching were very sensitive to the surroundings and should be redone inside the magnet when used for spectroscopic measurements.
+
+\begin{figure}[hbt]
+    \centering
+    \includesvg[width=\textwidth]{images/probe_andrew_tum.svg}
+    \caption{\captiontitle{The \(S_{11}\) coefficient of the manufacturer probe} On an x-scale from \qtyrange{20}{30}{\mega\hertz} and a logarithmic y-scale in \unit{\deci\bel}. Measured with a Rhode \& Schwarz ZNB 4 VNA.}
+    \labfig{andrew-probe-tum}
+\end{figure}
+
+In an attempt to overcome the shortcomings of the manufacturers coil a larger version of it that fills the available space inside the magnet was created. This parameterized 3D model designed using openSCAD was then exported to a standard 3D model format, sliced and printed. The first print was done on a Prusa MK3S MMU2S with 0.3mm PLA on the \enquote{DRAFT} setting in roughly \qty{30}{\minute}. Due to small gaps at the connection joints of different parts it was printed again with a smaller print diameter of 0.2mm with the \enquote{QUALITY} setting which did not show any holes in \qty{1.25}{\hour} and can be found in \reffig{probe}. The full dimensions are \qty{70}{\milli\metre} x \qty{83.35}{\milli\metre} x \qty{10}{\milli\metre}, positioning the coil exactly in its center of the magnet.
 
 \begin{figure}[hbt]
     \centering
@@ -219,17 +246,54 @@ B = u0 * n * I / l \cite{mispelterNMRProbeheadsBiophysical2015}
     \labfig{probe}
 \end{figure}
 
-A lot more work can be done. The presented probe is utterly simple and functional, but by no means optimized in any way. Different designs, parameters and configurations are to be explored. This includes saddle coils.
+The coil was designed similarly to the manufacturer's probe as well. \qty{0.2}{\milli\metre} diameter insulated copper wire was wrapped 18 times around a \qty{7.5}{\milli\metre} glass tube on a length of \qty{4}{\milli\metre}. This results in a theoretical inductance for a long air-filled coil of \qty{4.5}{\micro\henry}. To reach a resonant frequency of \qty{25}{\mega\hertz} a tuning capacitance of about \qty{9}{\pico\farad} is thus needed in theory in an LC circuit. When measured with an HP4284 LCR-meter while resting on a styrofoam box an inductance of \qty{2.74}{\micro\henry} and a resistance of \qty{0.627}{\ohm} was measured at \qty{1}{\mega\hertz}. The difference can be attributed to stray capacitances of the connection wires, between the individual windings and the surroundings. The coil is also not long compared to the diameter --- a different model would be more accurate.
 
-Integrating a second coil with a fixed small sample for locking could be done as well.
+To estimate the coil behaviour closer to resonance frequency a resonant circuit was formed by connecting a \qty{10}{\pico\farad} capacitance to both ends end then measured using a pickup coil connected to a Rhode \& Schwarz ZNB4 \acrshort{vna}. The resonant frequency was estimated to be \qty{29.6}{\mega\hertz} using the well known LC resonance formula
+\[
+    f_{\text{res}} = \frac{1}{2\pi{}\sqrt{LC}}
+\]
+the inductance was calculated to be
+\[
+    L = \frac{1}{4\pi{}^2f_{\text{res}}^2C} = \frac{1}{4\pi{}^2 \cdot{} (\qty{29.6}{\mega\hertz})^2 \cdot{} \qty{10}{\micro\farad}} = \qty{2.89}{\micro\henry}
+\] which is relatively close to the measured \qty{2.74}{\micro\henry} at \qty{1}{\mega\hertz}.
+
+With the new inductance value, a capacitance of \(\approx{}\qty{14}{\pico\farad}\) is needed for resonance at \qty{25}{\mega\hertz}. To allow for tuning and matching of the circuit two variable capacitors with a range of \qtyrange{4.5}{20}{\pico\farad} was therefore chosen\sidenote{JZ200HV}. It's a high voltage, paramagnetic model. \reffig{probe} shows the complete probe. The completed probe was then tuned and matched outside the magnet with the results depicted in \reffig{probe-tum}.
+
+\begin{figure}[hbt]
+    \centering
+    \includesvg[width=\textwidth]{images/probe_v1_tum.svg}
+    \caption{\captiontitle{The \(S_{11}\) coefficient of the home-built probe} On an x-scale from \qtyrange{20}{30}{\mega\hertz} and a logarithmic y-scale in \unit{\deci\bel}. Measured with a Rhode \& Schwarz ZNB 4 VNA.}
+    \labfig{probe-tum}
+\end{figure}
+
+Despite the seemingly better tuning and matching the signal of the home-built coil, the manufacture's probe gave better spectra, i.e. more lorentzian line shapes and a stronger signal. Qualitatively, the probe is less sensitive to stray capacitances and is better behaved inside the magnet, though this has not been quantified.
+
+A lot more work can be done. The presented probe is utterly simple and functional, but by no means optimized. Different designs, parameters and configurations are to be explored. This includes saddle coils and variable pitch coils, but also approaches like distributed capacitances between the windings of the solenoid coil. For more consistency the winding patterns could be 3D printed as well.
+
+Another important aspect is shielding of the probe which would provide more defined stray capacitances and reduce induced noise from the environment. Since the magnetic field is relatively homogenous even outside the small specified volume, a second coil with a fixed known sample could be included into the probe holder for locking purposes, simplifying the processing. Lastly the ability to tune and match the coil from the outside of the magnet would help greatly in usability.
 
 \section{The low noise amplifier}
+
+The low noise amplifier follows the same principles as the power amplifier. In \reffig{preamp} the signal travels from left to right first through a \qty{1.8}{\giga\hertz} low-pass filter as recommended by the \acrshort{lna} manufacturer to remove out of band frequencies that might cause distortions. Next is a set of crossed diodes decoupled with a capacitor to prevent \acrshort{dc}. They prevent any surges or leaked pulse to damage the amplifier that follows and clamp the voltage to \
+
+The schematic can be found in the appendix \refsec{lna-schematic}.
+
+The input
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=\textwidth]{images/preamp.png}
+    \caption{\captiontitle{The low noise amplifier} 3D rendering of the low noise amplifier \acrshort{pcb} in \gls{kicad}. The signal travels from left to right through a low-pass filter with \qty{1.8}{\giga\hertz} cut off frequency, a \qty{+5}{\deci\belm} clamping diode and the PHA-13LN+ low noise amplifier (\(G = \qty{24}{\deci\bel}, N = \qty{1.2}{\deci\bel}, P_{\qty{1}{\deci\bel} = \qty{23}{\deci\belm} @\qty{20}{\mega\hertz}}\)). The power is supplied by the onboard linear regulator at the top}
+    \labfig{preamp}
+\end{figure}
 
 Basically the same as the power amplifier, just lower noise.
 
 Mention input filter
 
 Mention protection diodes
+
+Mention oscillations
 
 \section{The 32-channel current source}
 building the power supply
@@ -250,13 +314,8 @@ For the material, temperature-compensated samarium cobalt (SmCo TC)\sidenote{EC 
 
 \section{The software}
 \labsec{software}
+The low-level \gls{marcos} software has been introduced in \refsec{console}. The \gls{marcos} client library sends \enquote{msgpack} formatted data from the PC to the C++ server running on the console, which handles sequence compilation and stream management with the \acrshort{fpga}. Around this client client library a simple interface for sending and receiving pulse sequences has been built.
 
-Cite nmrglue here \sidecite{helmusNmrglueOpenSource2013}
+Using \enquote{nmrglue} \sidecite{helmusNmrglueOpenSource2013} it is possible to save the data in the popular NMRPipe \sidecite{delaglioNMRPipeMultidimensionalSpectral1995} data format. This could easily be extended in the future to include for example the relatively new nmrML\sidecite{schoberNmrMLCommunitySupported2018} open data standard or the older JCAMP-DX \sidecite{mcdonaldJCAMPDXStandardForm1988} format. The software adds simple processing and analysis shortcuts for 1D NMR spectra to facilitate easy and quick inspection of the data. This includes plotting, fourier transform, automatic phase correction, scale conversions, peak picking and single peak as well as spectra fitting.
 
-design and development of the control software
-
-short description of marcos? Already mentioned in console?
-
-
-% Building process
-% Lessons learned
+The usage of the software is described further in \refch{complete}. Additional information can be found inside the repository including example scripts, demonstration notebooks, \acrshort{cli} documentation and an \acrshort{api} reference.

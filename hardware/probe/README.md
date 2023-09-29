@@ -12,11 +12,11 @@ To this end, a custom probe for the NMR has to be made.
 
 To evaluate the performance (i.e specification) of the magnet, NuevoMRSABR has performed a [crude probe that fits 5mm NMR tubes](../../literature/SABR_Permanent_Magnet_and_Shim/ETH%200.6%20T%20Final%20Report_202301.pdf)
 
-!TODO: Insert my own picture of Andrew's NMR Probe here.
+![Andrew's Probe](andrew/pictures/230103-rf_probe_holder_andrew_mcdowell_with_coil.png)
 
 As a first attempt, the same probe holder was 3D printed on a Prusa MK3S MMU2S with 0.3mm PLA on the "DRAFT" setting of the printer in about 26 minutes. The print of which can be seen here:
 
-![3D Print of Andrew McDowell's NMR Probe holder with Prusa MK3S with 0.3mm PLA](andrew/230404-rf_probe_holder_andrew_mcdowell.jpg)
+![3D Print of Andrew McDowell's NMR Probe holder with Prusa MK3S with 0.3mm PLA](andrew/pictures/230404-rf_probe_holder_andrew_mcdowell.jpg)
 
 This first print turned out ok, but small gaps can be noticed where the actual tube holders connect to the plates. A smaller print diameter should thus be chosen for the next print.
 
@@ -39,7 +39,7 @@ The design for this first version stayed the same, the probe holder also accepts
 The resulting \*.scad file was exported to \*.stl, sliced with Prusa Slicer and printed this time with 0.2mm PLA in about 1.25 hours on a Prusa M3KS printer with the "QUALITY" setting.
 
 The resulting part has exactly the dimensions of the free space of the magnet: 70mm x 83.35mm x 10mm and fits flush inside.
-![NMR Probe Holder v1 - 3D printed](probe_holder_v1/230405-probe_holder_v1_0.2mm_PLA_M3KS.jpg)
+![NMR Probe Holder v1 - 3D printed](probe_holder_v1/pictures/230405-probe_holder_v1_0.2mm_PLA_M3KS.jpg)
 
 ### Coil
 
@@ -59,7 +59,7 @@ The variability can be explained by stray capacitances of the connection wires, 
 
 To get a better idea of how the coil behaves near the target resonance frequency of 25.01MHz (set by the magnet) a resonant circuit was formed by connecting a 10pF capacitance to both ends. See the bottom coil here:
 
-![Hand wound coils](230412-rf_coil_0_2mm_copper_18_turns_4mm_long_7_5mm_diameter_on_glass_hand_wound.jpg)
+![Hand wound coils](probe_holder_v1/pictures/230412-rf_coil_0_2mm_copper_18_turns_4mm_long_7_5mm_diameter_on_glass_hand_wound.jpg)
 
 The resonant frequency of this setup was then measured with a Rhode&Schwarz ZNB4 vector network analyser (VNA) and a connected pickup coil held near the circuit. We estimated the resonant frequency to be 29.6MHz. With the formula of the resonance frequency of a coil and capacitance of $f_{res} = \frac{1}{2\pi\sqrt{LC}}$ we estimated the inductance to be $L = \frac{1}{4\pi^2f_{res}^2C} = 2.89\textrm{uH}$, which is close to the expected value when looking at the measurements above, but quite far (~35% smaller) from the calculated expectation of 4.5uH.
 
