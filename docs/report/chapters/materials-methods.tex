@@ -17,9 +17,53 @@ In general, the components were selected to be standard parts wherever possible.
 \begin{figure}[hbt]
     \centering
     \includegraphics{images/block_diagram.pdf}
-    \caption{\captiontitle{Block Diagram.} The main components of the \magnethical{} NMR spectrometer, including the console, lowpass filters, analogue amplifiers, transmit-receive switch and transmit-receive coil.}
+    \caption{\captiontitle{Block Diagram.} The main components of the \magnethical{} NMR spectrometer, include the console, lowpass filters, analogue amplifiers, transmit-receive switch and transmit-receive coil.}
     \labfig{block-diagram}
 \end{figure}
+
+In line with the goal of an accessible NMR spectrometer, the built spectrometer is very affordable. \reftab{total-comparison} shows a comparison of it with a high-field spectrometer and other commercial benchtop spectrometers capable of measuring samples in a \qty{5}{\milli\metre} NMR tube in terms of features.
+
+\begin{table}
+    \caption{\captiontitle{Comparison of different NMR spectrometer types.} Prices are estimates based on previous purchases of the lab and experience in the price developments across vendors.}
+    \begin{tabular}{@{} lrrr @{}}
+        \toprule
+                                       & Superconducting                        & Benchtop                            & \magnethical{}                                          \\
+        \midrule
+        Price [k\,CHF]                 & \numrange[range-phrase=--]{200}{18000} & \numrange[range-phrase=--]{50}{150} & \approx\num{10}                                         \\
+        Frequency [\unit{\mega\hertz}] & \numrange[range-phrase=--]{300}{1200}  & \numrange[range-phrase=--]{40}{125} & \num{25}                                                \\
+        Resolution [\unit{\hertz}]     & \approx\num{0.2}                       & \numrange[range-phrase=--]{0.2}{1}  & \approx \num{2.5}/\num{50}\footnote{with/without shims} \\
+        Weight [\unit{\kilo\gram}]     & \numrange[range-phrase=--]{600}{15000} & \numrange[range-phrase=--]{25}{150} & \approx\num{5}                                          \\
+        \bottomrule
+    \end{tabular}
+    \labtab{total-comparison}
+\end{table}
+
+\reftab{prices} shows a more detailed record of the prices of the individual components used and described in the following chapters. The vast majority of the money is spent on the magnet. Further development should seek better pricing here or start looking into home-made alternatives.
+
+\begin{table}
+    \caption{\captiontitle{Prices of the individual parts of the built spectrometer in comparison.} Prices include \acrshort{vat} in \acrshort{chf}}
+    \begin{tabular}{@{}
+            l
+            S[table-format=7.0,table-align-text-pre=false]
+            S[table-format=3.2,table-align-text-pre=false]
+            S[table-format=5.2,table-align-text-pre=false]
+            @{}}
+        \toprule
+                        & {\qty{600}{\mega\hertz}\footnote{estimated costs}} & {mini-circuits} & {\magnethical}          \\
+        \midrule
+        Power Amplifier & 50000                                              & 323.49          & 36.01                   \\
+        Switch          & {-}                                                & 82.06           & 20.05                   \\
+        Probe           & 100000                                             & {-}             & {\approx{}} 15.00       \\
+        \acrshort{lna}  & 50000                                              & 409.38          & 73.11                   \\
+        Shim Driver     & {-}                                                & {-}             & 257.08                  \\
+        Console         & 200000                                             & {-}             & 662.53                  \\
+        Magnet          & 1000000                                            & {-}             & {\approx{}} 9000.00     \\
+        \bottomrule
+        \textbf{Sum}    &                                                    &                 & \textbf{\num{10142.80}} \\
+    \end{tabular}
+    \labtab{prices}
+\end{table}
+
 
 The section order follows the path of the signal, that is, clockwise around the schematic starting with the console.
 
