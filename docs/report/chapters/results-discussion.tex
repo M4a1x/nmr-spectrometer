@@ -11,7 +11,7 @@ The following sections look at the built spectrometer from a user's point of vie
 \labsec{user-perspective}
 The spectrometer was designed with ease of use and reconfigurability in mind. The individual parts are placed on separate boards, connected with standard \acrshort{sma} connectors. Broken parts can thus be easily exchanged. Old already existing parts can be used in conjunction with newly developed ones, facilitating the re-use of hardware and ensuring operation while a broken part is fixed or upgraded.
 
-The software -- while still incomplete -- has the same goals as the hardware. It is written in \gls{python} with extensive documentation, comments throughout the code and accompanying guides to get started\sidenote{Take a look at the official \lstinline{README.md} in the \href{https://gitlab.ethz.ch/mstabel/nmr-spectrometer/-/tree/master/software/spectrometer}{official repository}}. Generally, the code tries to adhere to the ideas presented in \enquote{Uncle Bob's} book \textit{Clean Code} \sidecite{martinCleanCodeHandbook2008}.
+The software -- while still incomplete -- has the same goals as the hardware. It is written in \gls{python} with extensive documentation, comments throughout the code and accompanying guides to get started\sidenote{Take a look at the official \lstinline{README.md} in the \href{https://github.com/M4a1x/nmr-spectrometer/tree/master/software/spectrometer}{official repository}}. Generally, the code tries to adhere to the ideas presented in \enquote{Uncle Bob's} book \textit{Clean Code} \sidecite{martinCleanCodeHandbook2008}.
 
 \begin{marginfigure}
     \includesvg{images/logo_magnETHical.svg}
@@ -131,7 +131,7 @@ The user can now install the control software including all dependencies indepen
 
 \begin{listing}[h!bt]
     \begin{minted}{shell-session}
-        $ git clone https://gitlab.ethz.ch/mstabel/nmr-spectrometer
+        $ git clone https://github.com/M4a1x/nmr-spectrometer.git
         $ python3 -m pip install ./nmr-spectrometer/software/spectrometer
     \end{minted}
     \caption{Installation of the python library with automated dependency resolution using \href{https://pypi.org/project/pip/}{\acrshort{pip}}. Assuming the user already installed and activated a virtual environment as described in Listing~\ref{lst:setup}.}
@@ -225,12 +225,12 @@ With the package and all dependencies installed as described above, the system i
 \end{listing}
 
 \section{Editing the control software}
-The source code of the control software is available on the ETH Gitlab and can be easily obtained through \lstinline{git} as done in line 2 of Listing \ref{lst:hatch}. It uses \lstinline{hatch} for package and dependency management, which needs to be installed globally. \lstinline{hatch} then provides commands for running a demo Jupyter notebook, unittests\sidenote{unittests are individual tests of separate components as opposed to integration tests that verify the interplay and compatibility of several units}, compiling and reading the documentation. The demo does not work offline and needs a connection the spectrometer. The documentation and unittests are standalone. See Listing \ref{lst:hatch} for examples on using the commands.
+The source code of the control software can be easily obtained through \lstinline{git} as done in line 2 of Listing \ref{lst:hatch}. It uses \lstinline{hatch} for package and dependency management, which needs to be installed globally. \lstinline{hatch} then provides commands for running a demo Jupyter notebook, unittests\sidenote{unittests are individual tests of separate components as opposed to integration tests that verify the interplay and compatibility of several units}, compiling and reading the documentation. The demo does not work offline and needs a connection the spectrometer. The documentation and unittests are standalone. See Listing \ref{lst:hatch} for examples on using the commands.
 
 \begin{listing}[h!bt]
     \begin{minted}{shell-session}
         $ python -m pip install hatch  # Install globally with no venv activated
-        $ git clone https://gitlab.ethz.ch/mstabel/nmr-spectrometer
+        $ git clone https://github.com/M4a1x/nmr-spectrometer.git
         $ cd nmr-spectrometer
         $ hatch run demo  # Open the demo Jupyter notebook in a browser
         $ hatch run docs  # Compile and open the documentation and API reference
@@ -362,16 +362,16 @@ It clearly shows a decaying sine wave. The magnet causes the magnetization\siden
 
 \reffig{rabi-nutation-fit} shows the result of a least-squares fit of a decaying sinusoid to the data. This is a simple way to determine the frequency of the oscillation. The fit directly returns a period of \qty{32}{\micro\second}, thus a \(\frac{\pi}{2}\)-pulse length of \qty{8}{\micro\second} --- confirming the estimation above.
 
-The decay of the signal can be explained again with the de-phasing of the spins. Due to the inhomogeneous magnetic fields the different nuclei experience, they resonate at different frequencies. A \(T_2^*\) of only \qty{2.5}{\milli\second} already has a significant impact in this timeframe and is not negligible anymore compared to the pulse length.
-
-Without electronic shims the \acrshort{fid} decay \(T_2^*\) is quite fast with a \(1/e\) time of \qty{2.5}{\milli\second}. To measure the transversal relaxation time \(T_2\) independently of the homogeneity of the magnetic field --- thus dropping the \(^*\) --- a so-called spin echo experiment can be used. \reffig{pulse-echo-sequence} shows the spin echo pulse sequence.
-
 \begin{marginfigure}
     \centering
     \includesvg{spin_echo_sequence_margin.svg}
     \caption{\captiontitle{Spin echo sequence}. A possible depiction of the spin echo sequence. A pulse of a duration that causes a \(\frac{\pi}{2}\) rotation of the spins and a pulse twice as long (i.e. length \(\pi\)) are applied with a delay of duration \(\tau\) in between. A spin echo is then observed with its peak after a delay of \(\tau\) after the second pulse.}
     \labfig{pulse-echo-sequence}
 \end{marginfigure}
+
+The decay of the signal can be explained again with the de-phasing of the spins. Due to the inhomogeneous magnetic fields the different nuclei experience, they resonate at different frequencies. A \(T_2^*\) of only \qty{2.5}{\milli\second} already has a significant impact in this timeframe and is not negligible anymore compared to the pulse length.
+
+Without electronic shims the \acrshort{fid} decay \(T_2^*\) is quite fast with a \(1/e\) time of \qty{2.5}{\milli\second}. To measure the transversal relaxation time \(T_2\) independently of the homogeneity of the magnetic field --- thus dropping the \(^*\) --- a so-called spin echo experiment can be used. \reffig{pulse-echo-sequence} on the side shows the spin echo pulse sequence.
 
 The idea of the spin echo sequence is that after the \(\frac{\pi}{2}\)-pulse another \(\pi\)-pulse is sent after a delay of \(\tau\), effectively inverting all the spins. In the presence of an inhomogeneous field with the spins rotating at slightly different frequencies in the rotating reference frame, this \(\pi\)-pulse inverts consequently the direction of their de-phasing, causing them to align again when all spins returned to the starting point.
 

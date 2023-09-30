@@ -85,7 +85,7 @@ For digital processing, a \acrfull{fpga} is used, which can be thought of as a p
 \begin{figure}[hbt]
     \centering
     \includegraphics{images/rp122-16.png}
-    \caption{\captiontitle{RedPiaya SDRlab 122-16.} 3D rendering of the console in KiCAD. Can be thought of as an \enquote{RF Raspberry Pi}. It has a Dual Core ARM Cortex A9, \qty{512}{\mega\byte} RAM, Gigabit Ethernet, 2x transmit, 2x receive, an ADC sample rate of \qty{122.88}{\mega\sample\per\second}, \qty{16}{\bit} resolution, a bandwidth of \qty{300}{\kilo\hertz} to \qty{550}{\mega\hertz} and a voltage range of \qty{0.5}{Vpp}/\qty{-2}{\deci\belm} (\qty{50}{\ohm}). The DAC has the same sample rate and voltage range, but a resolution of \qty{14}{\bit} and a bandwidth of \qty{300}{\kilo\hertz} to \qty{60}{\mega\hertz}.}
+    \caption{\captiontitle{RedPiaya SDRlab 122-16.} 3D rendering of the console in KiCAD. Can be thought of as an \enquote{RF Raspberry Pi}. It has a Dual Core ARM Cortex A9, \qty{512}{\mega\byte} RAM, Gigabit Ethernet, 2x transmit, 2x receive, an ADC sample rate of \qty{122.88}{\mega\sample\per\second}, \qty{16}{\bit} resolution, a bandwidth of \qty{300}{\kilo\hertz} to \qty{550}{\mega\hertz} and a voltage range of \qty{0.5}{\vpp}/\qty{-2}{\deci\belm} (\qty{50}{\ohm}). The DAC has the same sample rate and voltage range, but a resolution of \qty{14}{\bit} and a bandwidth of \qty{300}{\kilo\hertz} to \qty{60}{\mega\hertz}.}
     \labfig{redpitaya}
 \end{figure}
 
@@ -140,7 +140,7 @@ Targeting a pulse length of \qty{20}{\micro\second} for a \ch{^1H} \(\frac{\pi}{
     B = \frac{\alpha}{\gamma\tau} = \frac{\frac{\pi}{2}}{\qty{42.577}{\mega\hertz\per\tesla}\cdot{}\qty{20}{\micro\second}} = \qty{1.845}{\milli\tesla}
 \]
 
-The magnet has a homogenous region of \(\qty{100}{\micro\litre}\) for a \qty{5}{\milli\meter} NMR tube, resulting in an NMR active length of about \(l = \qty{6}{\milli\meter}\). If we assume a simple solenoid of that length with about \(n = 20\) turns, a Q factor of 100 (usually in the range of 10 to 1000 \sidecite{mispelterNMRProbeheadsBiophysical2015}) and a self-inductance of \(L = \frac{\mu_0n^2A}{l} = \qty{3}{\micro\henry}\)\sidenote{} we can roughly estimate the required peak power \(P\) with the following formulas \cite{mispelterNMRProbeheadsBiophysical2015}
+The magnet has a homogenous region of \(\qty{100}{\micro\litre}\) for a \qty{5}{\milli\meter} NMR tube, resulting in an NMR active length of about \(l = \qty{6}{\milli\meter}\). If we assume a simple solenoid of that length with about \(n = 20\) turns, a Q factor of 100 (usually in the range of 10 to 1000 \cite{mispelterNMRProbeheadsBiophysical2015}) and a self-inductance of \(L = \frac{\mu_0n^2A}{l} = \qty{3}{\micro\henry}\) we can roughly estimate the required peak power \(P\) with the following formulas \sidecite{mispelterNMRProbeheadsBiophysical2015}
 \begin{align}
     B & = \frac{\mu{}_0nI}{l}              \\
     P & = R\underbar{I}^2 = R\frac{I^2}{2} \\
@@ -157,7 +157,7 @@ The exact power required is difficult to calculate at best due to various losses
 
 The most affordable option for the power amplification would be based on \acrshort{rf} transistors. Unfortunately, this also necessitates an involved design process including not only biasing and feedback design, but also impedance matching and power supply circuits of a possible multi-stage power amplifier. This alone could be the topic of another thesis. Therefore, an \acrshort{mmic} approach has been chosen. Furthermore, availability in the \qty{1}{\watt} range is large due to a large commercial market in this power range especially for CATV amplifiers. Therefore, a \qty{1}{\watt} \acrshort{mmic} amplifier was chosen.
 
-The \acrfull{mmic} amplifier has biasing, possible feedback and stabilization requirements all integrated on a single substrate design. In an application-only power, \acrshort{dc} blocking and adequate cooling have to be supplied since this is a Class A amplifier design.
+The \acrfull{mmic} amplifier has biasing, possible feedback and stabilization requirements all integrated on a single substrate design. In an application only power, \acrshort{dc} blocking in addition to adequate cooling have to be supplied, since this is a Class A amplifier design.
 
 The final board can be found in \reffig{poweramp}, with its schematic in the appendix \refsec{poweramp-schematic} and the part list in \refsec{poweramp-parts}.
 
@@ -187,8 +187,6 @@ The chosen \qty{100}{\nano\farad} are significantly larger and simply chosen for
     f = \frac{1}{2\pi{}XC} = \frac{1}{2\pi{} \cdot{} \qty{100}{\ohm} \cdot{} \qty{100}{\nano\farad}} = \qty{15.9}{\kilo\hertz}
 \]
 For the chosen capacitors\sidenote{C0805C104J5RACTU} by KEMET this can be easily verified using the provided K-SIM simulator\sidenote{\url{https://ksim3.kemet.com/capacitor-simulation}}, which confirms an insertion loss (S21) of \qty{0}{\deci\bel} and an input reflection (S11) of \qty{-68}{\deci\bel} for \qty{25}{\mega\hertz}.
-
-\todo{Add problems with test equipment, i.e. function generator output even thoug turned off of almost 5mVpp}
 
 \section{The switch}
 \begin{marginfigure}
@@ -345,7 +343,7 @@ Another important aspect is the shielding of the probe which would provide more 
 
 On the receive path, the first thing to do is amplify the weak resonance signal. To this end, an amplifier is needed to boost the signal from the \unit{\micro\watt} level up to the measurement range of the \acrshort{adc} of about \qty{0.625}{\milli\watt} without compromising the signal. To this end an amplification of more than \qty{30}{\deci\bel} is needed, which generally implies a two or three-stage amplifier design. In principle, the first amplifier dominates the chain, as the noise introduced by it will be amplified by any subsequent amplifier in the chain. Despite this --- for simplicity --- the same low noise amplifier is used in all stages.
 
-The low noise amplifier design follows largely the same principles as the power amplifier design. In \reffig{preamp} the signal travels from left to right first through a \qty{1.8}{\giga\hertz} low-pass filter as recommended by the \acrshort{lna} manufacturer of the low noise amplifier in the datasheet to remove out of band frequencies that might cause distortions. Next is a set of crossed silicon diodes (BAV99) decoupled with a ceramic capacitor to prevent \acrshort{dc} current flow. They prevent any surges or leaked pulse from damaging the amplifier that follows and clamp the voltage to about \qty{+5}{\deci\belm}/\qty{1.2}{V_{pp}}. It then reaches the PHA-13LN+ amplifier which has a noise figure of \(N = \qty{1}{\deci\bel}\) at \qty{20}{\mega\hertz}. After the last amplifier a simple passive low pass filter (SCLF-27+) with a cut-off frequency of \qty{27}{\mega\hertz} is added. It is added after the last amplifier to reduce its influence on the signal and because the saturation of the amplifiers due to out-of-band noise has not been an issue\sidenote{The out-of-band reflections of the filter have not posed any issue for the amplifiers either, but they were not specifically tested}. The full schematic of a single amplifier stage can be found in the appendix \refsec{lna-schematic} alongside the list of parts in \refsec{lna-parts}.
+The low noise amplifier design follows largely the same principles as the power amplifier design. In \reffig{preamp} the signal travels from left to right first through a \qty{1.8}{\giga\hertz} low-pass filter as recommended by the \acrshort{lna} manufacturer of the low noise amplifier in the datasheet to remove out of band frequencies that might cause distortions. Next is a set of crossed silicon diodes (BAV99) decoupled with a ceramic capacitor to prevent \acrshort{dc} current flow. They prevent any surges or leaked pulse from damaging the amplifier that follows and clamp the voltage to about \qty{+5}{\deci\belm}/\qty{1.2}{\vpp}. It then reaches the PHA-13LN+ amplifier which has a noise figure of \(N = \qty{1}{\deci\bel}\) at \qty{20}{\mega\hertz}. After the last amplifier a simple passive low pass filter (SCLF-27+) with a cut-off frequency of \qty{27}{\mega\hertz} is added. It is added after the last amplifier to reduce its influence on the signal and because the saturation of the amplifiers due to out-of-band noise has not been an issue\sidenote{The out-of-band reflections of the filter have not posed any issue for the amplifiers either, but they were not specifically tested}. The full schematic of a single amplifier stage can be found in the appendix \refsec{lna-schematic} alongside the list of parts in \refsec{lna-parts}.
 
 \begin{figure}[hbt]
     \centering
@@ -372,7 +370,7 @@ Having noticed that the stability factor (K-factor) is lowest and very close to 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=\textwidth]{images/preamp-10mVpp_30dB_attenuation_3_lna_2x3dB_attenuation_27MHz_lowpass_4_protection_diodes.png}
-    \caption{\captiontitle{Amplifier concatenation test.} Oscilloscope measurement of a function generator signal of \qty{10}{\(mV_{pp}\)}/\qty{-36}{\deci\belm} attenuated by \qty{30}{\deci\bel} (\(= \qty{-66}{\deci\belm}\)) that was amplified by three low noise amplifiers built here separated by two \qty{3}{\deci\bel} attenuators and a low pass filter (\(S_{21} < \qty{0.3}{\deci\bel}\)) at the end. Expected total amplification is thus \(G \approx \qty{63.3}{\deci\bel}\). Measured \qty{-2}{\deci\belm} equivalent to the full console input range, giving an amplification of \qty{64}{\deci\bel}.}
+    \caption{\captiontitle{Amplifier concatenation test.} Oscilloscope measurement of a function generator signal of \qty{10}{\milli\vpp}/\qty{-36}{\deci\belm} attenuated by \qty{30}{\deci\bel} (\(= \qty{-66}{\deci\belm}\)) that was amplified by three low noise amplifiers built here separated by two \qty{3}{\deci\bel} attenuators and a low pass filter (\(S_{21} < \qty{0.3}{\deci\bel}\)) at the end. Expected total amplification is thus \(G \approx \qty{63.3}{\deci\bel}\). Measured \qty{-2}{\deci\belm} equivalent to the full console input range, giving an amplification of \qty{64}{\deci\bel}.}
     \labfig{preamp-concatenate}
 \end{figure}
 
