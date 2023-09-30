@@ -116,8 +116,7 @@ The first obvious choice for this would be standard silicon diodes with a thresh
 \end{figure}
 
 A simulation confirmed later by measurement shows a phase shift between input and output occurs. This lead to the hypothesis that a high capacitance forming a filter with the \qty{50}{\ohm} termination is responsible for the attenuation of the signal. Through a parameterized search the RB520SM-30 Schottky diode was found and then simulated to be suitable for the input protection. The measurement of the final version can be found in \reffig{input-protection-working}. While still attenuating the signal, only about \qty{1.4}{\deci\bel} are lost while still clamping the maximum voltage to less than \qty{1}{\vpp}.
-
-\begin{figure}[hbt]
+\begin{figure}[!hbt]
     \centering
     \includegraphics{images/protection_diode_input_500mVpp_working.png}
     \caption{\captiontitle{Working receive input protection of crossed shunt RB520SM-30 Schottky diodes.} The Schottky diodes attenuate the \qty{500}{\milli\volt} input signal to about \qty{426}{\milli\volt}, equivalent to a power attenuation of \qty{1.4}{\deci\bel}.}
@@ -126,12 +125,11 @@ A simulation confirmed later by measurement shows a phase shift between input an
 
 \section{The power amplifier}
 \labsec{poweramp}
-\begin{marginfigure}
+The power amplifier has to amplify the low-power digitally synthesised signal from the console. The console described in \refsec{console} above has a maximum output power of \qty{0.5}{\volt} or \qty{-2}{\deci\belm} into a \qty{50}{\ohm} load.
+\begin{marginfigure}[-4\baselineskip]
     \includegraphics{block_diagram_highlight_tx.pdf}
     \labfig{block-diagram-pa}
 \end{marginfigure}
-
-The power amplifier has to amplify the low-power digitally synthesised signal from the console. The console described in \refsec{console} above has a maximum output power of \qty{0.5}{\volt} or \qty{-2}{\deci\belm} into a \qty{50}{\ohm} load.
 
 The output power required to excite a volume of \qty{1}{\centi\meter\cubed} on a bandwidth of about \qty{10}{\kilo\hertz} or \qty{20}{ppm} in a high field magnet (\qty{500}{\mega\hertz} (\ch{^1H})/\qty{11.7}{\tesla}) is about \qty{11}{\watt} \sidecite{louis-josephDesigningBuildingLowcost2019}. The magnet in this work (see \refsec{magnet}) has a field strength of \qty{25}{\mega\hertz} (\ch{^1H})/\qty{0.6}{\tesla}, therefore \qty{20}{ppm} equals an excitation bandwidth of only \qty{500}{\hertz}. The sample volume is only \(\qty{100}{\micro\litre} = \qty{0.1}{\centi\meter\cubed}\) as well, reducing the required energy further.
 

@@ -9,15 +9,15 @@ The following sections look at the built spectrometer from a user's point of vie
 
 \section{Software Setup}
 \labsec{user-perspective}
-The spectrometer was designed with ease of use and reconfigurability in mind. The individual parts are placed on separate boards, connected with standard \acrshort{sma} connectors. Broken parts can thus be easily exchanged. Old already existing parts can be used in conjunction with newly developed ones, facilitating the re-use of hardware and ensuring operation while a broken part is fixed or upgraded.
-
-The software -- while still incomplete -- has the same goals as the hardware. It is written in \gls{python} with extensive documentation, comments throughout the code and accompanying guides to get started\sidenote{Take a look at the official \lstinline{README.md} in the \href{https://github.com/M4a1x/nmr-spectrometer/tree/master/software/spectrometer}{official repository}}. Generally, the code tries to adhere to the ideas presented in \enquote{Uncle Bob's} book \textit{Clean Code} \sidecite{martinCleanCodeHandbook2008}.
-
 \begin{marginfigure}
     \includesvg{images/logo_magnETHical.svg}
     \caption{Logo of the \magnethical{} spectrometer project}
     \labfig{logo-magnethical}
 \end{marginfigure}
+
+The spectrometer was designed with ease of use and reconfigurability in mind. The individual parts are placed on separate boards, connected with standard \acrshort{sma} connectors. Broken parts can thus be easily exchanged. Old already existing parts can be used in conjunction with newly developed ones, facilitating the re-use of hardware and ensuring operation while a broken part is fixed or upgraded.
+
+The software -- while still incomplete -- has the same goals as the hardware. It is written in \gls{python} with extensive documentation, comments throughout the code and accompanying guides to get started\sidenote{Take a look at the official \lstinline{README.md} in the \href{https://github.com/M4a1x/nmr-spectrometer/tree/master/software/spectrometer}{official repository}}. Generally, the code tries to adhere to the ideas presented in \enquote{Uncle Bob's} book \textit{Clean Code} \sidecite{martinCleanCodeHandbook2008}.
 
 There are five main parts to the spectrometer as explained in \nrefch{methods}:
 \begin{description}
