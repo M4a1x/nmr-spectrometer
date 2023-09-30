@@ -360,7 +360,7 @@ After assembly, the amplification performance of the amplifier was evaluated usi
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=\textwidth]{images/preamp_20DB_25MHz.png}
-    \caption{\captiontitle{VNA \(S_{11}\) and \(S_{21}\) measurement.} An \(S_{11}\) of \qty{-14.47}{\deci\bel} and a \(S_21\) of \qty{23.21}{\deci\bel} was measured at \qty{25}{\mega\hertz} using a nanoVNA-H4.}
+    \caption{\captiontitle{VNA \(S_{11}\) and \(S_{21}\) measurement.} An \(S_{11}\) of \qty{-14.47}{\deci\bel} and a \(S_{21}\) of \qty{23.21}{\deci\bel} was measured at \qty{25}{\mega\hertz} using a nanoVNA-H4.}
     \labfig{preamp-vna}
 \end{figure}
 
@@ -376,25 +376,41 @@ Having noticed that the stability factor (K-factor) is lowest and very close to 
 \end{figure}
 
 \section{The 32-channel current source}
-building the power supply
-\todo{Add options considered. Fully Commercial (expensive, 100k) Dedicated ic (50€ per channel, MAX32010), LED current driver (chips themselves not powerful enough if integrated (NCR320PAS, LT3092), mosfet driver chips could be used, but only one directional -> needs output stage (Tietze Schenk!), more more parts/more complicated/more expensive, HV9961, TLD1211SJ), current driver ic, }
 
+The magnet was supplied with the active electronic shimming system already installed. They have a special design shown in \reffig{shims} consisting of straight wires running across the pole faces --- making good use of the limited space available between the two dipole magnets. The shim system consists of two \acrshort{pcb}s with 16 different shims each that are together capable of generating the first through fourth order magnetic fields\sidenote{with the exception of of the fourth order \(XY(X^2-Y^2)\) field} by supplying 32 individual currents. The resistance of each shim is about \qty{0.2}{\ohm}.
 
-\todo{Add simulation schematic and results}
 \begin{figure}[hbt]
     \centering
-    \includesvg[width=\textwidth]{images/current_source_channel.svg}
-    \caption{\captiontitle{Simulation schematic of one channel of the current source.} }
+    \includegraphics[width=0.8\textwidth]{images/shims.png}
+    \caption{\captiontitle{Active electronic shim system.} The shown system was pre-installed inside the dipole magnet. The bottom side is shown, the top side is the equivalent. Current is supplied through the connectors at the bottom, each vertical pair connected to one shim.}
+    \labfig{shims}
+\end{figure}
+
+To drive the shims, a 32-channel constant current source capable of driving \(\pm{} \qty{0.5}{\ampere}\) with a voltage range of \(\pm{} \qty{2.5}{\volt}\) is needed. To this end multiple options were considered. Commercially available 32-channel digitally controllable current sources were deemed to expensive. Dedicated current control chips exist (e.g. MAX32010), though most only for single rail operation (e.g. HV9961, TLD1211SJ). Additionally they often don't have enough current drive capabilities, requiring an output stage which then again is often limited to single rail operation. Dual-channel operation needs at least twice the number of parts and additional balancing circuitry. The last option considered were \acrshort{led} driver \acrshort{ic}s (e.g. NCR320PAS, LT3092)which are often only capable of single rail operation as well\sidenote{Which in hindsight makes sense, considering they drive diodes}.
+
+The simplest solution for the problem as described in fundamental electronics textbooks (for example \sidecite{tietzeHalbleiterSchaltungstechnik2019}, page 771, chapter 11.3.1, implemented in \reffig{current-source-simulation} on the right) is using a non-inverting amplifier with the feedback path resistor exchanged for the load. This setup was used in the prototype built here, despite the disadvantage of the lack of specialised protection circuitry. Using a dual rail \acrshort{opamp} capable of handling the high currents makes the circuitry quite easy.
+
+\begin{figure*}[hbt]
+    \centering
+    \includesvg{images/current_source_channel.svg}
+    \caption{\captiontitle{Simulation schematic of one channel of the current source in LTSpice.} The output voltage of the AD5676R is in practice set through \acrshort{spi} by the console. It is important to not set the supply voltage too high, because excess voltage will drop over the \acrshort{opamp} generating heat.}
     \labfig{current-source-simulation}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[hbt]
+\reffig{current-source-simulation} shows the LTSpice simulation of one of the 32 channels of the current source. The AD5676R \acrfull{dac} outputs a voltage between \qtyrange{0}{2.5}{\volt}. The following subtractor circuit based on a LMV358 industry standard dual rail-to-rail output operational amplifier moves and scales this output to a voltage of \qtyrange{-0.5}{+0.5}{\volt} before it is fed into the high power TCA0372 operational amplifier in a non-inverting amplifier configuration setting a constant current over \(R_{coil}\). \reffig{current-source-simulation-wave} shows the output of the simulation of this circuit.
+
+\begin{figure*}[hbt]
     \centering
-    \includesvg[width=\textwidth]{images/current_source_channel_wave.svg}
-    \caption{\captiontitle{Simulation result of one current source channel} }
+    \includesvg{images/current_source_channel_wave.svg}
+    \caption{\captiontitle{Simulation result of one current source channel.} The dashed blue line is the resulting output current set by the output voltage of the \acrshort{dac} shown in solid orange. The curves deviate slightly, but this can be later corrected in software. Schematic of the simulation can be found in \reffig{current-source-simulation}. Simulated using LTSpice.}
     \labfig{current-source-simulation-wave}
-\end{figure}
+\end{figure*}
 
+The AD5676R was chosen for its internal reference that further simplifies the circuit, its 16-bit accuracy and 8-channel output. It can be daisy-chained and thus controlled via a single \acrshort{spi} bus. A future prototype could have an integrated microcontroller to enable for example a \acrshort{usb} interface.
+
+Since the high power output \acrshort{opamp} will operate in linear mode, excess voltage will drop over it and generate heat. Thus the voltage level should be chosen as low as necessary. To manage the excessive heat, VIAs were added below the operational amplifier on the board to help distribute the heat across the whole \acrshort{pcb}. Additionally, the bottom solder mask has been removed enabling good thermal connection to a heatsink attached to the bottom of the board.
+
+\reffig{current-source} shows the final board inside the Hammond 1590Z150\sidenote{the lid, screw and gasket have been hidden} aluminium enclosure which doubles as a heat sink. The \acrshort{spi} interface on the right, the positive and negative power connectors on the left and the 4 x 8 constant current channels for the shims in the center. They are in assembly to be connected to the four connectors visible at the bottom of the picture in the sidewall of the enclosure.
 
 \begin{figure}[hbt]
     \centering
@@ -403,20 +419,22 @@ building the power supply
     \labfig{current-source}
 \end{figure}
 
-More stable voltage reference
+Each AD5676R \acrshort{dac} has 8 channels, each \acrshort{opamp} package has two units inside, giving 4 x 2 channel per \acrshort{dac} that are replicated 4x across the \acrshort{pcb}.
 
 \begin{figure}[hbt]
     \centering
     \includesvg[width=\textwidth]{images/current_source_channel_push_pull_alternative.svg}
-    \caption{\captiontitle{Alternative current source channel schematic.} }
+    \caption{\captiontitle{Alternative current source channel schematic.} This push-pull circuit has higher current drive capabilities through the use of \acrshort{fet} output stages. The zero point is compensated by the third \acrshort{opamp} reducing quiescent currents compared to a resistor divider. Simulated in LTSpice, taken from \cite{tietzeHalbleiterSchaltungstechnik2019} (page 778, chapter 11.3.3.1)}
     \labfig{current-source-alternative}
 \end{figure}
+
+Unfortunately, there was not enough time to build and characterize the 32-channel current source for the shim drivers\sidenote{Which will become apparent in \refch{results} later}. This exciting work has been left for the next person working on this project. If it works as intended with stable enough shimming results in the future different interface options and protection mechanisms could be added to make the driver more versatile. This includes over-voltage and over-current protection for inputs and outputs, temperature protection and fusing. If higher current drive capabilities are needed the slightly more complicated push pull configuration shown in \reffig{current-source-alternative} could be used.
 
 \section{The magnet}
 \labsec{magnet}
 The magnet was built by SABR Enterprises, LLC with a homogenous volume of \qty{100}{\micro\litre} using a \qty{5}{\milli\metre} NMR tube. It has a field strength of \qty{0.6}{\tesla}/\qty{25}{\mega\hertz} with a homogeneity of at least \qty{0.1}{\partspermillion} inside the homogenous volume with the magnetic ink shims and active electronic shimming performed by NuevoMR, LLC\sidenote{spherical harmonic fields of order 1-4 (except \(XY(X^2-Y^2)\))}. A simple two-dipole setup is employed due to the ease of construction and shimming. The schematic can be found in the appendix \refsec{magnet-schematic}.
 
-A Halbach array --- the so-called NMR Mandhala --- was considered as well. While the achievable field strengths of \qtyrange{0.5}{2}{\tesla} \sidecite{blumichCompactNMR2014} are sufficient, the initially achievable line width of \qty{700}{\partspermillion} \cite{raichDesignConstructionDipolar2004} (without shims) magnets is not\sidenote{The chosen dipole magnet achieves a homogeneity \qty{4.7}{\partspermillion} without active shims}. This can be compensated by further passive and active shimming, at the expense of adding complexity to the design. The shimming of Mandhala magnets is still an ongoing research topic, see for example \sidecite{danieliSmallMagnetsPortable2010}, \sidecite{parkerShimmingHalbachMagnets2016} or \sidecite{wangDesignShimmingMethod2022} paper. This design is worth investigating further in the future promising low sub-kg weighta as well as price reductions --- also considering the current price point for the dipole magnet of \approx \qty{9}{kCHF}.
+A Halbach array --- the so-called NMR Mandhala --- was considered as well. While the achievable field strengths of \qtyrange{0.5}{2}{\tesla} \sidecite{blumichCompactNMR2014} are sufficient, the initially achievable line width of \qty{700}{\partspermillion} \cite{raichDesignConstructionDipolar2004} (without shims) magnets is not\sidenote{The chosen dipole magnet achieves a homogeneity of \qty{4.7}{\partspermillion} without active shims}. This can be compensated by further passive and active shimming, at the expense of adding complexity to the design. The shimming of Mandhala magnets is still an ongoing research topic, see for example \sidecite{danieliSmallMagnetsPortable2010}, \sidecite{parkerShimmingHalbachMagnets2016} or \sidecite{wangDesignShimmingMethod2022} paper. This design is worth investigating further in the future promising low sub-kg weighta as well as price reductions --- also considering the current price point for the dipole magnet of \approx \qty{9}{kCHF}.
 
 For the material, temperature-compensated samarium cobalt (SmCo TC, EC 2:17-TC16) with a reversible temperature coefficient (RTC) of \qty{-0.001}{\%\per\kelvin} was chosen. The more common and cheaper Neodymium is more temperature sensitive with an RTC of around \qty{-0.1}{\%\per\kelvin}. Due to the low field, multiple scans will likely be required for at least some NMR measurements, exasperating the undesirable effect of a field drift over longer periods.
 

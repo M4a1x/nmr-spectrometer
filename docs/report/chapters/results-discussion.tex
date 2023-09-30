@@ -329,7 +329,7 @@ In NMR spectroscopy the SNR is usually defined with the amplitudes as opposed to
 \]
 Using the above definition the noise was estimated by calculating the \(\sigma{}_N\) from \qtyrange{1}{2}{\kilo\hertz} and using the peak amplitude as the mean \(\mu{}_S\) for the signal under the aforementioned assumptions. With an amplitude of \(2505\) and a noise of \(7.83\) this results in an \snrnmr{} of \(320\) for the water spectrum.
 
-For a constant area under the curve (i.e. constant signal strength) the \snrnmr{} for a lower linewidth due to shimming can be estimated. In this case, the amplitude and the half width at half maximum are antiproportional\sidenote{The proof of which is left as an exercise to the reader}. Assuming a resolution (i.e. full width at half maximum) of \qty{2.5}{\hertz}/\qty{0.1}{\partspermillion} can be achieved as stated by the magnet specification and given an amplitude of 2505 on a linewidth of \qty{118}{\hertz}/\qty{4.72}{\partspermillion} an \snrnmr{} of
+For a constant area under the curve (i.e. constant signal strength) the \snrnmr{} for a lower linewidth due to shimming can be estimated. In this case, the amplitude and the half width at half maximum are inversely proportional\sidenote{The proof of which is left as an exercise to the reader}. Assuming a resolution (i.e. full width at half maximum) of \qty{2.5}{\hertz}/\qty{0.1}{\partspermillion} can be achieved as stated by the magnet specification and given an amplitude of 2505 on a linewidth of \qty{118}{\hertz}/\qty{4.72}{\partspermillion} an \snrnmr{} of
 \[
     \text{SNR}_{\text{NMR,shimmed}} = \text{SNR}_{\text{NMR}} \cdot \frac{\text{FWHM}_{\text{measured}}}{\text{FWHM}_{\text{expected}}} = 320 \cdot \frac{118}{2.5} = \num{15066}
 \]
