@@ -5,7 +5,7 @@
 \chapter{The complete spectrometer}
 \labch{complete}
 
-The following sections look at the built spectrometer from a user's point of view. The first \refsec{user-perspective} describes the assembly and operation of the spectrometer built above. The following sections set up the console (\refsec{console}) and control software (\refsec{control-software}). Lastly, \refsec{measurement} discusses the how to measure a signal with a simple and approachable example.
+The following sections look at the built spectrometer from a user's point of view. The first \refsec{user-perspective} describes the assembly and operation of the spectrometer built above. The following sections set up the console (\refsec{console-setup}) and control software (\refsec{control-software}). Lastly, \refsec{measurement} discusses the how to measure a signal with a simple and approachable example.
 
 \section{Software Setup}
 \labsec{user-perspective}
@@ -69,7 +69,7 @@ The short conceptual overview is reproduced in figure \reffig{overview} for the 
 \end{figure*}
 
 \section{Setting up the RedPitaya}
-\labsec{console}
+\labsec{console-setup}
 Having ordered or built the parts\sidenote{Again, see \refch{methods}}, connected them using \acrshort{sma} cables and powered them through a lab power supply, the console needs to be configured. The configuration of the console is relatively simple as most of the complexity has been programmed into the \gls{python} control library. The user thus only needs to ensure that a working \acrshort{linux} distribution is running on the \acrshort{rp} and that the \acrshort{ip} address is known. The official distribution that is pre-installed on the micro SD card that ships with the \acrshort{rp} is completely sufficient.
 
 If the user needs to create a new microSD card, the \href{https://redpitaya.readthedocs.io/en/latest/quickStart/SDcard/SDcard.html}{setup of the microSD card is described in the \acrshort{rp} docs} and is summarized here for simplicity on a Linux based system.
@@ -206,7 +206,7 @@ With the package and all dependencies installed as described above, the system i
             label="1H",
             sample="Water",
             pulse="single_90_degree_pulse,length=9us,delay=30us",
-            spectrometer="magnETHical v0.1",
+            spectrometer="magnETHical v1.0",
         )
         fid.to_file("my_experiment.fid")
 
@@ -268,7 +268,7 @@ Probably the simplest \acrshort{nmr} pulse sequence consists of a single \(\frac
     \labfig{fid-raw}
 \end{figure}
 
-\reffig{fid-raw} shows a nice exponentially decaying sine wave. There are some points in the beginning of the signal that clearly do not fit in this model. They can be explained through the impulse response of the discrete \acrshort{cic} filters and should ideally be discarded. Nevertheless, \reffig{fid-sine-fit} shows a least squares optimized fit of a decaying exponential sinusoid. Despite the outliers in the beginning this works quite well and confirms the first impression.
+\reffig{fid-raw} shows a nice exponentially decaying sine wave. There are some points at the beginning of the signal that clearly do not fit in this model. They can be explained through the impulse response of the discrete \acrshort{cic} filters and should ideally be discarded. Nevertheless, \reffig{fid-sine-fit} shows a least squares optimized fit of a decaying exponential sinusoid. Despite the outliers in the beginning this works quite well and confirms the first impression.
 
 \begin{figure}[h!bt]
     \centering
