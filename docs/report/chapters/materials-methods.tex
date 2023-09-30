@@ -25,7 +25,7 @@ The section order follows the path of the signal, that is, clockwise around the 
 
 \section{The console}
 \labsec{console}
-\begin{marginfigure}[-4.5\baselineskip]
+\begin{marginfigure}
     \includegraphics{block_diagram_highlight_console.pdf}
     \labfig{block-diagram-console}
 \end{marginfigure}
@@ -82,7 +82,7 @@ For details see the clamping diodes.asc LTSpice Simulation for the results for t
 
 \section{The power amplifier}
 \labsec{poweramp}
-\begin{marginfigure}[-4.5\baselineskip]
+\begin{marginfigure}
     \includegraphics{block_diagram_highlight_tx.pdf}
     \labfig{block-diagram-pa}
 \end{marginfigure}
@@ -147,7 +147,7 @@ For the chosen capacitors\sidenote{C0805C104J5RACTU} by KEMET this can be easily
 \todo{Add problems with test equipment, i.e. function generator output even thoug turned off of almost 5mVpp}
 
 \section{The switch}
-\begin{marginfigure}[-4.5\baselineskip]
+\begin{marginfigure}
     \includegraphics{block_diagram_highlight_switch.pdf}
     \labfig{block-diagram-switch}
 \end{marginfigure}
@@ -225,7 +225,7 @@ The Qorvo QPC6324 was therefore selected with a still acceptable insertion loss 
 \end{figure}
 
 \section{The probe}
-\begin{marginfigure}[-4.5\baselineskip]
+\begin{marginfigure}
     \includegraphics{block_diagram_highlight_coil.pdf}
     \labfig{block-diagram-coil}
 \end{marginfigure}
@@ -268,7 +268,7 @@ In an attempt to overcome the shortcomings of the manufacturers coil a larger ve
 
 The coil was designed similarly to the manufacturer's probe as well. \qty{0.2}{\milli\metre} diameter insulated copper wire was wrapped 18 times around a \qty{7.5}{\milli\metre} glass tube on a length of \qty{4}{\milli\metre}. This results in a theoretical inductance for a long air-filled coil of \qty{4.5}{\micro\henry}. To reach a resonant frequency of \qty{25}{\mega\hertz} a tuning capacitance of about \qty{9}{\pico\farad} is thus needed in theory in an LC circuit. When measured with an HP4284 LCR-meter while resting on a styrofoam box an inductance of \qty{2.74}{\micro\henry} and a resistance of \qty{0.627}{\ohm} was measured at \qty{1}{\mega\hertz}. The difference can be attributed to stray capacitances of the connection wires, between the individual windings and the surroundings. The coil is also not long compared to the diameter --- a different model would be more accurate.
 
-To estimate the coil behaviour closer to resonance frequency a resonant circuit was formed by connecting a \qty{10}{\pico\farad} capacitance to both ends end then measured using a pickup coil connected to a Rhode \& Schwarz ZNB4 \acrshort{vna}. The resonant frequency was estimated to be \qty{29.6}{\mega\hertz} using the well known LC resonance formula
+To estimate the coil behaviour closer to resonance frequency a resonant circuit was formed by connecting a \qty{10}{\pico\farad} capacitance to both ends and then measured using a pickup coil connected to a Rhode \& Schwarz ZNB4 \acrshort{vna}. The resonant frequency was estimated to be \qty{29.6}{\mega\hertz} using the well known LC resonance formula
 \[
     f_{\text{res}} = \frac{1}{2\pi{}\sqrt{LC}}
 \]
@@ -277,7 +277,7 @@ the inductance was calculated to be
     L = \frac{1}{4\pi{}^2f_{\text{res}}^2C} = \frac{1}{4\pi{}^2 \cdot{} (\qty{29.6}{\mega\hertz})^2 \cdot{} \qty{10}{\micro\farad}} = \qty{2.89}{\micro\henry}
 \] which is relatively close to the measured \qty{2.74}{\micro\henry} at \qty{1}{\mega\hertz}.
 
-With the new inductance value, a capacitance of \(\approx{}\qty{14}{\pico\farad}\) is needed for resonance at \qty{25}{\mega\hertz}. To allow for tuning and matching of the circuit two variable capacitors with a range of \qtyrange{4.5}{20}{\pico\farad} was therefore chosen\sidenote{JZ200HV}. It is a high voltage, paramagnetic model. \reffig{probe} shows the complete probe. The completed probe was then tuned and matched outside the magnet with the results depicted in \reffig{probe-tum}.
+With the new inductance value, a capacitance of \(\approx{}\qty{14}{\pico\farad}\) is needed for resonance at \qty{25}{\mega\hertz}. To allow for tuning and matching of the circuit two variable capacitors with a range of \qtyrange{4.5}{20}{\pico\farad} was therefore chosen\sidenote{JZ200HV}. It is a high-voltage, paramagnetic model. \reffig{probe} shows the complete probe. The completed probe was then tuned and matched outside the magnet with the results depicted in \reffig{probe-tum}.
 
 \begin{figure}[hbt]
     \centering
@@ -286,54 +286,50 @@ With the new inductance value, a capacitance of \(\approx{}\qty{14}{\pico\farad}
     \labfig{probe-tum}
 \end{figure}
 
-Despite the seemingly better tuning and matching the signal of the home-built coil, the manufacture's probe gave better spectra, i.e. more lorentzian line shapes and a stronger signal. Qualitatively, the probe is less sensitive to stray capacitances and is better behaved inside the magnet, though this has not been quantified.
+Despite the seemingly better tuning and matching of the signal of the home-built coil, the manufacturer's probe gave better spectra, i.e. more Lorentzian line shapes and a stronger signal. Qualitatively, the probe is less sensitive to stray capacitances and is better behaved inside the magnet, though this has not been quantified.
 
-A lot more work can be done. The presented probe is utterly simple and functional, but by no means optimized. Different designs, parameters and configurations are to be explored. This includes saddle coils and variable pitch coils, but also approaches like distributed capacitances between the windings of the solenoid coil. For more consistency the winding patterns could be 3D printed as well.
+A lot more work can be done. The presented probe is utterly simple and functional, but by no means optimized. Different designs, parameters and configurations are to be explored. This includes saddle coils and variable pitch coils but also approaches like distributed capacitances between the windings of the solenoid coil. For more consistency, the winding patterns could be 3D printed as well.
 
-Another important aspect is shielding of the probe which would provide more defined stray capacitances and reduce induced noise from the environment. Since the magnetic field is relatively homogenous even outside the small specified volume, a second coil with a fixed known sample could be included into the probe holder for locking purposes, simplifying the processing. Lastly the ability to tune and match the coil from the outside of the magnet would help greatly in usability.
+Another important aspect is the shielding of the probe which would provide more defined stray capacitances and reduce induced noise from the environment. Since the magnetic field is relatively homogenous even outside the small specified volume, a second coil with a fixed known sample could be included in the probe holder for locking purposes, simplifying the processing. Lastly, the ability to tune and match the coil from the outside of the magnet would help greatly in usability.
 
 \section{The low noise amplifier}
+\begin{marginfigure}
+    \includegraphics{images/block_diagram_highlight_rx.pdf}
+    \labfig{block-diagram-rx}
+\end{marginfigure}
 
-The low noise amplifier follows the same principles as the power amplifier. In \reffig{preamp} the signal travels from left to right first through a \qty{1.8}{\giga\hertz} low-pass filter as recommended by the \acrshort{lna} manufacturer to remove out of band frequencies that might cause distortions. Next is a set of crossed diodes decoupled with a capacitor to prevent \acrshort{dc}. They prevent any surges or leaked pulse to damage the amplifier that follows and clamp the voltage to \
+On the receive path, the first thing to do is amplify the weak resonance signal. To this end, an amplifier is needed to boost the signal from the \unit{\micro\watt} level up to the measurement range of the \acrshort{adc} of about \qty{0.625}{\milli\watt} without compromising the signal. To this end an amplification of more than \qty{30}{\deci\bel} is needed, which generally implies a two or three-stage amplifier design. In principle, the first amplifier dominates the chain, as the noise introduced by it will be amplified by any subsequent amplifier in the chain. Despite this --- for simplicity --- the same low noise amplifier is used in all stages.
 
-The schematic can be found in the appendix \refsec{lna-schematic}.
-
-The input
-
-reference to martinos lab here
+The low noise amplifier design follows largely the same principles as the power amplifier design. In \reffig{preamp} the signal travels from left to right first through a \qty{1.8}{\giga\hertz} low-pass filter as recommended by the \acrshort{lna} manufacturer of the low noise amplifier in the datasheet to remove out of band frequencies that might cause distortions. Next is a set of crossed silicon diodes (BAV99) decoupled with a ceramic capacitor to prevent \acrshort{dc} current flow. They prevent any surges or leaked pulse from damaging the amplifier that follows and clamp the voltage to about \qty{+5}{\deci\belm}/\qty{1.2}{V_{pp}}. It then reaches the PHA-13LN+ amplifier which has a noise figure of \(N = \qty{1}{\deci\bel}\) at \qty{20}{\mega\hertz}. After the last amplifier a simple passive low pass filter (SCLF-27+) with a cut-off frequency of \qty{27}{\mega\hertz} is added. It is added after the last amplifier to reduce its influence on the signal and because the saturation of the amplifiers due to out-of-band noise has not been an issue\sidenote{The out-of-band reflections of the filter have not posed any issue for the amplifiers either, but they were not specifically tested}. The full schematic of a single amplifier stage can be found in the appendix \refsec{lna-schematic} alongside the list of parts in \refsec{lna-parts}.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=\textwidth]{images/preamp.png}
-    \caption{\captiontitle{The low noise amplifier} 3D rendering of the low noise amplifier \acrshort{pcb} in \gls{kicad}. The signal travels from left to right through a low-pass filter with \qty{1.8}{\giga\hertz} cut off frequency, a \qty{+5}{\deci\belm} clamping diode and the PHA-13LN+ low noise amplifier (\(G = \qty{24}{\deci\bel}, N = \qty{1.2}{\deci\bel}, P_{\qty{1}{\deci\bel} = \qty{23}{\deci\belm} @\qty{20}{\mega\hertz}}\)). The power is supplied by the onboard linear regulator at the top}
+    \caption{\captiontitle{The low noise amplifier} 3D rendering of the low noise amplifier \acrshort{pcb} in \gls{kicad}. The signal travels from left to right through a low-pass filter with \qty{1.8}{\giga\hertz} cut-off frequency, a \qty{+5}{\deci\belm} clamping diode and the PHA-13LN+ low noise amplifier (\(G = \qty{24}{\deci\bel}\), \(N = \qty{1}{\deci\bel}\), \(P_{\qty{1}{\deci\bel}} = \qty{23}{\deci\belm}\) @\qty{20}{\mega\hertz}). The power is supplied by the onboard linear regulator at the top}
     \labfig{preamp}
 \end{figure}
+
+The design is inspired by the low noise \acrshort{rf} pre-amplifier by the RF Lab of the MR-PIG Group at the Martinos Center for Biomedical Imaging\sidenote{\url{https://rflab.martinos.org/index.php?title=Low-noise_RF_Preamplifier}}. It largely follows the recommended layout of the manufacturer with the addition of protection diodes and an included linear power supply. Furthermore, care was taken to make the board easily reproducible using hand-solderable parts on a standard FR4 core \acrshort{pcb}.
+
+After assembly, the amplification performance of the amplifier was evaluated using a nanoVNA in \reffig{preamp-vna}. A single stage amplifies the signal by \qty{23.21}{\deci\bel} --- which is very close to the expected \qty{23.62}{\deci\bel} at \qty{30}{\mega\hertz}. The input return loss is slightly lower with \qty{14.47}{\deci\bel} than the expected \qty{16.04} at \qty{30}{\mega\hertz}. The noise figure was measured to be \qty{1.1}{\deci\bel} which is close to the specified \qty{1.03}{\deci\bel} in the datasheet.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=\textwidth]{images/preamp_20DB_25MHz.png}
-    \caption{\captiontitle{VNA \(S_{11}\) and \(S_{21}\) measurement} }
-    \labfig{preamp-concatenate}
+    \caption{\captiontitle{VNA \(S_{11}\) and \(S_{21}\) measurement.} An \(S_{11}\) of \qty{-14.47}{\deci\bel} and a \(S_21\) of \qty{23.21}{\deci\bel} was measured at \qty{25}{\mega\hertz} using a nanoVNA-H4.}
+    \labfig{preamp-vna}
 \end{figure}
+
+Upon concatenating the three amplifiers, spurious oscillations were noticed. Depending on load conditions, even a single amplifier would start oscillating. First, simple stray capacitances were tested as a possible source of the oscillations. For this different capacitances in the \unit{\pico\farad} range were added between various components and various components and ground with no effect on the oscillations.
+
+Having noticed that the stability factor (K-factor) is lowest and very close to one for the manufacturer evaluation board (\(K = 1.01\)) in the target frequency range, the feedback path was shortened and the 0805-sized capacitor and resistor (\(R_1\) and \(C_3\)) were replaced with corresponding 0402-sized variants of otherwise the same specifications. This completely eliminated the oscillations in a single amplifier as well as the three-stage amplifier chain. To attenuate possible other oscillations, \qty{3}{\deci\bel} attenuators were placed between the individual stages. The layout was fixed accordingly, but no new \acrshort{pcb} with the fix included have been ordered.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=\textwidth]{images/preamp-10mVpp_30dB_attenuation_3_lna_2x3dB_attenuation_27MHz_lowpass_4_protection_diodes.png}
-    \caption{\captiontitle{Amplifier concatenation test.} }
+    \caption{\captiontitle{Amplifier concatenation test.} Oscilloscope measurement of a function generator signal of \qty{10}{\(mV_{pp}\)}/\qty{-36}{\deci\belm} attenuated by \qty{30}{\deci\bel} (\(= \qty{-66}{\deci\belm}\)) that was amplified by three low noise amplifiers built here separated by two \qty{3}{\deci\bel} attenuators and a low pass filter (\(S_{21} < \qty{0.3}{\deci\bel}\)) at the end. Expected total amplification is thus \(G \approx \qty{63.3}{\deci\bel}\). Measured \qty{-2}{\deci\belm} equivalent to the full console input range, giving an amplification of \qty{64}{\deci\bel}.}
     \labfig{preamp-concatenate}
 \end{figure}
-
-Basically the same as the power amplifier, just lower noise.
-
-Mention input filter
-
-Mention protection diodes BAV99 diodes
-
-Mention oscillations
-
-noise figure was confirmed to comply with datasheet 0.9dB
-
-filter after the lna since we want best signal and out of band noise saturating the amplifiers hasn't been an issue.
 
 \section{The 32-channel current source}
 building the power supply
