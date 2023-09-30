@@ -60,7 +60,25 @@ All of these digital signal-processing tasks are performed by the \acrshort{marc
     \labfig{marcos}
 \end{figure}
 
-\todo{Protection diodes, incl. graphs and measurements}
+The LNAs on the receive chain will amplify any signal leaked by the RF switch. The LNAs themselves are therefore protected with BAV99 diodes that clamp the voltage to roughly ~+8dBm (~1.5Vpp) and up to +10dBm (2Vpp). The input power limit for continuous waves of the PHA-13LN+ amps is +8dBm for continuous waves and +21dBm for up to 5min. Unfortunately, these specs are too high for the RF inputs of the Red Pitaya which are specified to a max of 0.5Vpp for the ADC sampling and a maximum of 1Vpp without damaging the inputs. Thus instead of using the BAV99 silicon switching diodes, diodes with a lower forward voltage - such as Schottky diodes - have to be used. Simply choosing a general-purpose Schottky diode - the BYS10 in this case - led to a high attenuation of the signal of a measured ~10dB. As seen in the simulation - which agrees very well with the measurement results - a large phase shift occurs. This leads us to believe that a high capacitance forming a low pass filter with the 50 Ohm load input is responsible for the attenuation of the signal. Through a parameterized search and a SPICE simulation, the RB520SM-30 was chosen as a suitable Schottky diode with low enough capacitance and other losses, that can clamp the maximum output power of the PHA-13LN+ of about +24dBm to about +1Vpp thus even in the case of high power leaking through the TX/RX switch, the Red Pitaya input is still protected.
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics{images/protection_diode_input_100mVpp_attentuation.png}
+    \caption{\captiontitle{Receive input protection diodes attenuating the signal.} }
+    \labfig{marcos}
+\end{figure}
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics{images/protection_diode_input_500mVpp_working.png}
+    \caption{\captiontitle{Working receive input protection diodes.} }
+    \labfig{marcos}
+\end{figure}
+
+For details see the clamping diodes.asc LTSpice Simulation for the results for the mentioned diodes as well as other investigated ones.
+
+\todo{Redo above paragraph}
 
 \section{The power amplifier}
 \labsec{poweramp}
@@ -125,6 +143,8 @@ The chosen \qty{100}{\nano\farad} are significantly larger and simply chosen for
     f = \frac{1}{2\pi{}XC} = \frac{1}{2\pi{} \cdot{} \qty{100}{\ohm} \cdot{} \qty{100}{\nano\farad}} = \qty{15.9}{\kilo\hertz}
 \]
 For the chosen capacitors\sidenote{C0805C104J5RACTU} by KEMET this can be easily verified using the provided K-SIM simulator\sidenote{\url{https://ksim3.kemet.com/capacitor-simulation}}, which confirms an insertion loss (S21) of \qty{0}{\deci\bel} and an input reflection (S11) of \qty{-68}{\deci\bel} for \qty{25}{\mega\hertz}.
+
+\todo{Add problems with test equipment, i.e. function generator output even thoug turned off of almost 5mVpp}
 
 \section{The switch}
 \begin{marginfigure}[-4.5\baselineskip]
@@ -280,7 +300,6 @@ The schematic can be found in the appendix \refsec{lna-schematic}.
 
 The input
 
-
 reference to martinos lab here
 
 \begin{figure}[hbt]
@@ -290,21 +309,67 @@ reference to martinos lab here
     \labfig{preamp}
 \end{figure}
 
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=\textwidth]{images/preamp_20DB_25MHz.png}
+    \caption{\captiontitle{VNA \(S_{11}\) and \(S_{21}\) measurement} }
+    \labfig{preamp-concatenate}
+\end{figure}
+
+\begin{figure}[hbt]
+    \centering
+    \includegraphics[width=\textwidth]{images/preamp-10mVpp_30dB_attenuation_3_lna_2x3dB_attenuation_27MHz_lowpass_4_protection_diodes.png}
+    \caption{\captiontitle{Amplifier concatenation test.} }
+    \labfig{preamp-concatenate}
+\end{figure}
+
 Basically the same as the power amplifier, just lower noise.
 
 Mention input filter
 
-Mention protection diodes
+Mention protection diodes BAV99 diodes
 
 Mention oscillations
 
+noise figure was confirmed to comply with datasheet 0.9dB
+
+filter after the lna since we want best signal and out of band noise saturating the amplifiers hasn't been an issue.
+
 \section{The 32-channel current source}
 building the power supply
+\todo{Add options considered. Fully Commercial (expensive, 100k) Dedicated ic (50€ per channel, MAX32010), LED current driver (chips themselves not powerful enough if integrated (NCR320PAS, LT3092), mosfet driver chips could be used, but only one directional -> needs output stage (Tietze Schenk!), more more parts/more complicated/more expensive, HV9961, TLD1211SJ), current driver ic, }
+
+
+\todo{Add simulation schematic and results}
+\begin{figure}[hbt]
+    \centering
+    \includesvg[width=\textwidth]{images/current_source_channel.svg}
+    \caption{\captiontitle{Simulation schematic of one channel of the current source.} }
+    \labfig{current-source-simulation}
+\end{figure}
+
+\begin{figure}[hbt]
+    \centering
+    \includesvg[width=\textwidth]{images/current_source_channel_wave.svg}
+    \caption{\captiontitle{Simulation result of one current source channel} }
+    \labfig{current-source-simulation-wave}
+\end{figure}
+
+
 \begin{figure}[hbt]
     \centering
     \includegraphics[width=\textwidth]{images/32-channel_current_source.png}
     \caption{\captiontitle{32-channel programmable current source.} 3D rendering of the current source \acrshort{pcb} in \gls{kicad}. The \acrshort{spi} interface is on the right, the power connectors on the left and the 32 output channels on the top and bottom of the \acrshort{pcb}. It consists of 4 8-channel \acrshort{adc}s (AD5676R) setting a voltage that is converted to a constant current by two \acrshort{opamp}s: LMV358 for signal scaling and shifting and TCA0372 for the constant current source.}
     \labfig{current-source}
+\end{figure}
+
+More stable voltage reference
+
+\begin{figure}[hbt]
+    \centering
+    \includesvg[width=\textwidth]{images/current_source_channel_push_pull_alternative.svg}
+    \caption{\captiontitle{Alternative current source channel schematic.} }
+    \labfig{current-source-alternative}
 \end{figure}
 
 \section{The magnet}
