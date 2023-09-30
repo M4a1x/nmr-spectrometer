@@ -104,25 +104,25 @@ All of these digital signal-processing tasks are performed by the \acrshort{marc
     \labfig{marcos}
 \end{figure}
 
-The LNAs on the receive chain will amplify any signal leaked by the RF switch. The LNAs themselves are therefore protected with BAV99 diodes that clamp the voltage to roughly ~+8dBm (~1.5Vpp) and up to +10dBm (2Vpp). The input power limit for continuous waves of the PHA-13LN+ amps is +8dBm for continuous waves and +21dBm for up to 5min. Unfortunately, these specs are too high for the RF inputs of the Red Pitaya which are specified to a max of 0.5Vpp for the ADC sampling and a maximum of 1Vpp without damaging the inputs. Thus instead of using the BAV99 silicon switching diodes, diodes with a lower forward voltage - such as Schottky diodes - have to be used. Simply choosing a general-purpose Schottky diode - the BYS10 in this case - led to a high attenuation of the signal of a measured ~10dB. As seen in the simulation - which agrees very well with the measurement results - a large phase shift occurs. This leads us to believe that a high capacitance forming a low pass filter with the 50 Ohm load input is responsible for the attenuation of the signal. Through a parameterized search and a SPICE simulation, the RB520SM-30 was chosen as a suitable Schottky diode with low enough capacitance and other losses, that can clamp the maximum output power of the PHA-13LN+ of about +24dBm to about +1Vpp thus even in the case of high power leaking through the TX/RX switch, the Red Pitaya input is still protected.
+The low-noise amplifiers before the receive inputs can output more than \qty{+20}{\deci\belm} of power (\refsec{low-noise-amplifier}). The maximum input the \acrshort{rp} can handle before breaking is \qty{1}{\vpp}/\qty{+4}{\deci\belm}. Thus in case any \acrshort{rf} signal gets leaked into the cascaded amplifier chain the inputs of the \acrshort{rp} could be destroyed. To prevent this a pair of crossed shunt diodes is connected before the inputs.
+
+The first obvious choice for this would be standard silicon diodes with a threshold voltage of about \qty{0.7}{\volt}. The prototype with the standard BAV99 diodes would only clamp the signal safely to about \qty{2}{\vpp}. The lower threshold voltage BYS10 Schottky diodes tried next behaved attenuated the signal by about \qty{12}{\deci\bel}. The oscilloscope recording of a \qty{100}{\milli\vpp} sine wave of a function generator passed through the Schottky diodes is shown in \reffig{input-protection-attenuation}.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics{images/protection_diode_input_100mVpp_attentuation.png}
-    \caption{\captiontitle{Receive input protection diodes attenuating the signal.} }
-    \labfig{marcos}
+    \caption{\captiontitle{Receive input protection of crossed shunt BYS10 Schottky diodes attenuating the signal.} The attenuation is unacceptably high. The input signal of \qty{100}{\milli\vpp} is attenuated down to \qty{24}{\milli\vpp} or by about \qty{12}{\deci\bel}.}
+    \labfig{input-protection-attenuation}
 \end{figure}
+
+A simulation confirmed later by measurement shows a phase shift between input and output occurs. This lead to the hypothesis that a high capacitance forming a filter with the \qty{50}{\ohm} termination is responsible for the attenuation of the signal. Through a parameterized search the RB520SM-30 Schottky diode was found and then simulated to be suitable for the input protection. The measurement of the final version can be found in \reffig{input-protection-working}. While still attenuating the signal, only about \qty{1.4}{\deci\bel} are lost while still clamping the maximum voltage to less than \qty{1}{\vpp}.
 
 \begin{figure}[hbt]
     \centering
     \includegraphics{images/protection_diode_input_500mVpp_working.png}
-    \caption{\captiontitle{Working receive input protection diodes.} }
-    \labfig{marcos}
+    \caption{\captiontitle{Working receive input protection of crossed shunt RB520SM-30 Schottky diodes.} The Schottky diodes attenuate the \qty{500}{\milli\volt} input signal to about \qty{426}{\milli\volt}, equivalent to a power attenuation of \qty{1.4}{\deci\bel}.}
+    \labfig{input-protection-working}
 \end{figure}
-
-For details see the clamping diodes.asc LTSpice Simulation for the results for the mentioned diodes as well as other investigated ones.
-
-\todo{Redo above paragraph}
 
 \section{The power amplifier}
 \labsec{poweramp}
@@ -337,6 +337,7 @@ A lot more work can be done. The presented probe is utterly simple and functiona
 Another important aspect is the shielding of the probe which would provide more defined stray capacitances and reduce induced noise from the environment. Since the magnetic field is relatively homogenous even outside the small specified volume, a second coil with a fixed known sample could be included in the probe holder for locking purposes, simplifying the processing. Lastly, the ability to tune and match the coil from the outside of the magnet would help greatly in usability.
 
 \section{The low noise amplifier}
+\labsec{low-noise-amplifier}
 \begin{marginfigure}
     \includegraphics{images/block_diagram_highlight_rx.pdf}
     \labfig{block-diagram-rx}
