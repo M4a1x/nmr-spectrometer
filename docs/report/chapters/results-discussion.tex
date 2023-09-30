@@ -86,7 +86,7 @@ The \acrshort{rp} needs to be reachable through Ethernet from the computer runni
 
 The control software needs to be able to remotely log in to the system through \acrfull{ssh}. For this, the \lstinline{sshd} server needs to be running, which is the case for almost any image you find -- including the official RedPitaya image\sidenote{The default username is \lstinline{root} and the default password is also \lstinline{root}. Sometimes there is no password -- in that case, just press \enquote{Enter} when asked for one. Remember nothing -- not even stars -- is displayed when typing the password}.
 
-It is highly recommended to set up a passwordless login scheme from the computer to the \acrshort{rp}. Listing \ref{lst:pubkey} presents the necessary commands for creating a \lstinline{keyfile} and copying it to the \acrshort{rp} on a \acrshort{linux} machine. When asked, accept the recommended settings for the \lstinline{keyfile} -- don't set a password for it! Enter your password when prompted to do so.
+It is highly recommended to set up a passwordless login scheme from the computer to the \acrshort{rp}. Listing \ref{lst:pubkey} presents the necessary commands for creating a \lstinline{keyfile} and copying it to the \acrshort{rp} on a \acrshort{linux} machine. When asked, accept the recommended settings for the \lstinline{keyfile} -- do not set a password for it! Enter your password when prompted to do so.
 
 \begin{listing}[h!bt]
     \begin{minted}{shell-session}
@@ -225,7 +225,7 @@ With the package and all dependencies installed as described above, the system i
 \end{listing}
 
 \section{Editing the control software}
-The source code of the control software is available on the ETH Gitlab and can be easily obtained through \lstinline{git} as done in line 2 of Listing \ref{lst:hatch}. It uses \lstinline{hatch} for package and dependency management, which needs to be installed globally. \lstinline{hatch} then provides commands for running a demo Jupyter notebook, unittests\sidenote{unittests are individual tests of separate components as opposed to integration tests that verify the interplay and compatibility of several units}, compiling and reading the documentation. The demo doesn't work offline and needs a connection the spectrometer. The documentation and unittests are standalone. See Listing \ref{lst:hatch} for examples on using the commands.
+The source code of the control software is available on the ETH Gitlab and can be easily obtained through \lstinline{git} as done in line 2 of Listing \ref{lst:hatch}. It uses \lstinline{hatch} for package and dependency management, which needs to be installed globally. \lstinline{hatch} then provides commands for running a demo Jupyter notebook, unittests\sidenote{unittests are individual tests of separate components as opposed to integration tests that verify the interplay and compatibility of several units}, compiling and reading the documentation. The demo does not work offline and needs a connection the spectrometer. The documentation and unittests are standalone. See Listing \ref{lst:hatch} for examples on using the commands.
 
 \begin{listing}[h!bt]
     \begin{minted}{shell-session}
@@ -268,7 +268,7 @@ Probably the simplest \acrshort{nmr} pulse sequence consists of a single \(\frac
     \labfig{fid-raw}
 \end{figure}
 
-\reffig{fid-raw} shows a nice exponentially decaying sine wave. There are some points in the beginning of the signal that clearly don't fit in this model. They can be explained through the impulse response of the discrete \acrshort{cic} filters and should ideally be discarded. Nevertheless, \reffig{fid-sine-fit} shows a least squares optimized fit of a decaying exponential sinusoid. Despite the outliers in the beginning this works quite well and confirms the first impression.
+\reffig{fid-raw} shows a nice exponentially decaying sine wave. There are some points in the beginning of the signal that clearly do not fit in this model. They can be explained through the impulse response of the discrete \acrshort{cic} filters and should ideally be discarded. Nevertheless, \reffig{fid-sine-fit} shows a least squares optimized fit of a decaying exponential sinusoid. Despite the outliers in the beginning this works quite well and confirms the first impression.
 
 \begin{figure}[h!bt]
     \centering
@@ -319,7 +319,7 @@ The variance (also called the second central moment) is the square of the standa
 \[
     \sigma{}_X^2 \coloneqq E[(X-\mu{}_X)^2] = E[X^2] - E[X]^2 \stackrel{\mu{}_X = 0}{=} E[X^2]
 \]
-The variance of the signal itself is \(0\) as well\sidenote{In theory the signal without noise doesn't change across multiple experiments}. Therefore we can simply write equivalently
+The variance of the signal itself is \(0\) as well\sidenote{In theory the signal without noise does not change across multiple experiments}. Therefore we can simply write equivalently
 \[
     \text{SNR}_{\text{Engineer}} = \frac{\mu{}_S^2}{\sigma{}_N^2}
 \]
